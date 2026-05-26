@@ -1,0 +1,248 @@
+package javassist;
+
+/* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:javassist/CtMember.class */
+public abstract class CtMember {
+    CtMember next = null;
+    protected CtClass declaringClass;
+
+    protected abstract void extendToString(StringBuffer stringBuffer);
+
+    public abstract int getModifiers();
+
+    public abstract void setModifiers(int i);
+
+    public abstract boolean hasAnnotation(String str);
+
+    public abstract Object getAnnotation(Class<?> cls) throws ClassNotFoundException;
+
+    public abstract Object[] getAnnotations() throws ClassNotFoundException;
+
+    public abstract Object[] getAvailableAnnotations();
+
+    public abstract String getName();
+
+    public abstract String getSignature();
+
+    public abstract String getGenericSignature();
+
+    public abstract void setGenericSignature(String str);
+
+    public abstract byte[] getAttribute(String str);
+
+    public abstract void setAttribute(String str, byte[] bArr);
+
+    /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:javassist/CtMember$Cache.class */
+    static class Cache extends CtMember {
+        private CtMember methodTail;
+        private CtMember consTail;
+        private CtMember fieldTail;
+
+        @Override // javassist.CtMember
+        protected void extendToString(StringBuffer buffer) {
+        }
+
+        @Override // javassist.CtMember
+        public boolean hasAnnotation(String clz) {
+            return false;
+        }
+
+        @Override // javassist.CtMember
+        public Object getAnnotation(Class<?> clz) throws ClassNotFoundException {
+            return null;
+        }
+
+        @Override // javassist.CtMember
+        public Object[] getAnnotations() throws ClassNotFoundException {
+            return null;
+        }
+
+        @Override // javassist.CtMember
+        public byte[] getAttribute(String name) {
+            return null;
+        }
+
+        @Override // javassist.CtMember
+        public Object[] getAvailableAnnotations() {
+            return null;
+        }
+
+        @Override // javassist.CtMember
+        public int getModifiers() {
+            return 0;
+        }
+
+        @Override // javassist.CtMember
+        public String getName() {
+            return null;
+        }
+
+        @Override // javassist.CtMember
+        public String getSignature() {
+            return null;
+        }
+
+        @Override // javassist.CtMember
+        public void setAttribute(String name, byte[] data) {
+        }
+
+        @Override // javassist.CtMember
+        public void setModifiers(int mod) {
+        }
+
+        @Override // javassist.CtMember
+        public String getGenericSignature() {
+            return null;
+        }
+
+        @Override // javassist.CtMember
+        public void setGenericSignature(String sig) {
+        }
+
+        Cache(CtClassType decl) {
+            super(decl);
+            this.methodTail = this;
+            this.consTail = this;
+            this.fieldTail = this;
+            this.fieldTail.next = this;
+        }
+
+        CtMember methodHead() {
+            return this;
+        }
+
+        CtMember lastMethod() {
+            return this.methodTail;
+        }
+
+        CtMember consHead() {
+            return this.methodTail;
+        }
+
+        CtMember lastCons() {
+            return this.consTail;
+        }
+
+        CtMember fieldHead() {
+            return this.consTail;
+        }
+
+        CtMember lastField() {
+            return this.fieldTail;
+        }
+
+        void addMethod(CtMember method) {
+            method.next = this.methodTail.next;
+            this.methodTail.next = method;
+            if (this.methodTail == this.consTail) {
+                this.consTail = method;
+                if (this.methodTail == this.fieldTail) {
+                    this.fieldTail = method;
+                }
+            }
+            this.methodTail = method;
+        }
+
+        void addConstructor(CtMember cons) {
+            cons.next = this.consTail.next;
+            this.consTail.next = cons;
+            if (this.consTail == this.fieldTail) {
+                this.fieldTail = cons;
+            }
+            this.consTail = cons;
+        }
+
+        void addField(CtMember field) {
+            field.next = this;
+            this.fieldTail.next = field;
+            this.fieldTail = field;
+        }
+
+        static int count(CtMember head, CtMember tail) {
+            int n = 0;
+            while (head != tail) {
+                n++;
+                head = head.next;
+            }
+            return n;
+        }
+
+        void remove(CtMember mem) {
+            CtMember ctMember = this;
+            while (true) {
+                CtMember m = ctMember;
+                CtMember node = m.next;
+                if (node != this) {
+                    if (node == mem) {
+                        m.next = node.next;
+                        if (node == this.methodTail) {
+                            this.methodTail = m;
+                        }
+                        if (node == this.consTail) {
+                            this.consTail = m;
+                        }
+                        if (node == this.fieldTail) {
+                            this.fieldTail = m;
+                            return;
+                        }
+                        return;
+                    }
+                    ctMember = m.next;
+                } else {
+                    return;
+                }
+            }
+        }
+    }
+
+    protected CtMember(CtClass clazz) {
+        this.declaringClass = clazz;
+    }
+
+    final CtMember next() {
+        return this.next;
+    }
+
+    void nameReplaced() {
+    }
+
+    public String toString() {
+        StringBuffer buffer = new StringBuffer(getClass().getName());
+        buffer.append("@");
+        buffer.append(Integer.toHexString(hashCode()));
+        buffer.append("[");
+        buffer.append(Modifier.toString(getModifiers()));
+        extendToString(buffer);
+        buffer.append("]");
+        return buffer.toString();
+    }
+
+    public CtClass getDeclaringClass() {
+        return this.declaringClass;
+    }
+
+    public boolean visibleFrom(CtClass clazz) {
+        boolean visible;
+        int mod = getModifiers();
+        if (Modifier.isPublic(mod)) {
+            return true;
+        }
+        if (Modifier.isPrivate(mod)) {
+            return clazz == this.declaringClass;
+        }
+        String declName = this.declaringClass.getPackageName();
+        String fromName = clazz.getPackageName();
+        if (declName == null) {
+            visible = fromName == null;
+        } else {
+            visible = declName.equals(fromName);
+        }
+        if (!visible && Modifier.isProtected(mod)) {
+            return clazz.subclassOf(this.declaringClass);
+        }
+        return visible;
+    }
+
+    public boolean hasAnnotation(Class<?> clz) {
+        return hasAnnotation(clz.getName());
+    }
+}

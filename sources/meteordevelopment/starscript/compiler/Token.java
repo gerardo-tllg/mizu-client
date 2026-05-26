@@ -1,0 +1,37 @@
+package meteordevelopment.starscript.compiler;
+
+/* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/starscript/compiler/Token.class */
+public enum Token {
+    String,
+    Identifier,
+    Number,
+    Null,
+    True,
+    False,
+    And,
+    Or,
+    EqualEqual,
+    BangEqual,
+    Greater,
+    GreaterEqual,
+    Less,
+    LessEqual,
+    Plus,
+    Minus,
+    Star,
+    Slash,
+    Percentage,
+    UpArrow,
+    Bang,
+    Dot,
+    Comma,
+    QuestionMark,
+    Colon,
+    LeftParen,
+    RightParen,
+    LeftBrace,
+    RightBrace,
+    Section,
+    Error,
+    EOF
+}
