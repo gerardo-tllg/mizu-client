@@ -165,7 +165,7 @@ public class Waypoints extends System<Waypoints> implements Iterable<Waypoint> {
 
     @Override // meteordevelopment.meteorclient.systems.System, meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public Waypoints fromTag2(class_2487 tag) {
+    public Waypoints fromTag(class_2487 tag) {
         this.waypoints.clear();
         for (class_2520 waypointTag : tag.method_68569("waypoints")) {
             this.waypoints.add(new Waypoint(waypointTag));

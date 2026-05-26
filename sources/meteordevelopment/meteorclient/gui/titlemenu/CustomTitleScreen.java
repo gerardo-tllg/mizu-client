@@ -21,7 +21,7 @@ import net.minecraft.class_526;
 
 /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/titlemenu/CustomTitleScreen.class */
 public class CustomTitleScreen extends class_437 {
-    private static final String CLIENT_NAME = "R  E  V  I  V  E     ";
+    private static final String CLIENT_NAME = "M  I  Z  U     ";
     private static final String CLIENT_VERSION = "PRE-RELEASE-0.0.1";
     private static final String NEKO_GIF_PATH = "textures/gui/neko.gif";
     private static final Color ACCENT = new Color(Opcode.I2B, 61, 226);
@@ -91,9 +91,7 @@ public class CustomTitleScreen extends class_437 {
     }
 
     private void initDevelopers() {
-        this.developers.add(new DeveloperInfo("Crownizzle", new Color(Opcode.I2B, 61, 226)));
-        this.developers.add(new DeveloperInfo("_Synful", new Color(90, 200, 255)));
-        this.developers.add(new DeveloperInfo("Zandax", new Color(255, 215, 0)));
+        this.developers.add(new DeveloperInfo("swavez", new Color(Opcode.I2B, 61, 226)));
     }
 
     /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/titlemenu/CustomTitleScreen$ThemedButton.class */
@@ -417,7 +415,7 @@ public class CustomTitleScreen extends class_437 {
     }
 
     private void drawVersionText(class_332 context) {
-        context.method_25303(this.field_22787.field_1772, "R  E  V  I  V  E      PRE-RELEASE-0.0.1", 5, this.field_22790 - 15, toARGB(new Color(20, 240, 20)));
+        context.method_25303(this.field_22787.field_1772, "M  I  Z  U      PRE-RELEASE-0.0.1", 5, this.field_22790 - 15, toARGB(new Color(20, 240, 20)));
     }
 
     public boolean method_25402(double mouseX, double mouseY, int button) {

@@ -1,7 +1,6 @@
 package meteordevelopment.meteorclient.mixin;
 
 import meteordevelopment.meteorclient.systems.modules.Modules;
-import meteordevelopment.meteorclient.systems.modules.render.Xray;
 import meteordevelopment.meteorclient.systems.modules.world.Ambience;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import net.minecraft.class_1920;
@@ -33,12 +32,8 @@ public abstract class FluidRendererMixin {
     private void onRender(class_1920 world, class_2338 pos, class_4588 vertexConsumer, class_2680 blockState, class_3610 fluidState, CallbackInfo info) {
         Ambience ambience = (Ambience) Modules.get().get(Ambience.class);
         this.ambient.set(Boolean.valueOf(ambience.isActive() && ambience.customLavaColor.get().booleanValue() && fluidState.method_15767(class_3486.field_15518)));
-        int alpha = Xray.getAlpha(fluidState.method_15759(), pos);
-        if (alpha != 0) {
-            this.alphas.set(Integer.valueOf(alpha));
-        } else {
-            info.cancel();
-        }
+        int alpha = -1;
+        this.alphas.set(Integer.valueOf(alpha));
     }
 
     @Inject(method = {"vertex"}, at = {@At("HEAD")}, cancellable = true)

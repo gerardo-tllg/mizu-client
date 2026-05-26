@@ -117,7 +117,7 @@ public class HudElementScreen extends WindowScreen {
     public boolean fromClipboard() {
         class_2487 clipboard = NbtUtils.fromClipboard();
         if (clipboard != null) {
-            this.element.fromTag2(clipboard);
+            this.element.fromTag(clipboard);
             return true;
         }
         return false;

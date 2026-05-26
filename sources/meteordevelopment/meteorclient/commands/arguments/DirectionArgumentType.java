@@ -9,10 +9,6 @@ import net.minecraft.class_7485;
 public class DirectionArgumentType extends class_7485<class_2350> {
     private static final DirectionArgumentType INSTANCE = new DirectionArgumentType();
 
-    public /* bridge */ /* synthetic */ Object parse(StringReader stringReader) throws CommandSyntaxException {
-        return super.method_44091(stringReader);
-    }
-
     private DirectionArgumentType() {
         super(class_2350.field_29502, class_2350::values);
     }

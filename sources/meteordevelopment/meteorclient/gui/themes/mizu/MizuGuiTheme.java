@@ -1,4 +1,4 @@
-package meteordevelopment.meteorclient.gui.themes.revive;
+package meteordevelopment.meteorclient.gui.themes.mizu;
 
 import javassist.bytecode.Opcode;
 import meteordevelopment.meteorclient.MeteorClient;
@@ -6,27 +6,27 @@ import meteordevelopment.meteorclient.gui.DefaultSettingsWidgetFactory;
 import meteordevelopment.meteorclient.gui.GuiTheme;
 import meteordevelopment.meteorclient.gui.WidgetScreen;
 import meteordevelopment.meteorclient.gui.renderer.packer.GuiTexture;
-import meteordevelopment.meteorclient.gui.themes.revive.widgets.WReviveAccount;
-import meteordevelopment.meteorclient.gui.themes.revive.widgets.WReviveHorizontalSeparator;
-import meteordevelopment.meteorclient.gui.themes.revive.widgets.WReviveLabel;
-import meteordevelopment.meteorclient.gui.themes.revive.widgets.WReviveModule;
-import meteordevelopment.meteorclient.gui.themes.revive.widgets.WReviveMultiLabel;
-import meteordevelopment.meteorclient.gui.themes.revive.widgets.WReviveQuad;
-import meteordevelopment.meteorclient.gui.themes.revive.widgets.WReviveSection;
-import meteordevelopment.meteorclient.gui.themes.revive.widgets.WReviveTooltip;
-import meteordevelopment.meteorclient.gui.themes.revive.widgets.WReviveTopBar;
-import meteordevelopment.meteorclient.gui.themes.revive.widgets.WReviveVerticalSeparator;
-import meteordevelopment.meteorclient.gui.themes.revive.widgets.WReviveView;
-import meteordevelopment.meteorclient.gui.themes.revive.widgets.WReviveWindow;
-import meteordevelopment.meteorclient.gui.themes.revive.widgets.input.WReviveDropdown;
-import meteordevelopment.meteorclient.gui.themes.revive.widgets.input.WReviveSlider;
-import meteordevelopment.meteorclient.gui.themes.revive.widgets.input.WReviveTextBox;
-import meteordevelopment.meteorclient.gui.themes.revive.widgets.pressable.WReviveButton;
-import meteordevelopment.meteorclient.gui.themes.revive.widgets.pressable.WReviveCheckbox;
-import meteordevelopment.meteorclient.gui.themes.revive.widgets.pressable.WReviveFavorite;
-import meteordevelopment.meteorclient.gui.themes.revive.widgets.pressable.WReviveMinus;
-import meteordevelopment.meteorclient.gui.themes.revive.widgets.pressable.WRevivePlus;
-import meteordevelopment.meteorclient.gui.themes.revive.widgets.pressable.WReviveTriangle;
+import meteordevelopment.meteorclient.gui.themes.mizu.widgets.WMizuAccount;
+import meteordevelopment.meteorclient.gui.themes.mizu.widgets.WMizuHorizontalSeparator;
+import meteordevelopment.meteorclient.gui.themes.mizu.widgets.WMizuLabel;
+import meteordevelopment.meteorclient.gui.themes.mizu.widgets.WMizuModule;
+import meteordevelopment.meteorclient.gui.themes.mizu.widgets.WMizuMultiLabel;
+import meteordevelopment.meteorclient.gui.themes.mizu.widgets.WMizuQuad;
+import meteordevelopment.meteorclient.gui.themes.mizu.widgets.WMizuSection;
+import meteordevelopment.meteorclient.gui.themes.mizu.widgets.WMizuTooltip;
+import meteordevelopment.meteorclient.gui.themes.mizu.widgets.WMizuTopBar;
+import meteordevelopment.meteorclient.gui.themes.mizu.widgets.WMizuVerticalSeparator;
+import meteordevelopment.meteorclient.gui.themes.mizu.widgets.WMizuView;
+import meteordevelopment.meteorclient.gui.themes.mizu.widgets.WMizuWindow;
+import meteordevelopment.meteorclient.gui.themes.mizu.widgets.input.WMizuDropdown;
+import meteordevelopment.meteorclient.gui.themes.mizu.widgets.input.WMizuSlider;
+import meteordevelopment.meteorclient.gui.themes.mizu.widgets.input.WMizuTextBox;
+import meteordevelopment.meteorclient.gui.themes.mizu.widgets.pressable.WMizuButton;
+import meteordevelopment.meteorclient.gui.themes.mizu.widgets.pressable.WMizuCheckbox;
+import meteordevelopment.meteorclient.gui.themes.mizu.widgets.pressable.WMizuFavorite;
+import meteordevelopment.meteorclient.gui.themes.mizu.widgets.pressable.WMizuMinus;
+import meteordevelopment.meteorclient.gui.themes.mizu.widgets.pressable.WMizuPlus;
+import meteordevelopment.meteorclient.gui.themes.mizu.widgets.pressable.WMizuTriangle;
 import meteordevelopment.meteorclient.gui.utils.AlignmentX;
 import meteordevelopment.meteorclient.gui.utils.CharFilter;
 import meteordevelopment.meteorclient.gui.widgets.WAccount;
@@ -62,8 +62,8 @@ import meteordevelopment.meteorclient.utils.render.color.Color;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 import net.minecraft.class_310;
 
-/* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/themes/revive/ReviveGuiTheme.class */
-public class ReviveGuiTheme extends GuiTheme {
+/* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/themes/mizu/MizuGuiTheme.class */
+public class MizuGuiTheme extends GuiTheme {
     private final SettingGroup sgGeneral;
     private final SettingGroup sgColors;
     private final SettingGroup sgTextColors;
@@ -109,8 +109,8 @@ public class ReviveGuiTheme extends GuiTheme {
     public final Setting<SettingColor> starscriptKeywords;
     public final Setting<SettingColor> starscriptAccessedObjects;
 
-    public ReviveGuiTheme() {
-        super("Revive");
+    public MizuGuiTheme() {
+        super("Mizu");
         this.sgGeneral = this.settings.getDefaultGroup();
         this.sgColors = this.settings.createGroup("Colors");
         this.sgTextColors = this.settings.createGroup("Text");
@@ -176,102 +176,102 @@ public class ReviveGuiTheme extends GuiTheme {
 
     @Override // meteordevelopment.meteorclient.gui.GuiTheme
     public WWindow window(WWidget icon, String title) {
-        return (WWindow) w(new WReviveWindow(icon, title));
+        return (WWindow) w(new WMizuWindow(icon, title));
     }
 
     @Override // meteordevelopment.meteorclient.gui.GuiTheme
     public WLabel label(String text, boolean title, double maxWidth) {
-        return maxWidth == 0.0d ? (WLabel) w(new WReviveLabel(text, title)) : (WLabel) w(new WReviveMultiLabel(text, title, maxWidth));
+        return maxWidth == 0.0d ? (WLabel) w(new WMizuLabel(text, title)) : (WLabel) w(new WMizuMultiLabel(text, title, maxWidth));
     }
 
     @Override // meteordevelopment.meteorclient.gui.GuiTheme
     public WHorizontalSeparator horizontalSeparator(String text) {
-        return (WHorizontalSeparator) w(new WReviveHorizontalSeparator(text));
+        return (WHorizontalSeparator) w(new WMizuHorizontalSeparator(text));
     }
 
     @Override // meteordevelopment.meteorclient.gui.GuiTheme
     public WVerticalSeparator verticalSeparator() {
-        return (WVerticalSeparator) w(new WReviveVerticalSeparator());
+        return (WVerticalSeparator) w(new WMizuVerticalSeparator());
     }
 
     @Override // meteordevelopment.meteorclient.gui.GuiTheme
     protected WButton button(String text, GuiTexture texture) {
-        return (WButton) w(new WReviveButton(text, texture));
+        return (WButton) w(new WMizuButton(text, texture));
     }
 
     @Override // meteordevelopment.meteorclient.gui.GuiTheme
     public WMinus minus() {
-        return (WMinus) w(new WReviveMinus());
+        return (WMinus) w(new WMizuMinus());
     }
 
     @Override // meteordevelopment.meteorclient.gui.GuiTheme
     public WPlus plus() {
-        return (WPlus) w(new WRevivePlus());
+        return (WPlus) w(new WMizuPlus());
     }
 
     @Override // meteordevelopment.meteorclient.gui.GuiTheme
     public WCheckbox checkbox(boolean checked) {
-        return (WCheckbox) w(new WReviveCheckbox(checked));
+        return (WCheckbox) w(new WMizuCheckbox(checked));
     }
 
     @Override // meteordevelopment.meteorclient.gui.GuiTheme
     public WSlider slider(double value, double min, double max) {
-        return (WSlider) w(new WReviveSlider(value, min, max));
+        return (WSlider) w(new WMizuSlider(value, min, max));
     }
 
     @Override // meteordevelopment.meteorclient.gui.GuiTheme
     public WTextBox textBox(String text, String placeholder, CharFilter filter, Class<? extends WTextBox.Renderer> renderer) {
-        return (WTextBox) w(new WReviveTextBox(text, placeholder, filter, renderer));
+        return (WTextBox) w(new WMizuTextBox(text, placeholder, filter, renderer));
     }
 
     @Override // meteordevelopment.meteorclient.gui.GuiTheme
     public <T> WDropdown<T> dropdown(T[] values, T value) {
-        return (WDropdown) w(new WReviveDropdown(values, value));
+        return (WDropdown) w(new WMizuDropdown(values, value));
     }
 
     @Override // meteordevelopment.meteorclient.gui.GuiTheme
     public WTriangle triangle() {
-        return (WTriangle) w(new WReviveTriangle());
+        return (WTriangle) w(new WMizuTriangle());
     }
 
     @Override // meteordevelopment.meteorclient.gui.GuiTheme
     public WTooltip tooltip(String text) {
-        return (WTooltip) w(new WReviveTooltip(text));
+        return (WTooltip) w(new WMizuTooltip(text));
     }
 
     @Override // meteordevelopment.meteorclient.gui.GuiTheme
     public WView view() {
-        return (WView) w(new WReviveView());
+        return (WView) w(new WMizuView());
     }
 
     @Override // meteordevelopment.meteorclient.gui.GuiTheme
     public WSection section(String title, boolean expanded, WWidget headerWidget) {
-        return (WSection) w(new WReviveSection(title, expanded, headerWidget));
+        return (WSection) w(new WMizuSection(title, expanded, headerWidget));
     }
 
     @Override // meteordevelopment.meteorclient.gui.GuiTheme
     public WAccount account(WidgetScreen screen, Account<?> account) {
-        return (WAccount) w(new WReviveAccount(screen, account));
+        return (WAccount) w(new WMizuAccount(screen, account));
     }
 
     @Override // meteordevelopment.meteorclient.gui.GuiTheme
     public WWidget module(Module module) {
-        return w(new WReviveModule(module));
+        return w(new WMizuModule(module));
     }
 
     @Override // meteordevelopment.meteorclient.gui.GuiTheme
     public WQuad quad(Color color) {
-        return (WQuad) w(new WReviveQuad(color));
+        return (WQuad) w(new WMizuQuad(color));
     }
 
     @Override // meteordevelopment.meteorclient.gui.GuiTheme
     public WTopBar topBar() {
-        return (WTopBar) w(new WReviveTopBar());
+        return (WTopBar) w(new WMizuTopBar());
     }
 
     @Override // meteordevelopment.meteorclient.gui.GuiTheme
     public WFavorite favorite(boolean checked) {
-        return (WFavorite) w(new WReviveFavorite(checked));
+        return (WFavorite) w(new WMizuFavorite(checked));
     }
 
     @Override // meteordevelopment.meteorclient.gui.GuiTheme
@@ -358,16 +358,16 @@ public class ReviveGuiTheme extends GuiTheme {
         return this.hideHUD.get().booleanValue();
     }
 
-    /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/themes/revive/ReviveGuiTheme$ThreeStateColorSetting.class */
+    /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/themes/mizu/MizuGuiTheme$ThreeStateColorSetting.class */
     public class ThreeStateColorSetting {
         private final Setting<SettingColor> normal;
         private final Setting<SettingColor> hovered;
         private final Setting<SettingColor> pressed;
 
         public ThreeStateColorSetting(SettingGroup group, String name, SettingColor c1, SettingColor c2, SettingColor c3) {
-            this.normal = ReviveGuiTheme.this.color(group, name, "Color of " + name + ".", c1);
-            this.hovered = ReviveGuiTheme.this.color(group, "hovered-" + name, "Color of " + name + " when hovered.", c2);
-            this.pressed = ReviveGuiTheme.this.color(group, "pressed-" + name, "Color of " + name + " when pressed.", c3);
+            this.normal = MizuGuiTheme.this.color(group, name, "Color of " + name + ".", c1);
+            this.hovered = MizuGuiTheme.this.color(group, "hovered-" + name, "Color of " + name + " when hovered.", c2);
+            this.pressed = MizuGuiTheme.this.color(group, "pressed-" + name, "Color of " + name + " when pressed.", c3);
         }
 
         public SettingColor get() {
@@ -375,7 +375,7 @@ public class ReviveGuiTheme extends GuiTheme {
         }
 
         public SettingColor get(boolean pressed, boolean hovered, boolean bypassDisableHoverColor) {
-            return pressed ? this.pressed.get() : (!hovered || (!bypassDisableHoverColor && ReviveGuiTheme.this.disableHoverColor)) ? this.normal.get() : this.hovered.get();
+            return pressed ? this.pressed.get() : (!hovered || (!bypassDisableHoverColor && MizuGuiTheme.this.disableHoverColor)) ? this.normal.get() : this.hovered.get();
         }
 
         public SettingColor get(boolean pressed, boolean hovered) {
@@ -383,3 +383,5 @@ public class ReviveGuiTheme extends GuiTheme {
         }
     }
 }
+
+

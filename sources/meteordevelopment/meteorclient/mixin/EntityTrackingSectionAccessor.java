@@ -8,6 +8,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/mixin/EntityTrackingSectionAccessor.class */
 @Mixin({class_5572.class})
 public interface EntityTrackingSectionAccessor {
-    @Accessor("collection")
+    @Accessor("field_27248")
     <T> class_3509<T> getCollection();
 }

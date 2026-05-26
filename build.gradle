@@ -18,14 +18,65 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
+loom {
+    // The access widener lives in resources/ rather than the default src/main/resources location
+    accessWidenerPath = file("resources/meteor-client.accesswidener")
+}
+
 dependencies {
     minecraft 'com.mojang:minecraft:1.21.5'
-    mappings 'net.fabricmc:yarn:1.21.5+build.1:v2'
+    // Passthrough mapping: intermediary names are used as the "named" development
+    // namespace, so class_XXX / field_XXX names in the decompiled source compile as-is.
+    // The JAR contains a tiny v2 header with intermediary->named and no entries.
+    mappings loom.layered {
+        mappings dependencies.create(files('intermediary-passthrough.jar'))
+    }
     modImplementation 'net.fabricmc:fabric-loader:0.16.14'
     modImplementation 'net.fabricmc.fabric-api:fabric-api:0.119.5+1.21.5'
-    modImplementation 'meteordevelopment:orbit:0.2.4'
-    modImplementation 'org.meteordev:starscript:0.2.5'
     modImplementation 'meteordevelopment:baritone:1.21.5-SNAPSHOT'
+
+    // Third-party libraries used by the mod source; compiled from Maven rather
+    // than from the decompiled copies bundled in sources/ to avoid JADX artefacts
+    // and duplicate-class conflicts with Minecraft's transitive dependencies
+    implementation 'org.javassist:javassist:3.29.2-GA'
+    implementation 'org.reflections:reflections:0.10.2'
+    // Netty proxy handler (SOCKS4/SOCKS5) used by ClientConnectionMixin
+    implementation 'io.netty:netty-handler-proxy:4.1.118.Final'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['sources']
+            // Exclude source trees that are already provided via modImplementation
+            // or Minecraft transitive dependencies, and would cause duplicate-class
+            // or forward-reference compile errors if compiled from source
+            exclude 'io/**'                            // Netty — Minecraft transitive dep
+            exclude 'net/**'                           // Fabric API — modImplementation dep
+            exclude 'javax/**'                         // JSR-305 — Minecraft transitive dep
+            exclude 'javassist/**'                     // Javassist — added as Maven dep above
+            exclude 'org/**'                           // Reflections — added as Maven dep above
+            // de/florianmichael/waybackauthlib — only 3 files, compiles from source
+            // Orbit and Starscript compile from source (sources/meteordevelopment/{orbit,starscript}/)
+
+            // Optional third-party mod integrations — excluded because their APIs are not on the classpath
+            exclude 'meteordevelopment/meteorclient/mixin/lithium/**'       // Lithium mod
+            exclude 'meteordevelopment/meteorclient/mixin/sodium/**'        // Sodium mod
+            exclude 'meteordevelopment/meteorclient/mixin/viafabricplus/**' // ViaFabricPlus mod
+            exclude 'meteordevelopment/meteorclient/ModMenuIntegration.java'// ModMenu mod
+            exclude 'meteordevelopment/meteorclient/systems/modules/hunting/BetterStashFinder.java' // XaeroPlus
+            exclude 'meteordevelopment/meteorclient/systems/modules/hunting/TrailFollower.java'     // XaeroPlus
+            exclude 'meteordevelopment/meteorclient/utils/stardust/MapUtil.java'                    // Xaero Minimap
+            exclude 'meteordevelopment/meteorclient/systems/modules/render/Xray.java'               // Iris API
+            exclude 'meteordevelopment/meteorclient/mixin/BlockModelRendererMixin.java'            // Xray-only mixin
+            exclude 'meteordevelopment/meteorclient/mixin/BlockCollisionSpliteratorMixin.java'    // computeNext API removed in 1.21.5
+            exclude 'meteordevelopment/meteorclient/mixin/indigo/**'                               // Xray-only Indigo mixin
+        }
+        resources {
+            srcDirs = ['resources']
+            exclude '**/*.class'
+        }
+    }
 }
 
 processResources {

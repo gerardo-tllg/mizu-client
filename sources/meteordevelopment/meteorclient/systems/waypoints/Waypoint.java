@@ -89,7 +89,7 @@ public class Waypoint implements ISerializable<Waypoint> {
         } else {
             this.uuid = UUID.randomUUID();
         }
-        fromTag2(nbt);
+        fromTag(nbt);
     }
 
     public void renderIcon(double x, double y, double a, double size) {
@@ -187,9 +187,9 @@ public class Waypoint implements ISerializable<Waypoint> {
     /* JADX WARN: Can't rename method to resolve collision */
     @Override // meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public Waypoint fromTag2(class_2487 tag) {
+    public Waypoint fromTag(class_2487 tag) {
         if (tag.method_10545("settings")) {
-            this.settings.fromTag2(tag.method_68568("settings"));
+            this.settings.fromTag(tag.method_68568("settings"));
         }
         return this;
     }

@@ -83,7 +83,7 @@ public class Proxies extends System<Proxies> implements Iterable<Proxy> {
 
     @Override // meteordevelopment.meteorclient.systems.System, meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public Proxies fromTag2(class_2487 tag) {
+    public Proxies fromTag(class_2487 tag) {
         this.proxies = NbtUtils.listFromTag(tag.method_68569("proxies"), Proxy::new);
         return this;
     }

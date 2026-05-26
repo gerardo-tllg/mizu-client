@@ -95,7 +95,7 @@ public class NbtUtils {
                 return false;
             }
         }
-        serializable.fromTag2(tag);
+        serializable.fromTag(tag);
         return true;
     }
 

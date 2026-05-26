@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/mixininterface/DisconnectS2CPacketAccessor.class */
 @Mixin({class_2661.class})
 public interface DisconnectS2CPacketAccessor {
-    @Accessor("reason")
+    @Accessor("comp_2325")
     @Mutable
     void setReason(class_2561 class_2561Var);
 }

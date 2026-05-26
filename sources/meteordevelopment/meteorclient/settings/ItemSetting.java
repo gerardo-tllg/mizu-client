@@ -55,7 +55,7 @@ public class ItemSetting extends Setting<class_1792> {
                 if (!it.hasNext()) {
                     break;
                 }
-                ?? r0 = (class_1792) it.next();
+                class_1792 r0 = (class_1792) it.next();
                 if (this.filter.test((class_1792) r0)) {
                     this.value = r0;
                     break;

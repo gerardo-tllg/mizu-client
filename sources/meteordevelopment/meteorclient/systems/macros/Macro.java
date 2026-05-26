@@ -36,7 +36,7 @@ public class Macro implements ISerializable<Macro> {
     }
 
     public Macro(class_2520 tag) {
-        fromTag2((class_2487) tag);
+        fromTag((class_2487) tag);
     }
 
     public boolean onAction(boolean isKey, int value, int modifiers) {
@@ -78,9 +78,9 @@ public class Macro implements ISerializable<Macro> {
     /* JADX WARN: Can't rename method to resolve collision */
     @Override // meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public Macro fromTag2(class_2487 tag) {
+    public Macro fromTag(class_2487 tag) {
         if (tag.method_10545("settings")) {
-            this.settings.fromTag2(tag.method_68568("settings"));
+            this.settings.fromTag(tag.method_68568("settings"));
         }
         return this;
     }

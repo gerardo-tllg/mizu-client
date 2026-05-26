@@ -10,24 +10,24 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/mixin/KeyBindingAccessor.class */
 @Mixin({class_304.class})
 public interface KeyBindingAccessor {
-    @Accessor("boundKey")
+    @Accessor("field_1655")
     class_3675.class_306 getKey();
 
-    @Accessor("timesPressed")
+    @Accessor("field_1661")
     int meteor$getTimesPressed();
 
-    @Accessor("timesPressed")
+    @Accessor("field_1661")
     void meteor$setTimesPressed(int i);
 
-    @Invoker("reset")
+    @Invoker("method_1425")
     void invokeReset();
 
-    @Accessor("CATEGORY_ORDER_MAP")
+    @Accessor("field_1656")
     static Map<String, Integer> getCategoryOrderMap() {
         return null;
     }
 
-    @Accessor("KEYS_BY_ID")
+    @Accessor("field_1657")
     static Map<String, class_304> getKeysById() {
         return null;
     }

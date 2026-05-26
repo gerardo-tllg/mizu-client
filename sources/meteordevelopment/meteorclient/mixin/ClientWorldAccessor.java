@@ -8,6 +8,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/mixin/ClientWorldAccessor.class */
 @Mixin({class_638.class})
 public interface ClientWorldAccessor {
-    @Accessor("pendingUpdateManager")
+    @Accessor("field_37951")
     class_7202 getPendingUpdateManager();
 }

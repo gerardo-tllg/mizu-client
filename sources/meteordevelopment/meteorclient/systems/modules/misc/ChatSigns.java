@@ -45,7 +45,6 @@ import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.render.RenderUtils;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 import meteordevelopment.meteorclient.utils.stardust.LogUtil;
-import meteordevelopment.meteorclient.utils.stardust.MapUtil;
 import meteordevelopment.meteorclient.utils.stardust.MsgUtil;
 import meteordevelopment.meteorclient.utils.stardust.StardustUtil;
 import meteordevelopment.orbit.EventHandler;
@@ -726,11 +725,11 @@ public class ChatSigns extends Module {
     private void onTick(TickEvent.Pre event) {
         if (StardustUtil.XAERO_AVAILABLE && this.signBoardWaypoints.get().booleanValue()) {
             if (!this.waypointsIgnoreEmpty.get().booleanValue() && this.emptyClusterAmount >= this.signBoardWaypointsAmount.get().intValue() && this.lastEmptyClusterPos != null) {
-                MapUtil.addWaypoint(this.lastEmptyClusterPos, "ChatSigns: Cluster of " + this.emptyClusterAmount + " Empty Signs (Likely Farm)", "?", MapUtil.Purpose.Normal, MapUtil.WpColor.Random, this.temporaryWaypoints.get().booleanValue());
+                // MapUtil waypoint removed (Xaero Minimap not available)
                 this.emptyClusterAmount = 0;
             }
             if (this.fullClusterAmount >= this.signBoardWaypointsAmount.get().intValue() && this.lastFullClusterPos != null) {
-                MapUtil.addWaypoint(this.lastFullClusterPos, "ChatSigns: Cluster of " + this.fullClusterAmount + " Signs", "?", MapUtil.Purpose.Normal, MapUtil.WpColor.Random, this.temporaryWaypoints.get().booleanValue());
+                // MapUtil waypoint removed (Xaero Minimap not available)
                 this.fullClusterAmount = 0;
             }
         }
@@ -889,37 +888,7 @@ public class ChatSigns extends Module {
     }
 
     /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/systems/modules/misc/ChatSigns$ChatSignsJob.class */
-    private static final class ChatSignsJob extends Record {
-        private final class_2561 message;
-        private final int hashcode;
-
-        private ChatSignsJob(class_2561 message, int hashcode) {
-            this.message = message;
-            this.hashcode = hashcode;
-        }
-
-        @Override // java.lang.Record
-        public final String toString() {
-            return (String) ObjectMethods.bootstrap(MethodHandles.lookup(), "toString", MethodType.methodType(String.class, ChatSignsJob.class), ChatSignsJob.class, "message;hashcode", "FIELD:Lmeteordevelopment/meteorclient/systems/modules/misc/ChatSigns$ChatSignsJob;->message:Lnet/minecraft/class_2561;", "FIELD:Lmeteordevelopment/meteorclient/systems/modules/misc/ChatSigns$ChatSignsJob;->hashcode:I").dynamicInvoker().invoke(this) /* invoke-custom */;
-        }
-
-        @Override // java.lang.Record
-        public final int hashCode() {
-            return (int) ObjectMethods.bootstrap(MethodHandles.lookup(), "hashCode", MethodType.methodType(Integer.TYPE, ChatSignsJob.class), ChatSignsJob.class, "message;hashcode", "FIELD:Lmeteordevelopment/meteorclient/systems/modules/misc/ChatSigns$ChatSignsJob;->message:Lnet/minecraft/class_2561;", "FIELD:Lmeteordevelopment/meteorclient/systems/modules/misc/ChatSigns$ChatSignsJob;->hashcode:I").dynamicInvoker().invoke(this) /* invoke-custom */;
-        }
-
-        @Override // java.lang.Record
-        public final boolean equals(Object o) {
-            return (boolean) ObjectMethods.bootstrap(MethodHandles.lookup(), "equals", MethodType.methodType(Boolean.TYPE, ChatSignsJob.class, Object.class), ChatSignsJob.class, "message;hashcode", "FIELD:Lmeteordevelopment/meteorclient/systems/modules/misc/ChatSigns$ChatSignsJob;->message:Lnet/minecraft/class_2561;", "FIELD:Lmeteordevelopment/meteorclient/systems/modules/misc/ChatSigns$ChatSignsJob;->hashcode:I").dynamicInvoker().invoke(this, o) /* invoke-custom */;
-        }
-
-        public class_2561 message() {
-            return this.message;
-        }
-
-        public int hashcode() {
-            return this.hashcode;
-        }
+    private record ChatSignsJob(class_2561 message, int hashcode) {
 
         public class_2561 getMessage() {
             return this.message;

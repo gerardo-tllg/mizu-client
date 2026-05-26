@@ -72,13 +72,14 @@ public class SettingGroup implements ISerializable<SettingGroup>, Iterable<Setti
     /* JADX WARN: Can't rename method to resolve collision */
     @Override // meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public SettingGroup fromTag2(class_2487 tag) {
+    public SettingGroup fromTag(class_2487 tag) {
         this.sectionExpanded = tag.method_68566("sectionExpanded", false);
-        class_2499<class_2487> settingsTag = tag.method_68569("settings");
-        for (class_2487 settingTag : settingsTag) {
+        class_2499 settingsTag = tag.method_68569("settings");
+        for (Object _rawSettingTag : settingsTag) {
+            class_2487 settingTag = (class_2487) _rawSettingTag;
             Setting<?> setting = get(settingTag.method_68564("name", ""));
             if (setting != null) {
-                setting.fromTag2(settingTag);
+                setting.fromTag(settingTag);
             }
         }
         return this;

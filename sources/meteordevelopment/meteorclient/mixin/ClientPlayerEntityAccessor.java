@@ -8,12 +8,12 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/mixin/ClientPlayerEntityAccessor.class */
 @Mixin({class_746.class})
 public interface ClientPlayerEntityAccessor {
-    @Accessor("mountJumpStrength")
+    @Accessor("field_3922")
     void setMountJumpStrength(float f);
 
-    @Accessor("ticksSinceLastPositionPacketSent")
+    @Accessor("field_3923")
     void setTicksSinceLastPositionPacketSent(int i);
 
-    @Invoker("canSprint")
+    @Invoker("method_46743")
     boolean invokeCanSprint();
 }

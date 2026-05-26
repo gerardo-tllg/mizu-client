@@ -8,6 +8,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/mixin/FileCacheAccessor.class */
 @Mixin({class_1071.class_8687.class})
 public interface FileCacheAccessor {
-    @Accessor
+    @Accessor("field_45640")
     Path getDirectory();
 }

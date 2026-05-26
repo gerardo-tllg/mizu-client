@@ -17,7 +17,7 @@ import net.minecraft.class_2172;
 /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/commands/arguments/FriendArgumentType.class */
 public class FriendArgumentType implements ArgumentType<String> {
     private static final FriendArgumentType INSTANCE = new FriendArgumentType();
-    private static final Collection<String> EXAMPLES = List.of("_Synful8169", "Crownizzle");
+    private static final Collection<String> EXAMPLES = List.of("swavez", "MizuPlayer");
 
     public static FriendArgumentType create() {
         return INSTANCE;
@@ -31,7 +31,7 @@ public class FriendArgumentType implements ArgumentType<String> {
     }
 
     /* JADX INFO: renamed from: parse, reason: merged with bridge method [inline-methods] */
-    public String m113parse(StringReader reader) throws CommandSyntaxException {
+    public String parse(StringReader reader) throws CommandSyntaxException {
         return reader.readString();
     }
 

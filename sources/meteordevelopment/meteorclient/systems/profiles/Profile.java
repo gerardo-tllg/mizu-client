@@ -36,7 +36,7 @@ public class Profile implements ISerializable<Profile> {
     }
 
     public Profile(class_2520 tag) {
-        fromTag2((class_2487) tag);
+        fromTag((class_2487) tag);
     }
 
     public void load() {
@@ -93,9 +93,9 @@ public class Profile implements ISerializable<Profile> {
     /* JADX WARN: Can't rename method to resolve collision */
     @Override // meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public Profile fromTag2(class_2487 tag) {
+    public Profile fromTag(class_2487 tag) {
         if (tag.method_10545("settings")) {
-            this.settings.fromTag2(tag.method_68568("settings"));
+            this.settings.fromTag(tag.method_68568("settings"));
         }
         return this;
     }

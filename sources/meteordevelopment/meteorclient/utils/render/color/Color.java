@@ -323,7 +323,7 @@ public class Color implements ICopyable<Color>, ISerializable<Color> {
     /* JADX WARN: Can't rename method to resolve collision */
     @Override // meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public Color fromTag2(class_2487 tag) {
+    public Color fromTag(class_2487 tag) {
         this.r = tag.method_68083("r", 0);
         this.g = tag.method_68083("g", 0);
         this.b = tag.method_68083("b", 0);

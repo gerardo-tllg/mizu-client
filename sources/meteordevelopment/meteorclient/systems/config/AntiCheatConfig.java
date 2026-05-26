@@ -98,12 +98,12 @@ public class AntiCheatConfig extends System<AntiCheatConfig> {
 
     @Override // meteordevelopment.meteorclient.systems.System, meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public AntiCheatConfig fromTag2(class_2487 tag) {
+    public AntiCheatConfig fromTag(class_2487 tag) {
         if (tag.method_10545("settings")) {
             Optional optionalMethod_10562 = tag.method_10562("settings");
             Settings settings = this.settings;
             Objects.requireNonNull(settings);
-            optionalMethod_10562.ifPresent(settings::fromTag2);
+            optionalMethod_10562.ifPresent(settings::fromTag);
         }
         return this;
     }

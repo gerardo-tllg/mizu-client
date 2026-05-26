@@ -9,6 +9,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/mixin/WorldRendererAccessor.class */
 @Mixin({class_761.class})
 public interface WorldRendererAccessor {
-    @Accessor("blockBreakingInfos")
+    @Accessor("field_4058")
     Int2ObjectMap<class_3191> getBlockBreakingInfos();
 }

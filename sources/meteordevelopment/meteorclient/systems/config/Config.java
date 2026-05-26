@@ -114,9 +114,9 @@ public class Config extends System<Config> {
 
     @Override // meteordevelopment.meteorclient.systems.System, meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public Config fromTag2(class_2487 tag) {
+    public Config fromTag(class_2487 tag) {
         if (tag.method_10545("settings")) {
-            this.settings.fromTag2(tag.method_68568("settings"));
+            this.settings.fromTag(tag.method_68568("settings"));
         }
         if (tag.method_10545("dontShowAgainPrompts")) {
             this.dontShowAgainPrompts = listFromTag(tag, "dontShowAgainPrompts");

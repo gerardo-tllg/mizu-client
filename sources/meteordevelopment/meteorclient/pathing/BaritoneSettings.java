@@ -20,7 +20,7 @@ import meteordevelopment.meteorclient.settings.IntSetting;
 import meteordevelopment.meteorclient.settings.ItemListSetting;
 import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
-import meteordevelopment.meteorclient.settings.Settings;
+// import meteordevelopment.meteorclient.settings.Settings; // removed to avoid conflict with baritone.api.Settings
 import meteordevelopment.meteorclient.settings.StringSetting;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 import net.minecraft.class_1792;
@@ -28,7 +28,7 @@ import net.minecraft.class_2248;
 
 /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/pathing/BaritoneSettings.class */
 public class BaritoneSettings implements IPathManager.ISettings {
-    private final Settings settings = new Settings();
+    private final meteordevelopment.meteorclient.settings.Settings settings = new meteordevelopment.meteorclient.settings.Settings();
     private Setting<Boolean> walkOnWater;
     private Setting<Boolean> walkOnLava;
     private Setting<Boolean> step;
@@ -45,7 +45,7 @@ public class BaritoneSettings implements IPathManager.ISettings {
     }
 
     @Override // meteordevelopment.meteorclient.pathing.IPathManager.ISettings
-    public Settings get() {
+    public meteordevelopment.meteorclient.settings.Settings get() {
         return this.settings;
     }
 

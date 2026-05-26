@@ -37,8 +37,9 @@ public class Settings implements ISerializable<Settings>, Iterable<SettingGroup>
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     public <T> Setting<T> get(String name, Class<T> tClass) {
-        for (SettingGroup<Setting<T>> sg : this) {
+        for (SettingGroup sg : this) {
             for (Setting<T> setting : sg) {
                 Class<?> sClass = setting.getDefaultValue().getClass();
                 if (name.equalsIgnoreCase(setting.name) && tClass.equals(sClass)) {
@@ -92,9 +93,9 @@ public class Settings implements ISerializable<Settings>, Iterable<SettingGroup>
             for (Setting<?> setting : group) {
                 setting.module = module;
                 if (setting instanceof ColorSetting) {
-                    RainbowColors.addSetting(setting);
+                    RainbowColors.addSetting((Setting<meteordevelopment.meteorclient.utils.render.color.SettingColor>) setting);
                 } else if (setting instanceof ColorListSetting) {
-                    RainbowColors.addSettingList(setting);
+                    RainbowColors.addSettingList((Setting<java.util.List<meteordevelopment.meteorclient.utils.render.color.SettingColor>>) setting);
                 }
             }
         }
@@ -104,9 +105,9 @@ public class Settings implements ISerializable<Settings>, Iterable<SettingGroup>
         for (SettingGroup group : this) {
             for (Setting<?> setting : group) {
                 if (setting instanceof ColorSetting) {
-                    RainbowColors.removeSetting(setting);
+                    RainbowColors.removeSetting((Setting<meteordevelopment.meteorclient.utils.render.color.SettingColor>) setting);
                 } else if (setting instanceof ColorListSetting) {
-                    RainbowColors.removeSettingList(setting);
+                    RainbowColors.removeSettingList((Setting<java.util.List<meteordevelopment.meteorclient.utils.render.color.SettingColor>>) setting);
                 }
             }
         }
@@ -149,14 +150,14 @@ public class Settings implements ISerializable<Settings>, Iterable<SettingGroup>
     /* JADX WARN: Can't rename method to resolve collision */
     @Override // meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public Settings fromTag2(class_2487 tag) {
+    public Settings fromTag(class_2487 tag) {
         reset();
-        class_2499<class_2520> groupsTag = tag.method_68569("groups");
-        for (class_2520 t : groupsTag) {
+        class_2499 groupsTag = tag.method_68569("groups");
+        for (Object t : groupsTag) {
             class_2487 groupTag = (class_2487) t;
             SettingGroup sg = getGroup(groupTag.method_68564("name", ""));
             if (sg != null) {
-                sg.fromTag2(groupTag);
+                sg.fromTag(groupTag);
             }
         }
         return this;

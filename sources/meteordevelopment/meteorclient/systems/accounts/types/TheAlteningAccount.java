@@ -86,13 +86,13 @@ public class TheAlteningAccount extends Account<TheAlteningAccount> implements T
 
     @Override // meteordevelopment.meteorclient.systems.accounts.Account, meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public TheAlteningAccount fromTag2(class_2487 tag) {
+    public TheAlteningAccount fromTag(class_2487 tag) {
         if (tag.method_10558("name").isEmpty() || tag.method_10562("cache").isEmpty() || tag.method_10558("token").isEmpty()) {
             throw new NbtException();
         }
         this.name = (String) tag.method_10558("name").get();
         this.token = (String) tag.method_10558("token").get();
-        this.cache.fromTag2((class_2487) tag.method_10562("cache").get());
+        this.cache.fromTag((class_2487) tag.method_10562("cache").get());
         return this;
     }
 }

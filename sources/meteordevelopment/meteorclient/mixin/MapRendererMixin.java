@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/mixin/MapRendererMixin.class */
 @Mixin({class_330.class})
 public abstract class MapRendererMixin {
-    @ModifyExpressionValue(method = {"draw(Lnet/minecraft/client/render/MapRenderState;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ZI)V"}, at = {@At(value = "FIELD", target = "Lnet/minecraft/client/render/MapRenderState;decorations:Ljava/util/List;")})
+    @ModifyExpressionValue(method = {"method_1773"}, at = {@At(value = "FIELD", target = "Lnet/minecraft/client/render/MapRenderState;decorations:Ljava/util/List;")})
     private List<class_20> getIconsProxy(List<class_20> original) {
         return ((NoRender) Modules.get().get(NoRender.class)).noMapMarkers() ? List.of() : original;
     }

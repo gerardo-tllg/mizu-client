@@ -10,6 +10,6 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/mixininterface/ClientConnectionAccessor.class */
 @Mixin({class_2535.class})
 public interface ClientConnectionAccessor {
-    @Invoker("sendImmediately")
+    @Invoker("method_10764")
     void invokeSendImmediately(class_2596<?> class_2596Var, @Nullable class_7648 class_7648Var, boolean z);
 }

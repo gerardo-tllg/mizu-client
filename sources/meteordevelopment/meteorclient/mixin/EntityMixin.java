@@ -137,7 +137,7 @@ public abstract class EntityMixin {
         return this != MeteorClient.mc.field_1724 ? original : (original == class_2246.field_10114 && ((NoSlow) Modules.get().get(NoSlow.class)).soulSand()) ? class_2246.field_10340 : (original == class_2246.field_21211 && ((NoSlow) Modules.get().get(NoSlow.class)).honeyBlock()) ? class_2246.field_10340 : original;
     }
 
-    @ModifyReturnValue(method = {"isInvisibleTo(Lnet/minecraft/entity/player/PlayerEntity;)Z"}, at = {@At("RETURN")})
+    @ModifyReturnValue(method = {"method_5756"}, at = {@At("RETURN")})
     private boolean isInvisibleToCanceller(boolean original) {
         if (!Utils.canUpdate()) {
             return original;

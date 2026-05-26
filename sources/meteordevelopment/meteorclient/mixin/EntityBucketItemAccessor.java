@@ -8,6 +8,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/mixin/EntityBucketItemAccessor.class */
 @Mixin({class_1785.class})
 public interface EntityBucketItemAccessor {
-    @Accessor("entityType")
+    @Accessor("field_7991")
     class_1299<?> getEntityType();
 }

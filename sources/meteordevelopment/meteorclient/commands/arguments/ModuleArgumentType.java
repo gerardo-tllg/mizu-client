@@ -38,7 +38,7 @@ public class ModuleArgumentType implements ArgumentType<Module> {
 
     /* JADX INFO: Thrown type has an unknown type hierarchy: com.mojang.brigadier.exceptions.CommandSyntaxException */
     /* JADX INFO: renamed from: parse, reason: merged with bridge method [inline-methods] */
-    public Module m117parse(StringReader reader) throws CommandSyntaxException {
+    public Module parse(StringReader reader) throws CommandSyntaxException {
         String argument = reader.readString();
         Module module = Modules.get().get(argument);
         if (module == null) {

@@ -21,7 +21,7 @@ public abstract class CompassStateMixin {
         return Modules.get().isActive(Freecam.class) ? MeteorClient.mc.field_1773.method_19418().method_19330() : original;
     }
 
-    @ModifyReturnValue(method = {"getAngleTo(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/BlockPos;)D"}, at = {@At("RETURN")})
+    @ModifyReturnValue(method = {"method_65651"}, at = {@At("RETURN")})
     private static double modifyGetAngleTo(double original, class_1297 entity, class_2338 pos) {
         if (Modules.get().isActive(Freecam.class)) {
             class_243 vec3d = class_243.method_24953(pos);

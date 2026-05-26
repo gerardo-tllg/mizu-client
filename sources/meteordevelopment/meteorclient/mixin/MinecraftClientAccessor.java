@@ -21,61 +21,61 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/mixin/MinecraftClientAccessor.class */
 @Mixin({class_310.class})
 public interface MinecraftClientAccessor {
-    @Accessor("session")
+    @Accessor("field_1726")
     @Mutable
     void setSession(class_320 class_320Var);
 
-    @Accessor("networkProxy")
+    @Accessor("field_1739")
     Proxy getProxy();
 
-    @Accessor("resourceReloadLogger")
+    @Accessor("field_33697")
     class_6360 getResourceReloadLogger();
 
-    @Accessor("attackCooldown")
+    @Accessor("field_1771")
     int getAttackCooldown();
 
-    @Accessor("attackCooldown")
+    @Accessor("field_1771")
     void setAttackCooldown(int i);
 
-    @Invoker("doAttack")
+    @Invoker("method_1536")
     boolean leftClick();
 
-    @Accessor("profileKeys")
+    @Accessor("field_39068")
     @Mutable
     void setProfileKeys(class_7853 class_7853Var);
 
-    @Accessor("authenticationService")
+    @Accessor("field_39420")
     YggdrasilAuthenticationService getAuthenticationService();
 
-    @Accessor
+    @Accessor("field_26902")
     @Mutable
     void setUserApiService(UserApiService userApiService);
 
-    @Accessor("sessionService")
+    @Accessor("field_1723")
     @Mutable
     void setSessionService(MinecraftSessionService minecraftSessionService);
 
-    @Accessor("authenticationService")
+    @Accessor("field_39420")
     @Mutable
     void setAuthenticationService(YggdrasilAuthenticationService yggdrasilAuthenticationService);
 
-    @Accessor("skinProvider")
+    @Accessor("field_1707")
     @Mutable
     void setSkinProvider(class_1071 class_1071Var);
 
-    @Accessor("socialInteractionsManager")
+    @Accessor("field_26842")
     @Mutable
     void setSocialInteractionsManager(class_5520 class_5520Var);
 
-    @Accessor("abuseReportContext")
+    @Accessor("field_39492")
     @Mutable
     void setAbuseReportContext(class_7574 class_7574Var);
 
-    @Accessor("gameProfileFuture")
+    @Accessor("field_45899")
     @Mutable
     void setGameProfileFuture(CompletableFuture<ProfileResult> completableFuture);
 
-    @Accessor("currentFps")
+    @Accessor("field_1738")
     static int getFps() {
         return 0;
     }

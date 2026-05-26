@@ -78,7 +78,7 @@ public abstract class EntityRenderDispatcherMixin {
         matrices.method_22905((float) v2, (float) v2, (float) v2);
     }
 
-    @ModifyExpressionValue(method = {"render(Lnet/minecraft/entity/Entity;DDDFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/client/render/entity/EntityRenderer;)V"}, at = {@At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/EntityRenderer;getAndUpdateRenderState(Lnet/minecraft/entity/Entity;F)Lnet/minecraft/client/render/entity/state/EntityRenderState;")})
+    @ModifyExpressionValue(method = {"method_3954"}, at = {@At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/EntityRenderer;getAndUpdateRenderState(Lnet/minecraft/entity/Entity;F)Lnet/minecraft/client/render/entity/state/EntityRenderState;")})
     private <E extends class_1297, S extends class_10017> S render$getAndUpdateRenderState(S state, E entity, double x, double y, double z, float tickDelta, class_4587 matrices, class_4597 vertexConsumers, int light, class_897<? super E, S> renderer) {
         ((IEntityRenderState) state).meteor$setEntity(entity);
         return state;

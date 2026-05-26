@@ -1,13 +1,13 @@
-package meteordevelopment.meteorclient.gui.themes.revive.widgets;
+package meteordevelopment.meteorclient.gui.themes.mizu.widgets;
 
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
-import meteordevelopment.meteorclient.gui.themes.revive.ReviveWidget;
+import meteordevelopment.meteorclient.gui.themes.mizu.MizuWidget;
 import meteordevelopment.meteorclient.gui.widgets.WMultiLabel;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 
-/* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/themes/revive/widgets/WReviveMultiLabel.class */
-public class WReviveMultiLabel extends WMultiLabel implements ReviveWidget {
-    public WReviveMultiLabel(String text, boolean title, double maxWidth) {
+/* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/themes/mizu/widgets/WMizuMultiLabel.class */
+public class WMizuMultiLabel extends WMultiLabel implements MizuWidget {
+    public WMizuMultiLabel(String text, boolean title, double maxWidth) {
         super(text, title, maxWidth);
     }
 
@@ -20,3 +20,5 @@ public class WReviveMultiLabel extends WMultiLabel implements ReviveWidget {
         }
     }
 }
+
+

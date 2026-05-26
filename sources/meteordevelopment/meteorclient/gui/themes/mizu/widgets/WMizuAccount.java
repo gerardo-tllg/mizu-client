@@ -1,14 +1,14 @@
-package meteordevelopment.meteorclient.gui.themes.revive.widgets;
+package meteordevelopment.meteorclient.gui.themes.mizu.widgets;
 
 import meteordevelopment.meteorclient.gui.WidgetScreen;
-import meteordevelopment.meteorclient.gui.themes.revive.ReviveWidget;
+import meteordevelopment.meteorclient.gui.themes.mizu.MizuWidget;
 import meteordevelopment.meteorclient.gui.widgets.WAccount;
 import meteordevelopment.meteorclient.systems.accounts.Account;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 
-/* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/themes/revive/widgets/WReviveAccount.class */
-public class WReviveAccount extends WAccount implements ReviveWidget {
-    public WReviveAccount(WidgetScreen screen, Account<?> account) {
+/* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/themes/mizu/widgets/WMizuAccount.class */
+public class WMizuAccount extends WAccount implements MizuWidget {
+    public WMizuAccount(WidgetScreen screen, Account<?> account) {
         super(screen, account);
     }
 
@@ -22,3 +22,5 @@ public class WReviveAccount extends WAccount implements ReviveWidget {
         return theme().textSecondaryColor.get();
     }
 }
+
+

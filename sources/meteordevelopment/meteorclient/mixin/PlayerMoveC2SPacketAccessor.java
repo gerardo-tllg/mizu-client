@@ -8,11 +8,11 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/mixin/PlayerMoveC2SPacketAccessor.class */
 @Mixin({class_2828.class})
 public interface PlayerMoveC2SPacketAccessor {
-    @Accessor("y")
+    @Accessor("field_12886")
     @Mutable
     void setY(double d);
 
-    @Accessor("onGround")
+    @Accessor("field_29179")
     @Mutable
     void setOnGround(boolean z);
 }

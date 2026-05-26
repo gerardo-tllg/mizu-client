@@ -14,7 +14,6 @@ import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.systems.modules.Modules;
-import meteordevelopment.meteorclient.systems.modules.render.Xray;
 import meteordevelopment.meteorclient.systems.modules.world.InfinityMiner;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.player.InvUtils;
@@ -193,6 +192,6 @@ public class AutoTool extends Module {
         if (block == class_2246.field_22109) {
             return false;
         }
-        return Xray.ORES.contains(block) || (block instanceof class_2302);
+        return (block instanceof class_2302);
     }
 }

@@ -32,7 +32,7 @@ public abstract class DrawContextMixin {
         }
     }
 
-    @ModifyReceiver(method = {"drawTooltip(Lnet/minecraft/client/font/TextRenderer;Ljava/util/List;Ljava/util/Optional;IILnet/minecraft/util/Identifier;)V"}, at = {@At(value = "INVOKE", target = "Ljava/util/Optional;ifPresent(Ljava/util/function/Consumer;)V")})
+    @ModifyReceiver(method = {"method_51437"}, at = {@At(value = "INVOKE", target = "Ljava/util/Optional;ifPresent(Ljava/util/function/Consumer;)V")})
     private Optional<class_5632> onDrawTooltip_modifyIfPresentReceiver(Optional<class_5632> data, Consumer<class_5632> consumer) {
         return (data.isPresent() && (data.get() instanceof MeteorTooltipData)) ? Optional.empty() : data;
     }

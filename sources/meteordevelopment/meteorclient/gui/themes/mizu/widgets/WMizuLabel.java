@@ -1,12 +1,12 @@
-package meteordevelopment.meteorclient.gui.themes.revive.widgets;
+package meteordevelopment.meteorclient.gui.themes.mizu.widgets;
 
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
-import meteordevelopment.meteorclient.gui.themes.revive.ReviveWidget;
+import meteordevelopment.meteorclient.gui.themes.mizu.MizuWidget;
 import meteordevelopment.meteorclient.gui.widgets.WLabel;
 
-/* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/themes/revive/widgets/WReviveLabel.class */
-public class WReviveLabel extends WLabel implements ReviveWidget {
-    public WReviveLabel(String text, boolean title) {
+/* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/themes/mizu/widgets/WMizuLabel.class */
+public class WMizuLabel extends WLabel implements MizuWidget {
+    public WMizuLabel(String text, boolean title) {
         super(text, title);
     }
 
@@ -17,3 +17,5 @@ public class WReviveLabel extends WLabel implements ReviveWidget {
         }
     }
 }
+
+

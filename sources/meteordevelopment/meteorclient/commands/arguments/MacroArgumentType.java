@@ -35,7 +35,7 @@ public class MacroArgumentType implements ArgumentType<Macro> {
 
     /* JADX INFO: Thrown type has an unknown type hierarchy: com.mojang.brigadier.exceptions.CommandSyntaxException */
     /* JADX INFO: renamed from: parse, reason: merged with bridge method [inline-methods] */
-    public Macro m115parse(StringReader reader) throws CommandSyntaxException {
+    public Macro parse(StringReader reader) throws CommandSyntaxException {
         String argument = reader.readString();
         Macro macro = Macros.get().get(argument);
         if (macro == null) {

@@ -30,7 +30,7 @@ public class ChatUtils {
 
     @PostInit
     public static void init() {
-        PREFIX = class_2561.method_43473().method_10862(class_2583.field_24360.method_27706(class_124.field_1080)).method_27693("[").method_10852(class_2561.method_43470("ReviveClient").method_10862(class_2583.field_24360.method_27703(class_5251.method_27717(MeteorClient.ADDON.color.getPacked())))).method_27693("] ");
+        PREFIX = class_2561.method_43473().method_10862(class_2583.field_24360.method_27706(class_124.field_1080)).method_27693("[").method_10852(class_2561.method_43470("Mizu").method_10862(class_2583.field_24360.method_27703(class_5251.method_27717(MeteorClient.ADDON.color.getPacked())))).method_27693("] ");
     }
 
     public static class_2561 getMeteorPrefix() {

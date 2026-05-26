@@ -17,7 +17,7 @@ public class AddCrackedAccountScreen extends AddAccountScreen {
     public void initWidgets() {
         WTable t = (WTable) add(this.theme.table()).widget();
         t.add(this.theme.label("Name: "));
-        WTextBox name = (WTextBox) t.add(this.theme.textBox("", "_Synful8169", (text, c) -> {
+        WTextBox name = (WTextBox) t.add(this.theme.textBox("", "MizuPlayer", (text, c) -> {
             return c != ' ';
         })).minWidth(400.0d).expandX().widget();
         name.setFocused(true);

@@ -6,7 +6,6 @@ import com.mojang.blaze3d.textures.GpuTexture;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.systems.modules.render.Fullbright;
 import meteordevelopment.meteorclient.systems.modules.render.NoRender;
-import meteordevelopment.meteorclient.systems.modules.render.Xray;
 import net.minecraft.class_1309;
 import net.minecraft.class_3695;
 import net.minecraft.class_765;
@@ -29,7 +28,7 @@ public abstract class LightmapTextureManagerMixin {
 
     @Inject(method = {"update"}, at = {@At(value = "INVOKE", target = "Lnet/minecraft/util/profiler/Profiler;push(Ljava/lang/String;)V", shift = At.Shift.AFTER)}, cancellable = true)
     private void update$skip(float tickProgress, CallbackInfo ci, @Local class_3695 profiler) {
-        if (((Fullbright) Modules.get().get(Fullbright.class)).getGamma() || Modules.get().isActive(Xray.class)) {
+        if (((Fullbright) Modules.get().get(Fullbright.class)).getGamma()) {
             RenderSystem.getDevice().createCommandEncoder().clearColorTexture(this.field_57927, class_9848.method_61324(255, 255, 255, 255));
             profiler.method_15407();
             ci.cancel();

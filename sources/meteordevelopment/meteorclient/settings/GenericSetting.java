@@ -46,7 +46,7 @@ public class GenericSetting<T extends ICopyable<T> & ISerializable<T> & IScreenF
     /* JADX WARN: Incorrect return type in method signature: (Lnet/minecraft/class_2487;)TT; */
     @Override // meteordevelopment.meteorclient.settings.Setting
     public ICopyable load(class_2487 tag) {
-        ((ISerializable) ((ICopyable) get())).fromTag2(tag.method_68568("value"));
+        ((ISerializable) ((ICopyable) get())).fromTag(tag.method_68568("value"));
         return (ICopyable) get();
     }
 

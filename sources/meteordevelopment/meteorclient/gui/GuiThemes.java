@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.gui.themes.meteor.MeteorGuiTheme;
-import meteordevelopment.meteorclient.gui.themes.revive.ReviveGuiTheme;
+import meteordevelopment.meteorclient.gui.themes.mizu.MizuGuiTheme;
 import meteordevelopment.meteorclient.utils.PostInit;
 import meteordevelopment.meteorclient.utils.PreInit;
 import net.minecraft.class_2487;
@@ -26,7 +26,7 @@ public class GuiThemes {
 
     @PreInit
     public static void init() {
-        add(new ReviveGuiTheme());
+        add(new MizuGuiTheme());
         add(new MeteorGuiTheme());
     }
 
@@ -82,7 +82,7 @@ public class GuiThemes {
             try {
                 File file = new File(THEMES_FOLDER, get().name + ".nbt");
                 if (file.exists() && (tag = class_2507.method_10633(file.toPath())) != null) {
-                    get().fromTag2(tag);
+                    get().fromTag(tag);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

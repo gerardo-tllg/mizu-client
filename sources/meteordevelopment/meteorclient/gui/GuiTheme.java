@@ -363,14 +363,14 @@ public abstract class GuiTheme implements ISerializable<GuiTheme> {
     /* JADX WARN: Can't rename method to resolve collision */
     @Override // meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public GuiTheme fromTag2(class_2487 tag) {
+    public GuiTheme fromTag(class_2487 tag) {
         Optional optionalMethod_10562 = tag.method_10562("settings");
         Settings settings = this.settings;
         Objects.requireNonNull(settings);
-        optionalMethod_10562.ifPresent(settings::fromTag2);
+        optionalMethod_10562.ifPresent(settings::fromTag);
         tag.method_10562("windowConfigs").ifPresent(configs -> {
             for (String id : configs.method_10541()) {
-                this.windowConfigs.put(id, new WindowConfig().fromTag2((class_2487) configs.method_10562(id).get()));
+                this.windowConfigs.put(id, new WindowConfig().fromTag((class_2487) configs.method_10562(id).get()));
             }
         });
         return this;

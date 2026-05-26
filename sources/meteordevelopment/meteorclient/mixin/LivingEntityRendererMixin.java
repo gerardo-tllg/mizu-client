@@ -36,7 +36,7 @@ public abstract class LivingEntityRendererMixin<T extends class_1309, S extends 
     @Unique
     private Chams chams;
 
-    @ModifyExpressionValue(method = {"hasLabel(Lnet/minecraft/entity/LivingEntity;D)Z"}, at = {@At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;getCameraEntity()Lnet/minecraft/entity/Entity;")})
+    @ModifyExpressionValue(method = {"method_4055"}, at = {@At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;getCameraEntity()Lnet/minecraft/entity/Entity;")})
     private class_1297 hasLabelGetCameraEntityProxy(class_1297 cameraEntity) {
         if (Modules.get().isActive(Freecam.class)) {
             return null;
@@ -44,7 +44,7 @@ public abstract class LivingEntityRendererMixin<T extends class_1309, S extends 
         return cameraEntity;
     }
 
-    @ModifyExpressionValue(method = {"hasLabel(Lnet/minecraft/entity/LivingEntity;D)Z"}, at = {@At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;getScoreboardTeam()Lnet/minecraft/scoreboard/Team;")})
+    @ModifyExpressionValue(method = {"method_4055"}, at = {@At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;getScoreboardTeam()Lnet/minecraft/scoreboard/Team;")})
     private class_268 hasLabelClientPlayerEntityGetScoreboardTeamProxy(class_268 team) {
         if (MeteorClient.mc.field_1724 == null) {
             return null;
@@ -57,7 +57,7 @@ public abstract class LivingEntityRendererMixin<T extends class_1309, S extends 
         this.chams = (Chams) Modules.get().get(Chams.class);
     }
 
-    @WrapWithCondition(method = {"render(Lnet/minecraft/client/render/entity/state/LivingEntityRenderState;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V"}, at = {@At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/EntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;III)V")})
+    @WrapWithCondition(method = {"method_4054"}, at = {@At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/EntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;III)V")})
     private boolean render$render(M instance, class_4587 matrixStack, class_4588 vertexConsumer, int light, int overlay, int color, S state, class_4587 matrices, class_4597 consumers, int i) {
         if (!this.chams.isActive() || !this.chams.players.get().booleanValue()) {
             return true;

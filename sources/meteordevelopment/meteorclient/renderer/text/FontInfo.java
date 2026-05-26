@@ -1,38 +1,9 @@
 package meteordevelopment.meteorclient.renderer.text;
 
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
-import java.lang.runtime.ObjectMethods;
-
 /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/renderer/text/FontInfo.class */
-public final class FontInfo extends Record {
-    private final String family;
-    private final Type type;
+public record FontInfo(String family, Type type) {
 
-    public FontInfo(String family, Type type) {
-        this.family = family;
-        this.type = type;
-    }
-
-    @Override // java.lang.Record
-    public final int hashCode() {
-        return (int) ObjectMethods.bootstrap(MethodHandles.lookup(), "hashCode", MethodType.methodType(Integer.TYPE, FontInfo.class), FontInfo.class, "family;type", "FIELD:Lmeteordevelopment/meteorclient/renderer/text/FontInfo;->family:Ljava/lang/String;", "FIELD:Lmeteordevelopment/meteorclient/renderer/text/FontInfo;->type:Lmeteordevelopment/meteorclient/renderer/text/FontInfo$Type;").dynamicInvoker().invoke(this) /* invoke-custom */;
-    }
-
-    @Override // java.lang.Record
-    public final boolean equals(Object o) {
-        return (boolean) ObjectMethods.bootstrap(MethodHandles.lookup(), "equals", MethodType.methodType(Boolean.TYPE, FontInfo.class, Object.class), FontInfo.class, "family;type", "FIELD:Lmeteordevelopment/meteorclient/renderer/text/FontInfo;->family:Ljava/lang/String;", "FIELD:Lmeteordevelopment/meteorclient/renderer/text/FontInfo;->type:Lmeteordevelopment/meteorclient/renderer/text/FontInfo$Type;").dynamicInvoker().invoke(this, o) /* invoke-custom */;
-    }
-
-    public String family() {
-        return this.family;
-    }
-
-    public Type type() {
-        return this.type;
-    }
-
-    @Override // java.lang.Record
+    @Override
     public String toString() {
         return this.family + " " + String.valueOf(this.type);
     }

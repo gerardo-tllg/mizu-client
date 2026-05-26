@@ -270,14 +270,14 @@ public class Hud extends System<Hud> implements Iterable<HudElement> {
 
     @Override // meteordevelopment.meteorclient.systems.System, meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public Hud fromTag2(class_2487 tag) {
+    public Hud fromTag(class_2487 tag) {
         HudElementInfo<?> info;
         if (!tag.method_10545("__version__")) {
             resetToDefaultElements();
             return this;
         }
         this.active = ((Boolean) tag.method_10577("active").orElse(false)).booleanValue();
-        this.settings.fromTag2((class_2487) tag.method_10562("settings").orElse(new class_2487()));
+        this.settings.fromTag((class_2487) tag.method_10562("settings").orElse(new class_2487()));
         this.elements.clear();
         if (!tag.method_10545("elements")) {
             return this;
@@ -294,7 +294,7 @@ public class Hud extends System<Hud> implements Iterable<HudElement> {
                     Optional<String> optionalName = c.method_10558("name");
                     if (optionalName.isPresent() && (info = this.infos.get(optionalName.get())) != null) {
                         HudElement element = info.create();
-                        element.fromTag2(c);
+                        element.fromTag(c);
                         this.elements.add(element);
                     }
                 }

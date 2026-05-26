@@ -47,7 +47,7 @@ public class WaypointArgumentType implements ArgumentType<String> {
 
     /* JADX INFO: Thrown type has an unknown type hierarchy: com.mojang.brigadier.exceptions.CommandSyntaxException */
     /* JADX INFO: renamed from: parse, reason: merged with bridge method [inline-methods] */
-    public String m133parse(StringReader reader) throws CommandSyntaxException {
+    public String parse(StringReader reader) throws CommandSyntaxException {
         String argument;
         if (this.greedyString) {
             argument = reader.getRemaining();

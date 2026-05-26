@@ -206,36 +206,6 @@ public class NewAddHudElementScreen extends class_437 {
     }
 
     /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/newgui/screens/NewAddHudElementScreen$Item.class */
-    private static final class Item extends Record {
-        private final String title;
-        private final Object object;
-
-        private Item(String title, Object object) {
-            this.title = title;
-            this.object = object;
-        }
-
-        @Override // java.lang.Record
-        public final String toString() {
-            return (String) ObjectMethods.bootstrap(MethodHandles.lookup(), "toString", MethodType.methodType(String.class, Item.class), Item.class, "title;object", "FIELD:Lmeteordevelopment/meteorclient/gui/newgui/screens/NewAddHudElementScreen$Item;->title:Ljava/lang/String;", "FIELD:Lmeteordevelopment/meteorclient/gui/newgui/screens/NewAddHudElementScreen$Item;->object:Ljava/lang/Object;").dynamicInvoker().invoke(this) /* invoke-custom */;
-        }
-
-        @Override // java.lang.Record
-        public final int hashCode() {
-            return (int) ObjectMethods.bootstrap(MethodHandles.lookup(), "hashCode", MethodType.methodType(Integer.TYPE, Item.class), Item.class, "title;object", "FIELD:Lmeteordevelopment/meteorclient/gui/newgui/screens/NewAddHudElementScreen$Item;->title:Ljava/lang/String;", "FIELD:Lmeteordevelopment/meteorclient/gui/newgui/screens/NewAddHudElementScreen$Item;->object:Ljava/lang/Object;").dynamicInvoker().invoke(this) /* invoke-custom */;
-        }
-
-        @Override // java.lang.Record
-        public final boolean equals(Object o) {
-            return (boolean) ObjectMethods.bootstrap(MethodHandles.lookup(), "equals", MethodType.methodType(Boolean.TYPE, Item.class, Object.class), Item.class, "title;object", "FIELD:Lmeteordevelopment/meteorclient/gui/newgui/screens/NewAddHudElementScreen$Item;->title:Ljava/lang/String;", "FIELD:Lmeteordevelopment/meteorclient/gui/newgui/screens/NewAddHudElementScreen$Item;->object:Ljava/lang/Object;").dynamicInvoker().invoke(this, o) /* invoke-custom */;
-        }
-
-        public String title() {
-            return this.title;
-        }
-
-        public Object object() {
-            return this.object;
-        }
+    private record Item(String title, Object object) {
     }
 }

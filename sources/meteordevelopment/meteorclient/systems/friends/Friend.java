@@ -77,7 +77,7 @@ public class Friend implements ISerializable<Friend>, Comparable<Friend> {
     /* JADX WARN: Can't rename method to resolve collision */
     @Override // meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public Friend fromTag2(class_2487 tag) {
+    public Friend fromTag(class_2487 tag) {
         return this;
     }
 

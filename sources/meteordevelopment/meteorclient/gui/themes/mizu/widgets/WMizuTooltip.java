@@ -1,12 +1,12 @@
-package meteordevelopment.meteorclient.gui.themes.revive.widgets;
+package meteordevelopment.meteorclient.gui.themes.mizu.widgets;
 
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
-import meteordevelopment.meteorclient.gui.themes.revive.ReviveWidget;
+import meteordevelopment.meteorclient.gui.themes.mizu.MizuWidget;
 import meteordevelopment.meteorclient.gui.widgets.WTooltip;
 
-/* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/themes/revive/widgets/WReviveTooltip.class */
-public class WReviveTooltip extends WTooltip implements ReviveWidget {
-    public WReviveTooltip(String text) {
+/* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/themes/mizu/widgets/WMizuTooltip.class */
+public class WMizuTooltip extends WTooltip implements MizuWidget {
+    public WMizuTooltip(String text) {
         super(text);
     }
 
@@ -16,3 +16,5 @@ public class WReviveTooltip extends WTooltip implements ReviveWidget {
         renderer.quad(this.x, this.y, this.width, theme().scale(1.0d), theme().accentColor.get());
     }
 }
+
+

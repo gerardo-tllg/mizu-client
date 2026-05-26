@@ -82,36 +82,6 @@ public class StarscriptTextBoxRenderer implements WTextBox.Renderer {
     }
 
     /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/utils/StarscriptTextBoxRenderer$Section.class */
-    private static final class Section extends Record {
-        private final String text;
-        private final Color color;
-
-        private Section(String text, Color color) {
-            this.text = text;
-            this.color = color;
-        }
-
-        @Override // java.lang.Record
-        public final String toString() {
-            return (String) ObjectMethods.bootstrap(MethodHandles.lookup(), "toString", MethodType.methodType(String.class, Section.class), Section.class, "text;color", "FIELD:Lmeteordevelopment/meteorclient/gui/utils/StarscriptTextBoxRenderer$Section;->text:Ljava/lang/String;", "FIELD:Lmeteordevelopment/meteorclient/gui/utils/StarscriptTextBoxRenderer$Section;->color:Lmeteordevelopment/meteorclient/utils/render/color/Color;").dynamicInvoker().invoke(this) /* invoke-custom */;
-        }
-
-        @Override // java.lang.Record
-        public final int hashCode() {
-            return (int) ObjectMethods.bootstrap(MethodHandles.lookup(), "hashCode", MethodType.methodType(Integer.TYPE, Section.class), Section.class, "text;color", "FIELD:Lmeteordevelopment/meteorclient/gui/utils/StarscriptTextBoxRenderer$Section;->text:Ljava/lang/String;", "FIELD:Lmeteordevelopment/meteorclient/gui/utils/StarscriptTextBoxRenderer$Section;->color:Lmeteordevelopment/meteorclient/utils/render/color/Color;").dynamicInvoker().invoke(this) /* invoke-custom */;
-        }
-
-        @Override // java.lang.Record
-        public final boolean equals(Object o) {
-            return (boolean) ObjectMethods.bootstrap(MethodHandles.lookup(), "equals", MethodType.methodType(Boolean.TYPE, Section.class, Object.class), Section.class, "text;color", "FIELD:Lmeteordevelopment/meteorclient/gui/utils/StarscriptTextBoxRenderer$Section;->text:Ljava/lang/String;", "FIELD:Lmeteordevelopment/meteorclient/gui/utils/StarscriptTextBoxRenderer$Section;->color:Lmeteordevelopment/meteorclient/utils/render/color/Color;").dynamicInvoker().invoke(this, o) /* invoke-custom */;
-        }
-
-        public String text() {
-            return this.text;
-        }
-
-        public Color color() {
-            return this.color;
-        }
+    private record Section(String text, Color color) {
     }
 }

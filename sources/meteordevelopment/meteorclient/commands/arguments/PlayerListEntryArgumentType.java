@@ -22,7 +22,7 @@ public class PlayerListEntryArgumentType implements ArgumentType<class_640> {
     private static final DynamicCommandExceptionType NO_SUCH_PLAYER = new DynamicCommandExceptionType(name -> {
         return class_2561.method_43470("Player list entry with name " + String.valueOf(name) + " doesn't exist.");
     });
-    private static final Collection<String> EXAMPLES = List.of("_Synful8169", "Crownizzle");
+    private static final Collection<String> EXAMPLES = List.of("swavez", "MizuPlayer");
 
     public static PlayerListEntryArgumentType create() {
         return INSTANCE;
@@ -37,7 +37,7 @@ public class PlayerListEntryArgumentType implements ArgumentType<class_640> {
 
     /* JADX INFO: Thrown type has an unknown type hierarchy: com.mojang.brigadier.exceptions.CommandSyntaxException */
     /* JADX INFO: renamed from: parse, reason: merged with bridge method [inline-methods] */
-    public class_640 m123parse(StringReader reader) throws CommandSyntaxException {
+    public class_640 parse(StringReader reader) throws CommandSyntaxException {
         String argument = reader.readString();
         class_640 playerListEntry = null;
         Iterator it = MeteorClient.mc.method_1562().method_2880().iterator();

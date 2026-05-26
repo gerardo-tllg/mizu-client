@@ -66,13 +66,11 @@ import meteordevelopment.meteorclient.systems.modules.hunting.AutoLogPlus;
 import meteordevelopment.meteorclient.systems.modules.hunting.AutoPortal;
 import meteordevelopment.meteorclient.systems.modules.hunting.AutoRegear;
 import meteordevelopment.meteorclient.systems.modules.hunting.BaritoneElytraGoto;
-import meteordevelopment.meteorclient.systems.modules.hunting.BetterStashFinder;
 import meteordevelopment.meteorclient.systems.modules.hunting.DiscordNotifs;
 import meteordevelopment.meteorclient.systems.modules.hunting.ElytraFlyPlusPlus;
 import meteordevelopment.meteorclient.systems.modules.hunting.GotoPosition;
 import meteordevelopment.meteorclient.systems.modules.hunting.HighlightOldLava;
 import meteordevelopment.meteorclient.systems.modules.hunting.Pitch40Util;
-import meteordevelopment.meteorclient.systems.modules.hunting.TrailFollower;
 import meteordevelopment.meteorclient.systems.modules.hunting.VanityESP;
 import meteordevelopment.meteorclient.systems.modules.misc.AdBlocker;
 import meteordevelopment.meteorclient.systems.modules.misc.AntiPacketKick;
@@ -150,7 +148,6 @@ import meteordevelopment.meteorclient.systems.modules.render.Trajectories;
 import meteordevelopment.meteorclient.systems.modules.render.TunnelESP;
 import meteordevelopment.meteorclient.systems.modules.render.UnfocusedCPU;
 import meteordevelopment.meteorclient.systems.modules.render.WaypointsModule;
-import meteordevelopment.meteorclient.systems.modules.render.Xray;
 import meteordevelopment.meteorclient.systems.modules.render.Zoom;
 import meteordevelopment.meteorclient.systems.modules.render.blockesp.BlockESP;
 import meteordevelopment.meteorclient.systems.modules.world.AirPlace;
@@ -489,14 +486,14 @@ public class Modules extends System<Modules> {
 
     @Override // meteordevelopment.meteorclient.systems.System, meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public Modules fromTag2(class_2487 tag) {
+    public Modules fromTag(class_2487 tag) {
         disableAll();
         class_2499<class_2520> modulesTag = tag.method_68569("modules");
         for (class_2520 moduleTagI : modulesTag) {
             class_2487 moduleTag = (class_2487) moduleTagI;
             Module module = get(moduleTag.method_68564("name", ""));
             if (module != null) {
-                module.fromTag2(moduleTag);
+                module.fromTag(moduleTag);
             }
         }
         return this;
@@ -628,7 +625,6 @@ public class Modules extends System<Modules> {
         add(new TunnelESP());
         add(new UnfocusedCPU());
         add(new WaypointsModule());
-        add(new Xray());
         add(new Zoom());
     }
 
@@ -679,16 +675,8 @@ public class Modules extends System<Modules> {
                 add(new AutoRegear());
                 add(new BaritoneElytraGoto());
                 add(new ElytraFlyPlusPlus());
-                add(new TrailFollower());
             } catch (Throwable e) {
                 MeteorClient.LOG.error("Failed to load Baritone-dependent hunting modules", e);
-            }
-        }
-        if (FabricLoader.getInstance().isModLoaded("xaerominimap")) {
-            try {
-                add(new BetterStashFinder());
-            } catch (Throwable e2) {
-                MeteorClient.LOG.error("Failed to load Xaero's Minimap-dependent hunting modules", e2);
             }
         }
         add(new DiscordNotifs());

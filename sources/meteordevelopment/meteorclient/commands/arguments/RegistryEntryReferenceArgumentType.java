@@ -96,7 +96,7 @@ public class RegistryEntryReferenceArgumentType<T> implements ArgumentType<class
     }
 
     /* JADX INFO: renamed from: parse, reason: merged with bridge method [inline-methods] */
-    public class_6880.class_6883<T> m127parse(StringReader reader) throws CommandSyntaxException {
+    public class_6880.class_6883<T> parse(StringReader reader) throws CommandSyntaxException {
         class_2960 identifier = class_2960.method_12835(reader);
         class_5321<T> registryKey = class_5321.method_29179(this.registryRef, identifier);
         return (class_6880.class_6883) class_310.method_1551().method_1562().method_29091().method_30530(this.registryRef).method_46746(registryKey).orElseThrow(() -> {

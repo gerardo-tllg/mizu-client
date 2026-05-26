@@ -58,7 +58,7 @@ public abstract class EndCrystalEntityRendererMixin {
         }
     }
 
-    @WrapWithCondition(method = {"render(Lnet/minecraft/client/render/entity/state/EndCrystalEntityRenderState;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V"}, at = {@At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/EndCrystalEntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;II)V")})
+    @WrapWithCondition(method = {"method_3908"}, at = {@At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/EndCrystalEntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;II)V")})
     private boolean render$color(class_9946 instance, class_4587 matrices, class_4588 vertices, int light, int overlay) {
         if (this.chams.isActive() && this.chams.crystals.get().booleanValue()) {
             this.field_53187.method_62100(matrices, vertices, light, overlay, this.chams.crystalsCoreColor.get().getPacked());

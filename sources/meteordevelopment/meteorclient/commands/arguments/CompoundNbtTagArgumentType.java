@@ -27,7 +27,7 @@ public class CompoundNbtTagArgumentType implements ArgumentType<class_2487> {
 
     /* JADX INFO: Thrown type has an unknown type hierarchy: com.mojang.brigadier.exceptions.CommandSyntaxException */
     /* JADX INFO: renamed from: parse, reason: merged with bridge method [inline-methods] */
-    public class_2487 m108parse(StringReader reader) throws CommandSyntaxException {
+    public class_2487 parse(StringReader reader) throws CommandSyntaxException {
         reader.skipWhitespace();
         if (!reader.canRead()) {
             throw class_2522.field_56410.createWithContext(reader);

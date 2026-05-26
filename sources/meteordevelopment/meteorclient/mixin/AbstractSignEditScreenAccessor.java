@@ -8,6 +8,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/mixin/AbstractSignEditScreenAccessor.class */
 @Mixin({class_7743.class})
 public interface AbstractSignEditScreenAccessor {
-    @Accessor("blockEntity")
+    @Accessor("field_40424")
     class_2625 getSign();
 }

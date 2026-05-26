@@ -2,7 +2,6 @@ package meteordevelopment.meteorclient.mixin;
 
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.systems.modules.render.NoRender;
-import meteordevelopment.meteorclient.systems.modules.render.Xray;
 import meteordevelopment.meteorclient.systems.modules.world.Ambience;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import net.minecraft.class_1297;
@@ -22,7 +21,7 @@ public abstract class BackgroundRendererMixin {
     @ModifyArgs(method = {"applyFog"}, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/Fog;<init>(FFLnet/minecraft/client/render/FogShape;FFFF)V"))
     private static void modifyFogDistance(Args args, class_4184 camera, class_758.class_4596 fogType, Vector4f color, float viewDistance, boolean thickenFog, float tickDelta) {
         if (fogType == class_758.class_4596.field_20946) {
-            if (((NoRender) Modules.get().get(NoRender.class)).noFog() || Modules.get().isActive(Xray.class)) {
+            if (((NoRender) Modules.get().get(NoRender.class)).noFog()) {
                 args.set(0, Float.valueOf(viewDistance * 4.0f));
                 args.set(1, Float.valueOf(viewDistance * 4.25f));
             }

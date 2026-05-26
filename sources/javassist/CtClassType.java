@@ -662,7 +662,7 @@ class CtClassType extends CtClass {
         } else {
             numParameters = Descriptor.numOfParameters(minfo.getDescriptor());
         }
-        ?? r0 = new Object[numParameters];
+        Object[] r0 = new Object[numParameters];
         for (int i = 0; i < numParameters; i++) {
             if (a1 == null) {
                 anno1 = null;

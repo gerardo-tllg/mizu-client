@@ -64,8 +64,6 @@ public class AutoRegear extends Module {
     private int tickTimer;
     private class_2338 regearPos;
     private boolean wasBaritoneActive;
-    private TrailFollower trailFollower;
-    private boolean wasTrailFollowerActive;
     private final Map<Integer, InventorySlot> inventorySnapshot;
     private final List<class_2338> obsidianBlocks;
     private class_2338 enderChestPos;
@@ -115,8 +113,6 @@ public class AutoRegear extends Module {
         this.tickTimer = 0;
         this.regearPos = null;
         this.wasBaritoneActive = false;
-        this.trailFollower = null;
-        this.wasTrailFollowerActive = false;
         this.inventorySnapshot = new HashMap();
         this.obsidianBlocks = new ArrayList();
         this.enderChestPos = null;
@@ -130,7 +126,6 @@ public class AutoRegear extends Module {
         this.regearPos = null;
         this.obsidianBlocks.clear();
         this.enderChestPos = null;
-        this.trailFollower = (TrailFollower) Modules.get().get(TrailFollower.class);
         this.regearAttempts = 0;
         loadSnapshotFromFile();
         if (this.inventorySnapshot.isEmpty()) {
@@ -372,11 +367,6 @@ public class AutoRegear extends Module {
                 warning("Failed to pause Baritone: " + e.getMessage(), new Object[0]);
             }
         }
-        if (this.trailFollower != null && this.trailFollower.isActive()) {
-            this.wasTrailFollowerActive = true;
-            this.trailFollower.toggle();
-            info("Paused TrailFollower", new Object[0]);
-        }
         this.state = RegearState.CHECKING_SAFETY;
     }
 
@@ -561,14 +551,9 @@ public class AutoRegear extends Module {
                 warning("Failed to resume Baritone: " + e.getMessage(), new Object[0]);
             }
         }
-        if (this.wasTrailFollowerActive && this.trailFollower != null) {
-            this.trailFollower.toggle();
-            info("Resumed TrailFollower", new Object[0]);
-        }
         info("Regear cycle complete (attempt " + this.regearAttempts + "/3)", new Object[0]);
         this.state = RegearState.IDLE;
         this.wasBaritoneActive = false;
-        this.wasTrailFollowerActive = false;
         if (this.regearAttempts > 0) {
             this.regearAttempts = 0;
         }

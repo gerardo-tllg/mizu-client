@@ -41,7 +41,7 @@ public class SettingArgumentType implements ArgumentType<String> {
     }
 
     /* JADX INFO: renamed from: parse, reason: merged with bridge method [inline-methods] */
-    public String m129parse(StringReader reader) throws CommandSyntaxException {
+    public String parse(StringReader reader) throws CommandSyntaxException {
         return reader.readString();
     }
 

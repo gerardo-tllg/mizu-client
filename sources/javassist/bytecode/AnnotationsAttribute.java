@@ -427,7 +427,7 @@ public class AnnotationsAttribute extends AttributeInfo {
         /* JADX WARN: Type inference failed for: r0v1, types: [javassist.bytecode.annotation.Annotation[], javassist.bytecode.annotation.Annotation[][]] */
         @Override // javassist.bytecode.AnnotationsAttribute.Walker
         void parameters(int numParam, int pos) throws Exception {
-            ?? r0 = new Annotation[numParam];
+            Annotation[] r0 = new Annotation[numParam];
             for (int i = 0; i < numParam; i++) {
                 pos = annotationArray(pos);
                 r0[i] = this.allAnno;

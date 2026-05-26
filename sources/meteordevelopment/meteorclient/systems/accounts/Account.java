@@ -86,12 +86,12 @@ public abstract class Account<T extends Account<?>> implements ISerializable<T> 
     /* JADX WARN: Multi-variable type inference failed */
     @Override // meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public T fromTag2(class_2487 tag) {
+    public T fromTag(class_2487 tag) {
         if (tag.method_10558("name").isEmpty() || tag.method_10562("cache").isEmpty()) {
             throw new NbtException();
         }
         this.name = (String) tag.method_10558("name").get();
-        this.cache.fromTag2((class_2487) tag.method_10562("cache").get());
+        this.cache.fromTag((class_2487) tag.method_10562("cache").get());
         return this;
     }
 }

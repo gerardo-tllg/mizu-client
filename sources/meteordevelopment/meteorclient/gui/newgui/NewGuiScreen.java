@@ -20,7 +20,7 @@ public class NewGuiScreen extends class_437 {
     private long openTime;
 
     public NewGuiScreen() {
-        super(class_2561.method_43470("ReviveClient"));
+        super(class_2561.method_43470("Mizu"));
         this.panels = new ArrayList();
         this.initialized = false;
     }

@@ -103,7 +103,7 @@ public class KeybindSetting extends Setting<Keybind> {
     /* JADX WARN: Can't rename method to resolve collision */
     @Override // meteordevelopment.meteorclient.settings.Setting
     public Keybind load(class_2487 tag) {
-        get().fromTag2(tag.method_68568("value"));
+        get().fromTag(tag.method_68568("value"));
         return get();
     }
 

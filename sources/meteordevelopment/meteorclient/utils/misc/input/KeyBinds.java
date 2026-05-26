@@ -9,7 +9,7 @@ import net.minecraft.class_3675;
 
 /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/utils/misc/input/KeyBinds.class */
 public class KeyBinds {
-    private static final String CATEGORY = "ReviveClient";
+    private static final String CATEGORY = "Mizu";
     public static class_304 OPEN_GUI = new class_304("key.meteor-client.open-gui", class_3675.class_307.field_1668, TokenId.VOID, CATEGORY);
     public static class_304 OPEN_COMMANDS = new class_304("key.meteor-client.open-commands", class_3675.class_307.field_1668, 46, CATEGORY);
 

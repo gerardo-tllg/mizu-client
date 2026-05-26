@@ -96,7 +96,7 @@ public class Macros extends System<Macros> implements Iterable<Macro> {
 
     @Override // meteordevelopment.meteorclient.systems.System, meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public Macros fromTag2(class_2487 tag) {
+    public Macros fromTag(class_2487 tag) {
         for (Macro macro : this.macros) {
             MeteorClient.EVENT_BUS.unsubscribe(macro);
         }

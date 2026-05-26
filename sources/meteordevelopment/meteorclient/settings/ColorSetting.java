@@ -59,7 +59,7 @@ public class ColorSetting extends Setting<SettingColor> {
     /* JADX WARN: Can't rename method to resolve collision */
     @Override // meteordevelopment.meteorclient.settings.Setting
     public SettingColor load(class_2487 tag) {
-        get().fromTag2(tag.method_68568("value"));
+        get().fromTag(tag.method_68568("value"));
         return get();
     }
 

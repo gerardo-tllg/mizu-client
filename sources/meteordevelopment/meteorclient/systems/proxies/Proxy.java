@@ -33,7 +33,7 @@ public class Proxy implements ISerializable<Proxy> {
     }
 
     public Proxy(class_2520 tag) {
-        fromTag2((class_2487) tag);
+        fromTag((class_2487) tag);
     }
 
     public boolean resolveAddress() {
@@ -122,11 +122,11 @@ public class Proxy implements ISerializable<Proxy> {
     /* JADX WARN: Can't rename method to resolve collision */
     @Override // meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public Proxy fromTag2(class_2487 tag) {
+    public Proxy fromTag(class_2487 tag) {
         Optional optionalMethod_10562 = tag.method_10562("settings");
         Settings settings = this.settings;
         Objects.requireNonNull(settings);
-        optionalMethod_10562.ifPresent(settings::fromTag2);
+        optionalMethod_10562.ifPresent(settings::fromTag);
         return this;
     }
 

@@ -146,7 +146,7 @@ public class ModuleScreen extends WindowScreen {
         }
         Optional<class_2487> settings = tag.method_10562("settings");
         if (settings.isPresent()) {
-            this.module.settings.fromTag2(settings.get());
+            this.module.settings.fromTag(settings.get());
         } else {
             this.module.settings.reset();
         }

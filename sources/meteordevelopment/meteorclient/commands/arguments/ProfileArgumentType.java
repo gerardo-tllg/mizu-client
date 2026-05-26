@@ -37,7 +37,7 @@ public class ProfileArgumentType implements ArgumentType<String> {
 
     /* JADX INFO: Thrown type has an unknown type hierarchy: com.mojang.brigadier.exceptions.CommandSyntaxException */
     /* JADX INFO: renamed from: parse, reason: merged with bridge method [inline-methods] */
-    public String m125parse(StringReader reader) throws CommandSyntaxException {
+    public String parse(StringReader reader) throws CommandSyntaxException {
         String argument = reader.getRemaining();
         reader.setCursor(reader.getTotalLength());
         if (Profiles.get().get(argument) == null) {

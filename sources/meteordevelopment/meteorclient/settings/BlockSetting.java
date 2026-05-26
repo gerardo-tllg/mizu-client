@@ -56,7 +56,7 @@ public class BlockSetting extends Setting<class_2248> {
                 if (!it.hasNext()) {
                     break;
                 }
-                ?? r0 = (class_2248) it.next();
+                class_2248 r0 = (class_2248) it.next();
                 if (this.filter.test((class_2248) r0)) {
                     this.value = r0;
                     break;

@@ -128,42 +128,6 @@ public class AddHudElementScreen extends WindowScreen {
     }
 
     /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/systems/hud/screens/AddHudElementScreen$Item.class */
-    private static final class Item extends Record {
-        private final String title;
-        private final String description;
-        private final Object object;
-
-        private Item(String title, String description, Object object) {
-            this.title = title;
-            this.description = description;
-            this.object = object;
-        }
-
-        @Override // java.lang.Record
-        public final String toString() {
-            return (String) ObjectMethods.bootstrap(MethodHandles.lookup(), "toString", MethodType.methodType(String.class, Item.class), Item.class, "title;description;object", "FIELD:Lmeteordevelopment/meteorclient/systems/hud/screens/AddHudElementScreen$Item;->title:Ljava/lang/String;", "FIELD:Lmeteordevelopment/meteorclient/systems/hud/screens/AddHudElementScreen$Item;->description:Ljava/lang/String;", "FIELD:Lmeteordevelopment/meteorclient/systems/hud/screens/AddHudElementScreen$Item;->object:Ljava/lang/Object;").dynamicInvoker().invoke(this) /* invoke-custom */;
-        }
-
-        @Override // java.lang.Record
-        public final int hashCode() {
-            return (int) ObjectMethods.bootstrap(MethodHandles.lookup(), "hashCode", MethodType.methodType(Integer.TYPE, Item.class), Item.class, "title;description;object", "FIELD:Lmeteordevelopment/meteorclient/systems/hud/screens/AddHudElementScreen$Item;->title:Ljava/lang/String;", "FIELD:Lmeteordevelopment/meteorclient/systems/hud/screens/AddHudElementScreen$Item;->description:Ljava/lang/String;", "FIELD:Lmeteordevelopment/meteorclient/systems/hud/screens/AddHudElementScreen$Item;->object:Ljava/lang/Object;").dynamicInvoker().invoke(this) /* invoke-custom */;
-        }
-
-        @Override // java.lang.Record
-        public final boolean equals(Object o) {
-            return (boolean) ObjectMethods.bootstrap(MethodHandles.lookup(), "equals", MethodType.methodType(Boolean.TYPE, Item.class, Object.class), Item.class, "title;description;object", "FIELD:Lmeteordevelopment/meteorclient/systems/hud/screens/AddHudElementScreen$Item;->title:Ljava/lang/String;", "FIELD:Lmeteordevelopment/meteorclient/systems/hud/screens/AddHudElementScreen$Item;->description:Ljava/lang/String;", "FIELD:Lmeteordevelopment/meteorclient/systems/hud/screens/AddHudElementScreen$Item;->object:Ljava/lang/Object;").dynamicInvoker().invoke(this, o) /* invoke-custom */;
-        }
-
-        public String title() {
-            return this.title;
-        }
-
-        public String description() {
-            return this.description;
-        }
-
-        public Object object() {
-            return this.object;
-        }
+    private record Item(String title, String description, Object object) {
     }
 }

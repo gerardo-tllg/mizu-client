@@ -61,7 +61,7 @@ public class Accounts extends System<Accounts> implements Iterable<Account<?>> {
 
     @Override // meteordevelopment.meteorclient.systems.System, meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public Accounts fromTag2(class_2487 tag) {
+    public Accounts fromTag(class_2487 tag) {
         MeteorExecutor.execute(() -> {
             this.accounts = NbtUtils.listFromTag(tag.method_68569("accounts"), tag1 -> {
                 class_2487 t = (class_2487) tag1;
@@ -72,11 +72,11 @@ public class Accounts extends System<Accounts> implements Iterable<Account<?>> {
                 try {
                     switch (type) {
                         case Cracked:
-                            return new CrackedAccount(null).fromTag2(t);
+                            return new CrackedAccount(null).fromTag(t);
                         case Microsoft:
-                            return new MicrosoftAccount(null).fromTag2(t);
+                            return new MicrosoftAccount(null).fromTag(t);
                         case TheAltening:
-                            return new TheAlteningAccount(null).fromTag2(t);
+                            return new TheAlteningAccount(null).fromTag(t);
                         default:
                             throw new MatchException((String) null, (Throwable) null);
                     }

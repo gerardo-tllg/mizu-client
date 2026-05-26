@@ -38,7 +38,7 @@ public class AccountCache implements ISerializable<AccountCache> {
     /* JADX WARN: Can't rename method to resolve collision */
     @Override // meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public AccountCache fromTag2(class_2487 tag) {
+    public AccountCache fromTag(class_2487 tag) {
         if (tag.method_10558("username").isEmpty() || tag.method_10558("uuid").isEmpty()) {
             throw new NbtException();
         }

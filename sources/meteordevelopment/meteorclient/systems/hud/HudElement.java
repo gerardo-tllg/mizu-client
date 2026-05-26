@@ -118,11 +118,11 @@ public abstract class HudElement implements Snapper.Element, ISerializable<HudEl
     /* JADX WARN: Can't rename method to resolve collision */
     @Override // meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public HudElement fromTag2(class_2487 tag) {
+    public HudElement fromTag(class_2487 tag) {
         this.settings.reset();
         this.active = ((Boolean) tag.method_10577("active").orElse(false)).booleanValue();
-        this.settings.fromTag2((class_2487) tag.method_10562("settings").orElse(new class_2487()));
-        this.box.fromTag2((class_2487) tag.method_10562("box").orElse(new class_2487()));
+        this.settings.fromTag((class_2487) tag.method_10562("settings").orElse(new class_2487()));
+        this.box.fromTag((class_2487) tag.method_10562("box").orElse(new class_2487()));
         this.autoAnchors = ((Boolean) tag.method_10577("autoAnchors").orElse(false)).booleanValue();
         this.x = this.box.getRenderX();
         this.y = this.box.getRenderY();

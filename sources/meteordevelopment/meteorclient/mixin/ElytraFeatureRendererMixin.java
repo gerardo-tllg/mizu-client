@@ -22,7 +22,7 @@ public abstract class ElytraFeatureRendererMixin<S extends class_10034, M extend
         super(context);
     }
 
-    @ModifyExpressionValue(method = {"render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/client/render/entity/state/BipedEntityRenderState;FF)V"}, at = {@At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/feature/ElytraFeatureRenderer;getTexture(Lnet/minecraft/client/render/entity/state/BipedEntityRenderState;)Lnet/minecraft/util/Identifier;")})
+    @ModifyExpressionValue(method = {"method_17161"}, at = {@At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/feature/ElytraFeatureRenderer;getTexture(Lnet/minecraft/client/render/entity/state/BipedEntityRenderState;)Lnet/minecraft/util/Identifier;")})
     private class_2960 modifyCapeTexture(class_2960 original, class_4587 matrices, class_4597 consumers, int i, S state, float f, float g) {
         class_1657 class_1657VarMeteor$getEntity = ((IEntityRenderState) state).meteor$getEntity();
         if (class_1657VarMeteor$getEntity instanceof class_1657) {

@@ -1,10 +1,10 @@
-package meteordevelopment.meteorclient.gui.themes.revive.widgets.input;
+package meteordevelopment.meteorclient.gui.themes.mizu.widgets.input;
 
 import javassist.bytecode.Opcode;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
-import meteordevelopment.meteorclient.gui.themes.revive.ReviveGuiTheme;
-import meteordevelopment.meteorclient.gui.themes.revive.ReviveWidget;
-import meteordevelopment.meteorclient.gui.themes.revive.widgets.WReviveLabel;
+import meteordevelopment.meteorclient.gui.themes.mizu.MizuGuiTheme;
+import meteordevelopment.meteorclient.gui.themes.mizu.MizuWidget;
+import meteordevelopment.meteorclient.gui.themes.mizu.widgets.WMizuLabel;
 import meteordevelopment.meteorclient.gui.utils.CharFilter;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.gui.widgets.containers.WContainer;
@@ -13,22 +13,22 @@ import meteordevelopment.meteorclient.gui.widgets.input.WTextBox;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import net.minecraft.class_3532;
 
-/* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/themes/revive/widgets/input/WReviveTextBox.class */
-public class WReviveTextBox extends WTextBox implements ReviveWidget {
+/* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/themes/mizu/widgets/input/WMizuTextBox.class */
+public class WMizuTextBox extends WTextBox implements MizuWidget {
     private boolean cursorVisible;
     private double cursorTimer;
     private double animProgress;
 
-    public WReviveTextBox(String text, String placeholder, CharFilter filter, Class<? extends WTextBox.Renderer> renderer) {
+    public WMizuTextBox(String text, String placeholder, CharFilter filter, Class<? extends WTextBox.Renderer> renderer) {
         super(text, placeholder, filter, renderer);
     }
 
     @Override // meteordevelopment.meteorclient.gui.widgets.input.WTextBox
     protected WContainer createCompletionsRootWidget() {
-        return new WVerticalList() { // from class: meteordevelopment.meteorclient.gui.themes.revive.widgets.input.WReviveTextBox.1
+        return new WVerticalList() { // from class: meteordevelopment.meteorclient.gui.themes.mizu.widgets.input.WMizuTextBox.1
             @Override // meteordevelopment.meteorclient.gui.widgets.WWidget
             protected void onRender(GuiRenderer renderer1, double mouseX, double mouseY, double delta) {
-                ReviveGuiTheme theme1 = WReviveTextBox.this.theme();
+                MizuGuiTheme theme1 = WMizuTextBox.this.theme();
                 double s = theme1.scale(1.0d);
                 Color c = theme1.outlineColor.get();
                 Color col = theme1.backgroundColor.get();
@@ -49,8 +49,8 @@ public class WReviveTextBox extends WTextBox implements ReviveWidget {
         return new CompletionItem(completion, false, selected);
     }
 
-    /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/themes/revive/widgets/input/WReviveTextBox$CompletionItem.class */
-    private static class CompletionItem extends WReviveLabel implements WTextBox.ICompletionItem {
+    /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/themes/mizu/widgets/input/WMizuTextBox$CompletionItem.class */
+    private static class CompletionItem extends WMizuLabel implements WTextBox.ICompletionItem {
         private static final Color SELECTED_COLOR = new Color(0, Opcode.IXOR, 255, 25);
         private boolean selected;
 
@@ -59,7 +59,7 @@ public class WReviveTextBox extends WTextBox implements ReviveWidget {
             this.selected = selected;
         }
 
-        @Override // meteordevelopment.meteorclient.gui.themes.revive.widgets.WReviveLabel, meteordevelopment.meteorclient.gui.widgets.WWidget
+        @Override // meteordevelopment.meteorclient.gui.themes.mizu.widgets.WMizuLabel, meteordevelopment.meteorclient.gui.widgets.WWidget
         protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
             super.onRender(renderer, mouseX, mouseY, delta);
             if (this.selected) {
@@ -98,7 +98,7 @@ public class WReviveTextBox extends WTextBox implements ReviveWidget {
             this.cursorTimer += delta * 1.75d;
         }
         renderBackground(renderer, this, false, false);
-        ReviveGuiTheme theme = theme();
+        MizuGuiTheme theme = theme();
         double pad = pad();
         double overflowWidth = getOverflowWidthForRender();
         renderer.scissorStart(this.x + pad, this.y + pad, this.width - (pad * 2.0d), this.height - (pad * 2.0d));
@@ -122,3 +122,5 @@ public class WReviveTextBox extends WTextBox implements ReviveWidget {
         renderer.scissorEnd();
     }
 }
+
+

@@ -1,13 +1,13 @@
-package meteordevelopment.meteorclient.gui.themes.revive.widgets.input;
+package meteordevelopment.meteorclient.gui.themes.mizu.widgets.input;
 
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
-import meteordevelopment.meteorclient.gui.themes.revive.ReviveGuiTheme;
-import meteordevelopment.meteorclient.gui.themes.revive.ReviveWidget;
+import meteordevelopment.meteorclient.gui.themes.mizu.MizuGuiTheme;
+import meteordevelopment.meteorclient.gui.themes.mizu.MizuWidget;
 import meteordevelopment.meteorclient.gui.widgets.input.WSlider;
 
-/* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/themes/revive/widgets/input/WReviveSlider.class */
-public class WReviveSlider extends WSlider implements ReviveWidget {
-    public WReviveSlider(double value, double min, double max) {
+/* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/themes/mizu/widgets/input/WMizuSlider.class */
+public class WMizuSlider extends WSlider implements MizuWidget {
+    public WMizuSlider(double value, double min, double max) {
         super(value, min, max);
     }
 
@@ -19,7 +19,7 @@ public class WReviveSlider extends WSlider implements ReviveWidget {
     }
 
     private void renderBar(GuiRenderer renderer, double valueWidth) {
-        ReviveGuiTheme theme = theme();
+        MizuGuiTheme theme = theme();
         double s = theme.scale(2.0d);
         double handleSize = handleSize();
         double x = this.x + (handleSize / 2.0d);
@@ -29,8 +29,10 @@ public class WReviveSlider extends WSlider implements ReviveWidget {
     }
 
     private void renderHandle(GuiRenderer renderer, double valueWidth) {
-        ReviveGuiTheme theme = theme();
+        MizuGuiTheme theme = theme();
         double s = handleSize();
         renderer.quad(this.x + valueWidth, this.y, s, s, GuiRenderer.CIRCLE, theme.sliderHandle.get(this.dragging, this.handleMouseOver));
     }
 }
+
+

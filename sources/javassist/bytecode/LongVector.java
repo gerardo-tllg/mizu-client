@@ -42,7 +42,7 @@ final class LongVector {
         int offset = this.elements & Opcode.LAND;
         int len = this.objects.length;
         if (nth >= len) {
-            ?? r0 = new ConstInfo[len + 8];
+            ConstInfo[] r0 = new ConstInfo[len + 8];
             System.arraycopy(this.objects, 0, r0, 0, len);
             this.objects = r0;
         }

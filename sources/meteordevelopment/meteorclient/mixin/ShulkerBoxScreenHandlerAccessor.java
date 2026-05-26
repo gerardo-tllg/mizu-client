@@ -8,6 +8,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/mixin/ShulkerBoxScreenHandlerAccessor.class */
 @Mixin({class_1733.class})
 public interface ShulkerBoxScreenHandlerAccessor {
-    @Accessor("inventory")
+    @Accessor("field_7867")
     class_1263 meteor$getInventory();
 }

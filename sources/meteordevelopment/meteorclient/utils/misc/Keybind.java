@@ -169,7 +169,7 @@ public class Keybind implements ISerializable<Keybind>, ICopyable<Keybind> {
     /* JADX WARN: Can't rename method to resolve collision */
     @Override // meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public Keybind fromTag2(class_2487 tag) {
+    public Keybind fromTag(class_2487 tag) {
         this.isKey = tag.method_68566("isKey", false);
         this.value = tag.method_68083("value", 0);
         this.modifiers = tag.method_68083("modifiers", 0);

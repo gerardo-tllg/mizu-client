@@ -9,6 +9,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/mixin/BlockEntityTypeAccessor.class */
 @Mixin({class_2591.class})
 public interface BlockEntityTypeAccessor {
-    @Accessor
+    @Accessor("field_19315")
     Set<class_2248> getBlocks();
 }

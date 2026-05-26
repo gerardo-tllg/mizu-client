@@ -120,7 +120,7 @@ public abstract class Setting<T> implements IGetter<T>, ISerializable<T> {
 
     @Override // meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public T fromTag2(class_2487 tag) {
+    public T fromTag(class_2487 tag) {
         T value = load(tag);
         onChanged();
         return value;

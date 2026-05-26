@@ -116,7 +116,7 @@ public abstract class System<T> implements ISerializable<T> {
                 class_2487 nbt = NbtJsonBridge.toNbt(json);
                 if (nbt instanceof class_2487) {
                     class_2487 compound = nbt;
-                    fromTag2(compound);
+                    fromTag(compound);
                 } else {
                     MeteorClient.LOG.warn("'{}' is not a JSON object; ignoring.", jsonFile.getName());
                 }
@@ -142,7 +142,7 @@ public abstract class System<T> implements ISerializable<T> {
         try {
             class_2487 nbt = class_2507.method_10633(nbtFile.toPath());
             if (nbt != null) {
-                fromTag2(nbt);
+                fromTag(nbt);
             }
         } catch (class_148 e) {
             backup(nbtFile);
@@ -185,7 +185,7 @@ public abstract class System<T> implements ISerializable<T> {
 
     @Override // meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public T fromTag2(class_2487 tag) {
+    public T fromTag(class_2487 tag) {
         return null;
     }
 }

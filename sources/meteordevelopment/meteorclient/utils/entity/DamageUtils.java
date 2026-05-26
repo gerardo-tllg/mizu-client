@@ -405,36 +405,6 @@ public class DamageUtils {
     }
 
     /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/utils/entity/DamageUtils$ExposureRaycastContext.class */
-    public static final class ExposureRaycastContext extends Record {
-        private final class_243 start;
-        private final class_243 end;
-
-        public ExposureRaycastContext(class_243 start, class_243 end) {
-            this.start = start;
-            this.end = end;
-        }
-
-        @Override // java.lang.Record
-        public final String toString() {
-            return (String) ObjectMethods.bootstrap(MethodHandles.lookup(), "toString", MethodType.methodType(String.class, ExposureRaycastContext.class), ExposureRaycastContext.class, "start;end", "FIELD:Lmeteordevelopment/meteorclient/utils/entity/DamageUtils$ExposureRaycastContext;->start:Lnet/minecraft/class_243;", "FIELD:Lmeteordevelopment/meteorclient/utils/entity/DamageUtils$ExposureRaycastContext;->end:Lnet/minecraft/class_243;").dynamicInvoker().invoke(this) /* invoke-custom */;
-        }
-
-        @Override // java.lang.Record
-        public final int hashCode() {
-            return (int) ObjectMethods.bootstrap(MethodHandles.lookup(), "hashCode", MethodType.methodType(Integer.TYPE, ExposureRaycastContext.class), ExposureRaycastContext.class, "start;end", "FIELD:Lmeteordevelopment/meteorclient/utils/entity/DamageUtils$ExposureRaycastContext;->start:Lnet/minecraft/class_243;", "FIELD:Lmeteordevelopment/meteorclient/utils/entity/DamageUtils$ExposureRaycastContext;->end:Lnet/minecraft/class_243;").dynamicInvoker().invoke(this) /* invoke-custom */;
-        }
-
-        @Override // java.lang.Record
-        public final boolean equals(Object o) {
-            return (boolean) ObjectMethods.bootstrap(MethodHandles.lookup(), "equals", MethodType.methodType(Boolean.TYPE, ExposureRaycastContext.class, Object.class), ExposureRaycastContext.class, "start;end", "FIELD:Lmeteordevelopment/meteorclient/utils/entity/DamageUtils$ExposureRaycastContext;->start:Lnet/minecraft/class_243;", "FIELD:Lmeteordevelopment/meteorclient/utils/entity/DamageUtils$ExposureRaycastContext;->end:Lnet/minecraft/class_243;").dynamicInvoker().invoke(this, o) /* invoke-custom */;
-        }
-
-        public class_243 start() {
-            return this.start;
-        }
-
-        public class_243 end() {
-            return this.end;
-        }
+    public record ExposureRaycastContext(class_243 start, class_243 end) {
     }
 }

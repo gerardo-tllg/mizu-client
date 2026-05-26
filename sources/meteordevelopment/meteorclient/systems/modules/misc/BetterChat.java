@@ -315,11 +315,11 @@ public class BetterChat extends Module {
         }, class_2583.field_24360);
         StringBuilder full = new StringBuilder();
         int[] segmentIndex = new int[segments.stream().mapToInt(s -> {
-            return s.text.length();
+            return s.text().length();
         }).sum()];
         int charPos = 0;
         for (int si = 0; si < segments.size(); si++) {
-            String seg = segments.get(si).text;
+            String seg = segments.get(si).text();
             for (int ci = 0; ci < seg.length(); ci++) {
                 int i = charPos;
                 charPos++;
@@ -343,13 +343,13 @@ public class BetterChat extends Module {
         while (pos < fullStr.length()) {
             if (repIdx < replacements.size() && pos == replacements.get(repIdx).start()) {
                 C1Replacement rep = replacements.get(repIdx);
-                class_2583 repStyle = segments.get(segmentIndex[Math.min(pos, segmentIndex.length - 1)]).style;
-                outputSpans.add(new StyledSegment(repStyle, rep.text));
+                class_2583 repStyle = segments.get(segmentIndex[Math.min(pos, segmentIndex.length - 1)]).style();
+                outputSpans.add(new StyledSegment(repStyle, rep.text()));
                 pos = rep.end();
                 repIdx++;
             } else {
                 int segIdx = segmentIndex[pos];
-                class_2583 style2 = segments.get(segIdx).style;
+                class_2583 style2 = segments.get(segIdx).style();
                 int endPos = pos;
                 int nextRepStart = repIdx < replacements.size() ? replacements.get(repIdx).start() : fullStr.length();
                 while (endPos < fullStr.length() && segmentIndex[endPos] == segIdx && endPos < nextRepStart) {
@@ -360,8 +360,8 @@ public class BetterChat extends Module {
             }
         }
         for (StyledSegment span : outputSpans) {
-            if (!span.text.isEmpty()) {
-                result.method_10852(class_2561.method_43470(span.text).method_10862(span.style));
+            if (!span.text().isEmpty()) {
+                result.method_10852(class_2561.method_43470(span.text()).method_10862(span.style()));
             }
         }
         return result;
@@ -369,77 +369,11 @@ public class BetterChat extends Module {
 
     /* JADX INFO: renamed from: meteordevelopment.meteorclient.systems.modules.misc.BetterChat$1Replacement, reason: invalid class name */
     /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/systems/modules/misc/BetterChat$1Replacement.class */
-    static final class C1Replacement extends Record {
-        private final int start;
-        private final int end;
-        private final String text;
-
-        C1Replacement(int start, int end, String text) {
-            this.start = start;
-            this.end = end;
-            this.text = text;
-        }
-
-        @Override // java.lang.Record
-        public final String toString() {
-            return (String) ObjectMethods.bootstrap(MethodHandles.lookup(), "toString", MethodType.methodType(String.class, C1Replacement.class), C1Replacement.class, "start;end;text", "FIELD:Lmeteordevelopment/meteorclient/systems/modules/misc/BetterChat$1Replacement;->start:I", "FIELD:Lmeteordevelopment/meteorclient/systems/modules/misc/BetterChat$1Replacement;->end:I", "FIELD:Lmeteordevelopment/meteorclient/systems/modules/misc/BetterChat$1Replacement;->text:Ljava/lang/String;").dynamicInvoker().invoke(this) /* invoke-custom */;
-        }
-
-        @Override // java.lang.Record
-        public final int hashCode() {
-            return (int) ObjectMethods.bootstrap(MethodHandles.lookup(), "hashCode", MethodType.methodType(Integer.TYPE, C1Replacement.class), C1Replacement.class, "start;end;text", "FIELD:Lmeteordevelopment/meteorclient/systems/modules/misc/BetterChat$1Replacement;->start:I", "FIELD:Lmeteordevelopment/meteorclient/systems/modules/misc/BetterChat$1Replacement;->end:I", "FIELD:Lmeteordevelopment/meteorclient/systems/modules/misc/BetterChat$1Replacement;->text:Ljava/lang/String;").dynamicInvoker().invoke(this) /* invoke-custom */;
-        }
-
-        @Override // java.lang.Record
-        public final boolean equals(Object o) {
-            return (boolean) ObjectMethods.bootstrap(MethodHandles.lookup(), "equals", MethodType.methodType(Boolean.TYPE, C1Replacement.class, Object.class), C1Replacement.class, "start;end;text", "FIELD:Lmeteordevelopment/meteorclient/systems/modules/misc/BetterChat$1Replacement;->start:I", "FIELD:Lmeteordevelopment/meteorclient/systems/modules/misc/BetterChat$1Replacement;->end:I", "FIELD:Lmeteordevelopment/meteorclient/systems/modules/misc/BetterChat$1Replacement;->text:Ljava/lang/String;").dynamicInvoker().invoke(this, o) /* invoke-custom */;
-        }
-
-        public int start() {
-            return this.start;
-        }
-
-        public int end() {
-            return this.end;
-        }
-
-        public String text() {
-            return this.text;
-        }
+    record C1Replacement(int start, int end, String text) {
     }
 
     /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/systems/modules/misc/BetterChat$StyledSegment.class */
-    private static final class StyledSegment extends Record {
-        private final class_2583 style;
-        private final String text;
-
-        private StyledSegment(class_2583 style, String text) {
-            this.style = style;
-            this.text = text;
-        }
-
-        @Override // java.lang.Record
-        public final String toString() {
-            return (String) ObjectMethods.bootstrap(MethodHandles.lookup(), "toString", MethodType.methodType(String.class, StyledSegment.class), StyledSegment.class, "style;text", "FIELD:Lmeteordevelopment/meteorclient/systems/modules/misc/BetterChat$StyledSegment;->style:Lnet/minecraft/class_2583;", "FIELD:Lmeteordevelopment/meteorclient/systems/modules/misc/BetterChat$StyledSegment;->text:Ljava/lang/String;").dynamicInvoker().invoke(this) /* invoke-custom */;
-        }
-
-        @Override // java.lang.Record
-        public final int hashCode() {
-            return (int) ObjectMethods.bootstrap(MethodHandles.lookup(), "hashCode", MethodType.methodType(Integer.TYPE, StyledSegment.class), StyledSegment.class, "style;text", "FIELD:Lmeteordevelopment/meteorclient/systems/modules/misc/BetterChat$StyledSegment;->style:Lnet/minecraft/class_2583;", "FIELD:Lmeteordevelopment/meteorclient/systems/modules/misc/BetterChat$StyledSegment;->text:Ljava/lang/String;").dynamicInvoker().invoke(this) /* invoke-custom */;
-        }
-
-        @Override // java.lang.Record
-        public final boolean equals(Object o) {
-            return (boolean) ObjectMethods.bootstrap(MethodHandles.lookup(), "equals", MethodType.methodType(Boolean.TYPE, StyledSegment.class, Object.class), StyledSegment.class, "style;text", "FIELD:Lmeteordevelopment/meteorclient/systems/modules/misc/BetterChat$StyledSegment;->style:Lnet/minecraft/class_2583;", "FIELD:Lmeteordevelopment/meteorclient/systems/modules/misc/BetterChat$StyledSegment;->text:Ljava/lang/String;").dynamicInvoker().invoke(this, o) /* invoke-custom */;
-        }
-
-        public class_2583 style() {
-            return this.style;
-        }
-
-        public String text() {
-            return this.text;
-        }
+    private record StyledSegment(class_2583 style, String text) {
     }
 
     private class_5250 highlightName(class_2561 message, String name) {
@@ -625,38 +559,9 @@ public class BetterChat extends Module {
     }
 
     /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/systems/modules/misc/BetterChat$CustomHeadEntry.class */
-    private static final class CustomHeadEntry extends Record {
-        private final String prefix;
-        private final class_2960 texture;
-
-        private CustomHeadEntry(String prefix, class_2960 texture) {
-            this.prefix = prefix;
-            this.texture = texture;
-        }
-
-        @Override // java.lang.Record
-        public final String toString() {
-            return (String) ObjectMethods.bootstrap(MethodHandles.lookup(), "toString", MethodType.methodType(String.class, CustomHeadEntry.class), CustomHeadEntry.class, "prefix;texture", "FIELD:Lmeteordevelopment/meteorclient/systems/modules/misc/BetterChat$CustomHeadEntry;->prefix:Ljava/lang/String;", "FIELD:Lmeteordevelopment/meteorclient/systems/modules/misc/BetterChat$CustomHeadEntry;->texture:Lnet/minecraft/class_2960;").dynamicInvoker().invoke(this) /* invoke-custom */;
-        }
-
-        @Override // java.lang.Record
-        public final int hashCode() {
-            return (int) ObjectMethods.bootstrap(MethodHandles.lookup(), "hashCode", MethodType.methodType(Integer.TYPE, CustomHeadEntry.class), CustomHeadEntry.class, "prefix;texture", "FIELD:Lmeteordevelopment/meteorclient/systems/modules/misc/BetterChat$CustomHeadEntry;->prefix:Ljava/lang/String;", "FIELD:Lmeteordevelopment/meteorclient/systems/modules/misc/BetterChat$CustomHeadEntry;->texture:Lnet/minecraft/class_2960;").dynamicInvoker().invoke(this) /* invoke-custom */;
-        }
-
-        @Override // java.lang.Record
-        public final boolean equals(Object o) {
-            return (boolean) ObjectMethods.bootstrap(MethodHandles.lookup(), "equals", MethodType.methodType(Boolean.TYPE, CustomHeadEntry.class, Object.class), CustomHeadEntry.class, "prefix;texture", "FIELD:Lmeteordevelopment/meteorclient/systems/modules/misc/BetterChat$CustomHeadEntry;->prefix:Ljava/lang/String;", "FIELD:Lmeteordevelopment/meteorclient/systems/modules/misc/BetterChat$CustomHeadEntry;->texture:Lnet/minecraft/class_2960;").dynamicInvoker().invoke(this, o) /* invoke-custom */;
-        }
-
-        public String prefix() {
-            return this.prefix;
-        }
-
-        public class_2960 texture() {
-            return this.texture;
-        }
+    private record CustomHeadEntry(String prefix, class_2960 texture) {
     }
+
 
     public static void registerCustomHead(String prefix, class_2960 texture) {
         CUSTOM_HEAD_ENTRIES.add(new CustomHeadEntry(prefix, texture));

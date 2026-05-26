@@ -8,15 +8,15 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/mixin/EntityVelocityUpdateS2CPacketAccessor.class */
 @Mixin({class_2743.class})
 public interface EntityVelocityUpdateS2CPacketAccessor {
-    @Accessor("velocityX")
+    @Accessor("field_12563")
     @Mutable
     void setX(int i);
 
-    @Accessor("velocityY")
+    @Accessor("field_12562")
     @Mutable
     void setY(int i);
 
-    @Accessor("velocityZ")
+    @Accessor("field_12561")
     @Mutable
     void setZ(int i);
 }

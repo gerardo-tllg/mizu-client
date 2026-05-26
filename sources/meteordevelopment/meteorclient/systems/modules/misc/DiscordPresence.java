@@ -83,7 +83,7 @@ public class DiscordPresence extends Module {
     }
 
     public DiscordPresence() {
-        super(Categories.Misc, "discord-presence", "Displays ReviveClient as your presence on Discord.");
+        super(Categories.Misc, "discord-presence", "Displays Mizu as your presence on Discord.");
         this.sgLine1 = this.settings.createGroup("Line 1");
         this.sgLine2 = this.settings.createGroup("Line 2");
         this.line1Strings = this.sgLine1.add(new StringListSetting.Builder().name("line-1-messages").description("Messages used for the first line.").defaultValue("{player}", "{server}").onChanged(strings -> {
@@ -127,7 +127,7 @@ public class DiscordPresence extends Module {
             largeText = largeText + " Build: " + MeteorClient.BUILD_NUMBER;
         }
         rpc.setLargeImage("overlay", largeText);
-        this.currentSmallImage = SmallImage.Synful;
+        this.currentSmallImage = SmallImage.Swavez;
         recompileLine1();
         recompileLine2();
         this.ticks = 0;
@@ -235,7 +235,7 @@ public class DiscordPresence extends Module {
             } else if ((this.mc.field_1755 instanceof class_412) || (this.mc.field_1755 instanceof class_420)) {
                 rpc.setState("Connecting to server");
             } else if (this.mc.field_1755 instanceof WidgetScreen) {
-                rpc.setState("Browsing ReviveClient's GUI");
+                rpc.setState("Browsing Mizu's GUI");
             } else if ((this.mc.field_1755 instanceof class_429) || (this.mc.field_1755 instanceof class_440) || (this.mc.field_1755 instanceof class_443) || (this.mc.field_1755 instanceof class_446) || (this.mc.field_1755 instanceof class_458) || (this.mc.field_1755 instanceof class_426) || (this.mc.field_1755 instanceof class_404) || (this.mc.field_1755 instanceof class_5375) || (this.mc.field_1755 instanceof class_4189)) {
                 rpc.setState("Changing options");
             } else if (this.mc.field_1755 instanceof class_445) {
@@ -290,8 +290,7 @@ public class DiscordPresence extends Module {
 
     /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/systems/modules/misc/DiscordPresence$SmallImage.class */
     private enum SmallImage {
-        Crownizzle("crownizzle", "Crownizzle"),
-        Synful("synful", "_Synful");
+        Swavez("swavez", "swavez");
 
         private final String key;
         private final String text;
@@ -306,7 +305,7 @@ public class DiscordPresence extends Module {
         }
 
         SmallImage next() {
-            return this == Crownizzle ? Synful : Crownizzle;
+            return Swavez;
         }
     }
 }

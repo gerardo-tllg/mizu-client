@@ -1,22 +1,22 @@
-package meteordevelopment.meteorclient.gui.themes.revive.widgets;
+package meteordevelopment.meteorclient.gui.themes.mizu.widgets;
 
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
-import meteordevelopment.meteorclient.gui.themes.revive.ReviveGuiTheme;
-import meteordevelopment.meteorclient.gui.themes.revive.ReviveWidget;
+import meteordevelopment.meteorclient.gui.themes.mizu.MizuGuiTheme;
+import meteordevelopment.meteorclient.gui.themes.mizu.MizuWidget;
 import meteordevelopment.meteorclient.gui.utils.AlignmentX;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WPressable;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import net.minecraft.class_3532;
 
-/* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/themes/revive/widgets/WReviveModule.class */
-public class WReviveModule extends WPressable implements ReviveWidget {
+/* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/themes/mizu/widgets/WMizuModule.class */
+public class WMizuModule extends WPressable implements MizuWidget {
     private final Module module;
     private double titleWidth;
     private double animProgress1;
     private double animProgress2;
 
-    public WReviveModule(Module module) {
+    public WMizuModule(Module module) {
         this.module = module;
         this.tooltip = module.description;
         this.animProgress1 = module.isActive() ? 1.0d : 0.0d;
@@ -52,7 +52,7 @@ public class WReviveModule extends WPressable implements ReviveWidget {
 
     @Override // meteordevelopment.meteorclient.gui.widgets.WWidget
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-        ReviveGuiTheme theme = theme();
+        MizuGuiTheme theme = theme();
         double pad = pad();
         this.animProgress1 += delta * 5.0d * ((double) ((this.module.isActive() || this.mouseOver) ? 1 : -1));
         this.animProgress1 = class_3532.method_15350(this.animProgress1, 0.0d, 1.0d);
@@ -76,3 +76,5 @@ public class WReviveModule extends WPressable implements ReviveWidget {
         renderer.text(this.module.title, tx, this.y + pad, theme.textColor.get(), false);
     }
 }
+
+

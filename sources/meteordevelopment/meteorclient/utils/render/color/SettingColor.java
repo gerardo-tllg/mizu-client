@@ -93,8 +93,8 @@ public class SettingColor extends Color {
     /* JADX WARN: Can't rename method to resolve collision */
     @Override // meteordevelopment.meteorclient.utils.render.color.Color, meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag, reason: merged with bridge method [inline-methods] */
-    public Color fromTag2(class_2487 tag) {
-        super.fromTag2(tag);
+    public Color fromTag(class_2487 tag) {
+        super.fromTag(tag);
         this.rainbow = tag.method_68566("rainbow", false);
         return this;
     }

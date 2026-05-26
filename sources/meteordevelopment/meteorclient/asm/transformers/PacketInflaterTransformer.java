@@ -37,9 +37,9 @@ public class PacketInflaterTransformer extends AsmTransformer {
         LabelNode label = new LabelNode(new Label());
         ListIterator it = method.instructions.iterator();
         while (it.hasNext()) {
-            TypeInsnNode typeInsnNode = (AbstractInsnNode) it.next();
+            AbstractInsnNode typeInsnNode = (AbstractInsnNode) it.next();
             if (typeInsnNode instanceof TypeInsnNode) {
-                TypeInsnNode typeInsn = typeInsnNode;
+                TypeInsnNode typeInsn = (TypeInsnNode) typeInsnNode;
                 if (typeInsn.getOpcode() == 187 && typeInsn.desc.equals("io/netty/handler/codec/DecoderException")) {
                     newCount++;
                     if (newCount == 2) {

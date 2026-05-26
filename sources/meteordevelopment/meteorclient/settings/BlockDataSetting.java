@@ -57,7 +57,7 @@ public class BlockDataSetting<T extends ICopyable<T> & ISerializable<T> & IChang
         ((Map) get()).clear();
         class_2487 valueTag = tag.method_68568("value");
         for (String key : valueTag.method_10541()) {
-            ((Map) get()).put((class_2248) class_7923.field_41175.method_63535(class_2960.method_60654(key)), (ICopyable) ((ISerializable) ((ICopyable) this.defaultData.get()).copy()).fromTag2(valueTag.method_68568(key)));
+            ((Map) get()).put((class_2248) class_7923.field_41175.method_63535(class_2960.method_60654(key)), (ICopyable) ((ISerializable) ((ICopyable) this.defaultData.get()).copy()).fromTag(valueTag.method_68568(key)));
         }
         return (Map) get();
     }

@@ -60,7 +60,7 @@ public class ColorListSetting extends Setting<List<SettingColor>> {
         get().clear();
         Iterator it = tag.method_68569("value").iterator();
         while (it.hasNext()) {
-            get().add(new SettingColor().fromTag2((class_2487) it.next()));
+            get().add(new SettingColor().fromTag((class_2487) it.next()));
         }
         return get();
     }

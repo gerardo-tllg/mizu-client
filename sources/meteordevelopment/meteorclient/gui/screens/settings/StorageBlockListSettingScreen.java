@@ -56,36 +56,6 @@ public class StorageBlockListSettingScreen extends CollectionListSettingScreen<c
     }
 
     /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/screens/settings/StorageBlockListSettingScreen$BlockEntityTypeInfo.class */
-    private static final class BlockEntityTypeInfo extends Record {
-        private final class_1792 item;
-        private final String name;
-
-        private BlockEntityTypeInfo(class_1792 item, String name) {
-            this.item = item;
-            this.name = name;
-        }
-
-        @Override // java.lang.Record
-        public final String toString() {
-            return (String) ObjectMethods.bootstrap(MethodHandles.lookup(), "toString", MethodType.methodType(String.class, BlockEntityTypeInfo.class), BlockEntityTypeInfo.class, "item;name", "FIELD:Lmeteordevelopment/meteorclient/gui/screens/settings/StorageBlockListSettingScreen$BlockEntityTypeInfo;->item:Lnet/minecraft/class_1792;", "FIELD:Lmeteordevelopment/meteorclient/gui/screens/settings/StorageBlockListSettingScreen$BlockEntityTypeInfo;->name:Ljava/lang/String;").dynamicInvoker().invoke(this) /* invoke-custom */;
-        }
-
-        @Override // java.lang.Record
-        public final int hashCode() {
-            return (int) ObjectMethods.bootstrap(MethodHandles.lookup(), "hashCode", MethodType.methodType(Integer.TYPE, BlockEntityTypeInfo.class), BlockEntityTypeInfo.class, "item;name", "FIELD:Lmeteordevelopment/meteorclient/gui/screens/settings/StorageBlockListSettingScreen$BlockEntityTypeInfo;->item:Lnet/minecraft/class_1792;", "FIELD:Lmeteordevelopment/meteorclient/gui/screens/settings/StorageBlockListSettingScreen$BlockEntityTypeInfo;->name:Ljava/lang/String;").dynamicInvoker().invoke(this) /* invoke-custom */;
-        }
-
-        @Override // java.lang.Record
-        public final boolean equals(Object o) {
-            return (boolean) ObjectMethods.bootstrap(MethodHandles.lookup(), "equals", MethodType.methodType(Boolean.TYPE, BlockEntityTypeInfo.class, Object.class), BlockEntityTypeInfo.class, "item;name", "FIELD:Lmeteordevelopment/meteorclient/gui/screens/settings/StorageBlockListSettingScreen$BlockEntityTypeInfo;->item:Lnet/minecraft/class_1792;", "FIELD:Lmeteordevelopment/meteorclient/gui/screens/settings/StorageBlockListSettingScreen$BlockEntityTypeInfo;->name:Ljava/lang/String;").dynamicInvoker().invoke(this, o) /* invoke-custom */;
-        }
-
-        public class_1792 item() {
-            return this.item;
-        }
-
-        public String name() {
-            return this.name;
-        }
+    private record BlockEntityTypeInfo(class_1792 item, String name) {
     }
 }

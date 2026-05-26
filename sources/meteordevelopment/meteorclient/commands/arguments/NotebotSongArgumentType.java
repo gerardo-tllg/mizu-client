@@ -27,7 +27,7 @@ public class NotebotSongArgumentType implements ArgumentType<Path> {
     }
 
     /* JADX INFO: renamed from: parse, reason: merged with bridge method [inline-methods] */
-    public Path m119parse(StringReader reader) throws CommandSyntaxException {
+    public Path parse(StringReader reader) throws CommandSyntaxException {
         String text = reader.getRemaining();
         reader.setCursor(reader.getTotalLength());
         return MeteorClient.FOLDER.toPath().resolve("notebot/" + text);

@@ -1,14 +1,14 @@
-package meteordevelopment.meteorclient.gui.themes.revive.widgets.input;
+package meteordevelopment.meteorclient.gui.themes.mizu.widgets.input;
 
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
-import meteordevelopment.meteorclient.gui.themes.revive.ReviveGuiTheme;
-import meteordevelopment.meteorclient.gui.themes.revive.ReviveWidget;
+import meteordevelopment.meteorclient.gui.themes.mizu.MizuGuiTheme;
+import meteordevelopment.meteorclient.gui.themes.mizu.MizuWidget;
 import meteordevelopment.meteorclient.gui.widgets.input.WDropdown;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 
-/* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/themes/revive/widgets/input/WReviveDropdown.class */
-public class WReviveDropdown<T> extends WDropdown<T> implements ReviveWidget {
-    public WReviveDropdown(T[] values, T value) {
+/* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/themes/mizu/widgets/input/WMizuDropdown.class */
+public class WMizuDropdown<T> extends WDropdown<T> implements MizuWidget {
+    public WMizuDropdown(T[] values, T value) {
         super(values, value);
     }
 
@@ -24,7 +24,7 @@ public class WReviveDropdown<T> extends WDropdown<T> implements ReviveWidget {
 
     @Override // meteordevelopment.meteorclient.gui.widgets.WWidget
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-        ReviveGuiTheme theme = theme();
+        MizuGuiTheme theme = theme();
         double pad = pad();
         double s = theme.textHeight();
         renderBackground(renderer, this, this.pressed, this.mouseOver);
@@ -34,14 +34,14 @@ public class WReviveDropdown<T> extends WDropdown<T> implements ReviveWidget {
         renderer.rotatedQuad(this.x + pad + this.maxValueWidth + pad, this.y + pad, s, s, 0.0d, GuiRenderer.TRIANGLE, theme.accentColor.get());
     }
 
-    /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/themes/revive/widgets/input/WReviveDropdown$WRoot.class */
-    private static class WRoot extends WDropdown.WDropdownRoot implements ReviveWidget {
+    /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/themes/mizu/widgets/input/WMizuDropdown$WRoot.class */
+    private static class WRoot extends WDropdown.WDropdownRoot implements MizuWidget {
         private WRoot() {
         }
 
         @Override // meteordevelopment.meteorclient.gui.widgets.WWidget
         protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-            ReviveGuiTheme theme = theme();
+            MizuGuiTheme theme = theme();
             double s = theme.scale(1.0d);
             Color c = theme.outlineColor.get();
             renderer.quad(this.x, (this.y + this.height) - s, this.width, s, c);
@@ -50,9 +50,9 @@ public class WReviveDropdown<T> extends WDropdown<T> implements ReviveWidget {
         }
     }
 
-    /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/themes/revive/widgets/input/WReviveDropdown$WValue.class */
-    private class WValue extends WDropdown<T>.WDropdownValue implements ReviveWidget {
-        private WValue(WReviveDropdown wReviveDropdown) {
+    /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/gui/themes/mizu/widgets/input/WMizuDropdown$WValue.class */
+    private class WValue extends WDropdown<T>.WDropdownValue implements MizuWidget {
+        private WValue(WMizuDropdown wMizuDropdown) {
             super();
         }
 
@@ -65,7 +65,7 @@ public class WReviveDropdown<T> extends WDropdown<T> implements ReviveWidget {
 
         @Override // meteordevelopment.meteorclient.gui.widgets.WWidget
         protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-            ReviveGuiTheme theme = theme();
+            MizuGuiTheme theme = theme();
             Color color = theme.backgroundColor.get(this.pressed, this.mouseOver, true);
             int preA = color.a;
             color.a += color.a / 2;
@@ -77,3 +77,5 @@ public class WReviveDropdown<T> extends WDropdown<T> implements ReviveWidget {
         }
     }
 }
+
+

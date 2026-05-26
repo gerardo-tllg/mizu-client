@@ -176,7 +176,7 @@ public class HudBox implements ISerializable<HudBox> {
     /* JADX WARN: Can't rename method to resolve collision */
     @Override // meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public HudBox fromTag2(class_2487 tag) {
+    public HudBox fromTag(class_2487 tag) {
         if (tag.method_10545("x-anchor")) {
             this.xAnchor = XAnchor.valueOf((String) tag.method_10558("x-anchor").orElse("Left"));
         }

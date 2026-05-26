@@ -87,12 +87,12 @@ public class ESPBlockData implements ICopyable<ESPBlockData>, ISerializable<ESPB
     /* JADX WARN: Can't rename method to resolve collision */
     @Override // meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public ESPBlockData fromTag2(class_2487 tag) {
+    public ESPBlockData fromTag(class_2487 tag) {
         this.shapeMode = ShapeMode.valueOf((String) tag.method_10558("shapeMode").orElse("Both"));
-        this.lineColor.fromTag2((class_2487) tag.method_10562("lineColor").orElse(new class_2487()));
-        this.sideColor.fromTag2((class_2487) tag.method_10562("sideColor").orElse(new class_2487()));
+        this.lineColor.fromTag((class_2487) tag.method_10562("lineColor").orElse(new class_2487()));
+        this.sideColor.fromTag((class_2487) tag.method_10562("sideColor").orElse(new class_2487()));
         this.tracer = ((Boolean) tag.method_10577("tracer").orElse(false)).booleanValue();
-        this.tracerColor.fromTag2((class_2487) tag.method_10562("tracerColor").orElse(new class_2487()));
+        this.tracerColor.fromTag((class_2487) tag.method_10562("tracerColor").orElse(new class_2487()));
         this.changed = ((Boolean) tag.method_10577("changed").orElse(false)).booleanValue();
         return this;
     }

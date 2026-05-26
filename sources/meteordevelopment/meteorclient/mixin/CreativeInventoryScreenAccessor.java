@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/mixin/CreativeInventoryScreenAccessor.class */
 @Mixin({class_481.class})
 public interface CreativeInventoryScreenAccessor {
-    @Accessor("selectedTab")
+    @Accessor("field_2896")
     static class_1761 getSelectedTab() {
         return null;
     }

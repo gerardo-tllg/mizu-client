@@ -1,7 +1,6 @@
 package meteordevelopment.meteorclient.mixin;
 
 import meteordevelopment.meteorclient.systems.modules.Modules;
-import meteordevelopment.meteorclient.systems.modules.render.Xray;
 import meteordevelopment.meteorclient.systems.modules.world.Ambience;
 import net.minecraft.class_1921;
 import net.minecraft.class_2680;
@@ -15,22 +14,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/mixin/RenderLayersMixin.class */
 @Mixin({class_4696.class})
 public abstract class RenderLayersMixin {
-    @Inject(method = {"getBlockLayer"}, at = {@At("HEAD")}, cancellable = true)
-    private static void onGetBlockLayer(class_2680 state, CallbackInfoReturnable<class_1921> cir) {
-        int alpha;
-        if (Modules.get() != null && (alpha = Xray.getAlpha(state, null)) > 0 && alpha < 255) {
-            cir.setReturnValue(class_1921.method_23583());
-        }
-    }
-
     @Inject(method = {"getFluidLayer"}, at = {@At("HEAD")}, cancellable = true)
     private static void onGetFluidLayer(class_3610 state, CallbackInfoReturnable<class_1921> cir) {
         if (Modules.get() == null) {
-            return;
-        }
-        int alpha = Xray.getAlpha(state.method_15759(), null);
-        if (alpha > 0 && alpha < 255) {
-            cir.setReturnValue(class_1921.method_23583());
             return;
         }
         Ambience ambience = (Ambience) Modules.get().get(Ambience.class);

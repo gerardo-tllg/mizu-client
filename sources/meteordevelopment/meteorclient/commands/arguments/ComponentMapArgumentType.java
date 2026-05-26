@@ -32,7 +32,7 @@ public class ComponentMapArgumentType implements ArgumentType<class_9323> {
     }
 
     /* JADX INFO: renamed from: parse, reason: merged with bridge method [inline-methods] */
-    public class_9323 m106parse(StringReader reader) throws CommandSyntaxException {
+    public class_9323 parse(StringReader reader) throws CommandSyntaxException {
         return this.reader.consume(reader);
     }
 

@@ -11,13 +11,13 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/mixin/PlayerPositionLookS2CPacketAccessor.class */
 @Mixin({class_2708.class})
 public interface PlayerPositionLookS2CPacketAccessor {
-    @Accessor("change")
+    @Accessor("comp_3228")
     class_10182 getChange();
 
-    @Accessor("relatives")
+    @Accessor("comp_3229")
     Set<class_2709> getRelatives();
 
-    @Accessor("change")
+    @Accessor("comp_3228")
     @Mutable
     void setChange(class_10182 class_10182Var);
 }

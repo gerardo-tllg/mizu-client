@@ -165,14 +165,14 @@ public abstract class Module implements ISerializable<Module>, Comparable<Module
     /* JADX WARN: Can't rename method to resolve collision */
     @Override // meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public Module fromTag2(class_2487 tag) {
-        this.keybind.fromTag2(tag.method_68568("keybind"));
+    public Module fromTag(class_2487 tag) {
+        this.keybind.fromTag(tag.method_68568("keybind"));
         this.toggleOnBindRelease = tag.method_68566("toggleOnKeyRelease", false);
         this.chatFeedback = !tag.method_10545("chatFeedback") || tag.method_68566("chatFeedback", false);
         this.favorite = tag.method_68566("favorite", false);
         class_2487 class_2487VarMethod_10580 = tag.method_10580("settings");
         if (class_2487VarMethod_10580 instanceof class_2487) {
-            this.settings.fromTag2(class_2487VarMethod_10580);
+            this.settings.fromTag(class_2487VarMethod_10580);
         }
         boolean active = tag.method_68566("active", false);
         if (active != isActive()) {

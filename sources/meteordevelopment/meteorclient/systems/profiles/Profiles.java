@@ -89,7 +89,7 @@ public class Profiles extends System<Profiles> implements Iterable<Profile> {
 
     @Override // meteordevelopment.meteorclient.systems.System, meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public Profiles fromTag2(class_2487 tag) {
+    public Profiles fromTag(class_2487 tag) {
         this.profiles = NbtUtils.listFromTag(tag.method_68569("profiles"), Profile::new);
         return this;
     }

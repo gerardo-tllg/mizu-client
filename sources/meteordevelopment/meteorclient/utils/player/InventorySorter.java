@@ -202,36 +202,6 @@ public class InventorySorter {
     }
 
     /* JADX INFO: loaded from: meteor-client-1.21.5-local.jar:meteordevelopment/meteorclient/utils/player/InventorySorter$Action.class */
-    private static final class Action extends Record {
-        private final int from;
-        private final int to;
-
-        private Action(int from, int to) {
-            this.from = from;
-            this.to = to;
-        }
-
-        @Override // java.lang.Record
-        public final String toString() {
-            return (String) ObjectMethods.bootstrap(MethodHandles.lookup(), "toString", MethodType.methodType(String.class, Action.class), Action.class, "from;to", "FIELD:Lmeteordevelopment/meteorclient/utils/player/InventorySorter$Action;->from:I", "FIELD:Lmeteordevelopment/meteorclient/utils/player/InventorySorter$Action;->to:I").dynamicInvoker().invoke(this) /* invoke-custom */;
-        }
-
-        @Override // java.lang.Record
-        public final int hashCode() {
-            return (int) ObjectMethods.bootstrap(MethodHandles.lookup(), "hashCode", MethodType.methodType(Integer.TYPE, Action.class), Action.class, "from;to", "FIELD:Lmeteordevelopment/meteorclient/utils/player/InventorySorter$Action;->from:I", "FIELD:Lmeteordevelopment/meteorclient/utils/player/InventorySorter$Action;->to:I").dynamicInvoker().invoke(this) /* invoke-custom */;
-        }
-
-        @Override // java.lang.Record
-        public final boolean equals(Object o) {
-            return (boolean) ObjectMethods.bootstrap(MethodHandles.lookup(), "equals", MethodType.methodType(Boolean.TYPE, Action.class, Object.class), Action.class, "from;to", "FIELD:Lmeteordevelopment/meteorclient/utils/player/InventorySorter$Action;->from:I", "FIELD:Lmeteordevelopment/meteorclient/utils/player/InventorySorter$Action;->to:I").dynamicInvoker().invoke(this, o) /* invoke-custom */;
-        }
-
-        public int from() {
-            return this.from;
-        }
-
-        public int to() {
-            return this.to;
-        }
+    private record Action(int from, int to) {
     }
 }

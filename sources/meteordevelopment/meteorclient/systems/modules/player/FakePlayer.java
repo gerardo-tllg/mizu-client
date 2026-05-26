@@ -25,7 +25,7 @@ public class FakePlayer extends Module {
     public FakePlayer() {
         super(Categories.Player, "fake-player", "Spawns a client-side fake player for testing usages. No need to be active.");
         this.sgGeneral = this.settings.getDefaultGroup();
-        this.name = this.sgGeneral.add(new StringSetting.Builder().name("name").description("The name of the fake player.").defaultValue("_Synful8169").build());
+        this.name = this.sgGeneral.add(new StringSetting.Builder().name("name").description("The name of the fake player.").defaultValue("MizuPlayer").build());
         this.copyInv = this.sgGeneral.add(new BoolSetting.Builder().name("copy-inv").description("Copies your inventory to the fake player.").defaultValue(true).build());
         this.health = this.sgGeneral.add(new IntSetting.Builder().name("health").description("The fake player's default health.").defaultValue(20).min(1).sliderRange(1, 100).build());
     }

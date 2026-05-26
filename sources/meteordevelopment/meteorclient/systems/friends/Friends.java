@@ -96,7 +96,7 @@ public class Friends extends System<Friends> implements Iterable<Friend> {
 
     @Override // meteordevelopment.meteorclient.systems.System, meteordevelopment.meteorclient.utils.misc.ISerializable
     /* JADX INFO: renamed from: fromTag */
-    public Friends fromTag2(class_2487 tag) {
+    public Friends fromTag(class_2487 tag) {
         Friend friend;
         this.friends.clear();
         for (class_2487 friendTag : tag.method_68569("friends")) {
