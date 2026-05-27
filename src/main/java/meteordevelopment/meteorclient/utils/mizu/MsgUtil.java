@@ -1,4 +1,4 @@
-package meteordevelopment.meteorclient.utils.stardust;
+package meteordevelopment.meteorclient.utils.mizu;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -40,7 +40,7 @@ public class MsgUtil {
 
     public static String getModulePrefix(String module) {
         if (!modulePrefixes.containsKey(module)) {
-            return Formatting.DARK_GRAY + "[Mizu] " + 
+            return Formatting.DARK_GRAY + "[Mizu] " +
                 Formatting.DARK_GRAY + "[" + Formatting.GRAY + Utils.nameToTitle(module) + Formatting.DARK_GRAY + "]";
         } else {
             return Formatting.DARK_GRAY + "[" + modulePrefixes.get(module) + "] " +

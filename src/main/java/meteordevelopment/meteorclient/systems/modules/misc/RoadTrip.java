@@ -7,11 +7,11 @@ import meteordevelopment.meteorclient.systems.modules.Categories;
 import net.minecraft.item.Item;
 import net.minecraft.text.Text;
 import net.minecraft.item.Items;
-import meteordevelopment.meteorclient.utils.stardust.MsgUtil;
+import meteordevelopment.meteorclient.utils.mizu.MsgUtil;
 import javax.annotation.Nullable;
 import net.minecraft.item.ItemStack;
 import java.util.concurrent.TimeUnit;
-import meteordevelopment.meteorclient.utils.stardust.StardustUtil;
+import meteordevelopment.meteorclient.utils.mizu.MizuUtil;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.math.BlockPos;
@@ -357,12 +357,12 @@ public class RoadTrip extends Module {
 
     private void doForceKick(Text disconnectReason) {
         this.disconnectReason = disconnectReason;
-        StardustUtil.illegalDisconnect(true, StardustUtil.IllegalDisconnectMethod.Slot);
+        MizuUtil.illegalDisconnect(true, MizuUtil.IllegalDisconnectMethod.Slot);
     }
 
     private void disconnect(Text reason) {
         if (mc.getNetworkHandler() == null) return;
-        StardustUtil.disableAutoReconnect();
+        MizuUtil.disableAutoReconnect();
         mc.getNetworkHandler().onDisconnect(new DisconnectS2CPacket(reason));
         switch (autoLogToggle.get()) {
             case Module -> toggle();
@@ -381,7 +381,7 @@ public class RoadTrip extends Module {
 
     @EventHandler
     private void onTick(TickEvent.Pre event) {
-        if (StardustUtil.isIn2b2tQueue()) return;
+        if (MizuUtil.isIn2b2tQueue()) return;
         if (mc.getNetworkHandler() == null) return;
         if (mc.player == null || mc.world == null) return;
 

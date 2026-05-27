@@ -14,9 +14,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import net.minecraft.text.Style;
-import meteordevelopment.meteorclient.utils.stardust.MsgUtil;
-import meteordevelopment.meteorclient.utils.stardust.LogUtil;
-import meteordevelopment.meteorclient.utils.stardust.MapUtil;
+import meteordevelopment.meteorclient.utils.mizu.MsgUtil;
+import meteordevelopment.meteorclient.utils.mizu.LogUtil;
+import meteordevelopment.meteorclient.utils.mizu.MapUtil;
 import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.stream.Collectors;
@@ -24,9 +24,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.nbt.NbtCompound;
-import meteordevelopment.meteorclient.utils.stardust.StardustUtil;
+import meteordevelopment.meteorclient.utils.mizu.MizuUtil;
 import net.minecraft.world.biome.Biome;
-import meteordevelopment.meteorclient.utils.stardust.StardustUtil.*;
+import meteordevelopment.meteorclient.utils.mizu.MizuUtil.*;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -252,7 +252,7 @@ public class ChatSigns extends Module {
             .name("signBoard-waypoints")
             .description("Adds waypoints to your Xaeros map when a cluster of signs is rendered.")
             .defaultValue(false)
-            .visible(() -> StardustUtil.XAERO_AVAILABLE)
+            .visible(() -> MizuUtil.XAERO_AVAILABLE)
             .build()
     );
     private final Setting<Boolean> temporaryWaypoints = signBoardGroup.add(
@@ -260,7 +260,7 @@ public class ChatSigns extends Module {
             .name("temporary-waypoints")
             .description("Temporary waypoints are cleared when you disconnect from the server or close the game.")
             .defaultValue(true)
-            .visible(() -> StardustUtil.XAERO_AVAILABLE && signBoardWaypoints.get())
+            .visible(() -> MizuUtil.XAERO_AVAILABLE && signBoardWaypoints.get())
             .build()
     );
     private final Setting<Boolean> waypointsIgnoreEmpty = signBoardGroup.add(
@@ -268,7 +268,7 @@ public class ChatSigns extends Module {
             .name("waypoints-ignore-empty")
             .description("If enabled, empty signs will not count towards a cluster waypoint.")
             .defaultValue(true)
-            .visible(() -> StardustUtil.XAERO_AVAILABLE && signBoardWaypoints.get())
+            .visible(() -> MizuUtil.XAERO_AVAILABLE && signBoardWaypoints.get())
             .build()
     );
     private final Setting<Boolean> waypointsIgnoreBlacklist = signBoardGroup.add(
@@ -276,7 +276,7 @@ public class ChatSigns extends Module {
             .name("waypoints-ignore-blacklist")
             .description("If enabled, signs containing blocked text will still count towards the waypoint cluster.")
             .defaultValue(false)
-            .visible(() -> StardustUtil.XAERO_AVAILABLE && signBoardWaypoints.get())
+            .visible(() -> MizuUtil.XAERO_AVAILABLE && signBoardWaypoints.get())
             .build()
     );
     private final Setting<Integer> signBoardWaypointsAmount = signBoardGroup.add(
@@ -284,7 +284,7 @@ public class ChatSigns extends Module {
             .name("signBoard-waypoints-amount")
             .description("The amount of signs to trigger adding a waypoint.")
             .range(1, 1200).sliderRange(1, 120).defaultValue(3)
-            .visible(() -> StardustUtil.XAERO_AVAILABLE && signBoardWaypoints.get())
+            .visible(() -> MizuUtil.XAERO_AVAILABLE && signBoardWaypoints.get())
             .build()
     );
 
@@ -318,7 +318,7 @@ public class ChatSigns extends Module {
             .description("Ignore signs that contain specific text (line-separated list in chatsigns-blacklist.txt)")
             .defaultValue(false)
             .onChanged(it -> {
-                if (it && this.isActive() && StardustUtil.checkOrCreateFile(mc, BLACKLIST_FILE)) {
+                if (it && this.isActive() && MizuUtil.checkOrCreateFile(mc, BLACKLIST_FILE)) {
                     this.blacklisted.clear();
                     initBlacklistText();
                     if (mc.player != null) {
@@ -348,7 +348,7 @@ public class ChatSigns extends Module {
             .visible(signBlacklist::get)
             .onChanged(it -> {
                 if (it) {
-                    if (StardustUtil.checkOrCreateFile(mc, BLACKLIST_FILE)) openBlacklistFile();
+                    if (MizuUtil.checkOrCreateFile(mc, BLACKLIST_FILE)) openBlacklistFile();
                     else resetBlacklistFileSetting();
                 }
             })
@@ -674,7 +674,7 @@ public class ChatSigns extends Module {
 
     private void openBlacklistFile() {
         resetBlacklistFileSetting();
-        StardustUtil.openFile(BLACKLIST_FILE);
+        MizuUtil.openFile(BLACKLIST_FILE);
     }
 
     private void resetBlacklistFileSetting() {
@@ -735,13 +735,13 @@ public class ChatSigns extends Module {
 
     private void doForceKick(Text reason) {
         disconnectReason = reason;
-        StardustUtil.illegalDisconnect(true, StardustUtil.IllegalDisconnectMethod.Slot);
+        MizuUtil.illegalDisconnect(true, MizuUtil.IllegalDisconnectMethod.Slot);
     }
 
     @Override
     public void onActivate() {
         if (mc.player == null || mc.world == null) return;
-        if (signBlacklist.get() && StardustUtil.checkOrCreateFile(mc, BLACKLIST_FILE)) initBlacklistText();
+        if (signBlacklist.get() && MizuUtil.checkOrCreateFile(mc, BLACKLIST_FILE)) initBlacklistText();
 
         BlockPos pos = mc.player.getBlockPos();
         if (chatMode.get() == ChatMode.ESP || chatMode.get() == ChatMode.Both) {
@@ -812,7 +812,7 @@ public class ChatSigns extends Module {
 
     @EventHandler
     private void onTick(TickEvent.Pre event) {
-        if (StardustUtil.XAERO_AVAILABLE && signBoardWaypoints.get()) {
+        if (MizuUtil.XAERO_AVAILABLE && signBoardWaypoints.get()) {
             if (!waypointsIgnoreEmpty.get() && emptyClusterAmount >= signBoardWaypointsAmount.get() && lastEmptyClusterPos != null) {
                 MapUtil.addWaypoint(
                     lastEmptyClusterPos,
@@ -836,7 +836,7 @@ public class ChatSigns extends Module {
                 doForceKick(reason);
             } else {
                 signBoardAutoLog.set(false);
-                StardustUtil.disableAutoReconnect();
+                MizuUtil.disableAutoReconnect();
                 mc.getNetworkHandler().onDisconnect(new DisconnectS2CPacket(reason));
             }
             toggle();

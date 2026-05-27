@@ -1,8 +1,7 @@
 package meteordevelopment.meteorclient.commands;
 
-import meteordevelopment.meteorclient.utils.stardust.MsgUtil;
+import meteordevelopment.meteorclient.utils.mizu.MsgUtil;
 import meteordevelopment.meteorclient.systems.modules.misc.Loadouts;
-import meteordevelopment.meteorclient.utils.stardust.StardustUtil;
 import net.minecraft.command.CommandSource;
 import meteordevelopment.meteorclient.commands.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;

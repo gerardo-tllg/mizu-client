@@ -11,11 +11,11 @@ import meteordevelopment.meteorclient.systems.modules.Categories;
 import java.lang.reflect.Type;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
-import meteordevelopment.meteorclient.utils.stardust.LogUtil;
-import meteordevelopment.meteorclient.utils.stardust.MsgUtil;
+import meteordevelopment.meteorclient.utils.mizu.LogUtil;
+import meteordevelopment.meteorclient.utils.mizu.MsgUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
-import meteordevelopment.meteorclient.utils.stardust.StardustUtil;
+import meteordevelopment.meteorclient.utils.mizu.MizuUtil;
 import net.minecraft.registry.Registries;
 import com.google.common.reflect.TypeToken;
 import meteordevelopment.orbit.EventHandler;
@@ -105,7 +105,7 @@ public class Loadouts extends Module {
     }
 
     private void loadLoadoutsFromFile() {
-        if (!StardustUtil.checkOrCreateFile(mc, LOADOUTS_FILE)) {
+        if (!MizuUtil.checkOrCreateFile(mc, LOADOUTS_FILE)) {
             LogUtil.error("Error checking loadouts file for loading..!", this.name);
         }
 
@@ -130,7 +130,7 @@ public class Loadouts extends Module {
     }
 
     private void saveLoadoutsToFile() {
-        if (!StardustUtil.checkOrCreateFile(mc, LOADOUTS_FILE)) {
+        if (!MizuUtil.checkOrCreateFile(mc, LOADOUTS_FILE)) {
             LogUtil.error("Error checking loadouts file for saving..!", this.name);
         }
 

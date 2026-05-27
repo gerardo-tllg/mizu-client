@@ -1,14 +1,13 @@
 package meteordevelopment.meteorclient.commands;
 
 import net.minecraft.text.Text;
-import meteordevelopment.meteorclient.utils.stardust.LogUtil;
+import meteordevelopment.meteorclient.utils.mizu.LogUtil;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonElement;
 import java.util.concurrent.TimeUnit;
-import meteordevelopment.meteorclient.utils.stardust.StardustUtil;
 import net.minecraft.command.CommandSource;
 import net.minecraft.client.MinecraftClient;
-import meteordevelopment.meteorclient.utils.stardust.ApiHandler;
+import meteordevelopment.meteorclient.utils.mizu.ApiHandler;
 import meteordevelopment.meteorclient.commands.Command;
 import net.minecraft.client.network.ClientPlayerEntity;
 import com.mojang.brigadier.arguments.StringArgumentType;

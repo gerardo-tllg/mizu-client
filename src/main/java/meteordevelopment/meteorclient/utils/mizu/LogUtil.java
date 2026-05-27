@@ -1,4 +1,4 @@
-package meteordevelopment.meteorclient.utils.stardust;
+package meteordevelopment.meteorclient.utils.mizu;
 
 import meteordevelopment.meteorclient.MeteorClient;
 

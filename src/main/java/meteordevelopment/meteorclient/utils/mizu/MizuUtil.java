@@ -1,4 +1,4 @@
-package meteordevelopment.meteorclient.utils.stardust;
+package meteordevelopment.meteorclient.utils.mizu;
 
 import java.io.File;
 import java.util.UUID;
@@ -33,7 +33,7 @@ import meteordevelopment.meteorclient.mixin.ClientPlayNetworkHandlerAccessor;
 /**
  * @author Tas [@0xTas] <root@0xTas.dev>
  **/
-public class StardustUtil {
+public class MizuUtil {
     public static final boolean XAERO_AVAILABLE = FabricLoader.getInstance().isModLoaded("xaeroworldmap")
         && FabricLoader.getInstance().isModLoaded("xaerominimap");
 
@@ -216,7 +216,7 @@ public class StardustUtil {
         };
 
         ItemStack playerHead = new ItemStack(Items.PLAYER_HEAD);
-        GameProfile profile = new GameProfile(UUID.randomUUID(), "Stardust");
+        GameProfile profile = new GameProfile(UUID.randomUUID(), "Mizu");
         ProfileComponent profileComponent = new ProfileComponent(profile);
 
         // Apply a player head texture to the ItemStack
@@ -286,7 +286,7 @@ public class StardustUtil {
                     return true;
                 }
             }catch (Exception err) {
-                LogUtil.error("Error creating " + file.getAbsolutePath() + "! - Why:\n" + err, "StardustUtil#checkOrCreateFile");
+                LogUtil.error("Error creating " + file.getAbsolutePath() + "! - Why:\n" + err, "MizuUtil#checkOrCreateFile");
             }
         } else return true;
 
@@ -306,7 +306,7 @@ public class StardustUtil {
             }
         } catch (Exception err) {
             MsgUtil.sendMsg("Failed to open " + file.getName() + "§c..!");
-            LogUtil.error("Failed to open " + file.getAbsolutePath() + "! - Why:\n" + err, "StardustUtil#openFile");
+            LogUtil.error("Failed to open " + file.getAbsolutePath() + "! - Why:\n" + err, "MizuUtil#openFile");
         }
     }
 

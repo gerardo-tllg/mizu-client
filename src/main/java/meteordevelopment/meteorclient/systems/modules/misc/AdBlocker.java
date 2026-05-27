@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import meteordevelopment.meteorclient.systems.modules.Categories;
 import net.minecraft.text.Text;
-import meteordevelopment.meteorclient.utils.stardust.MsgUtil;
+import meteordevelopment.meteorclient.utils.mizu.MsgUtil;
 import net.minecraft.text.HoverEvent;
 import meteordevelopment.orbit.EventHandler;
 import meteordevelopment.orbit.EventPriority;

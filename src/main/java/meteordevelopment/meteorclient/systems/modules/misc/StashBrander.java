@@ -3,7 +3,7 @@ package meteordevelopment.meteorclient.systems.modules.misc;
 import java.util.List;
 import meteordevelopment.meteorclient.systems.modules.Categories;
 import net.minecraft.item.Item;
-import meteordevelopment.meteorclient.utils.stardust.MsgUtil;
+import meteordevelopment.meteorclient.utils.mizu.MsgUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundEvents;
 import meteordevelopment.orbit.EventHandler;

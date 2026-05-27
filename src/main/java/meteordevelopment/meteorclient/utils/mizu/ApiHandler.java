@@ -1,13 +1,11 @@
-package meteordevelopment.meteorclient.utils.stardust;
+package meteordevelopment.meteorclient.utils.mizu;
 
 import java.net.URI;
 import java.net.http.*;
 import java.time.Duration;
 import net.minecraft.text.Text;
-import meteordevelopment.meteorclient.utils.stardust.LogUtil;
 import javax.annotation.Nullable;
 import java.net.URISyntaxException;
-import meteordevelopment.meteorclient.utils.stardust.StardustUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 

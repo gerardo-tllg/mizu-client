@@ -1,4 +1,4 @@
-package meteordevelopment.meteorclient.utils.stardust;
+package meteordevelopment.meteorclient.utils.mizu;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,13 +12,13 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
  **/
 public class MapUtil {
     public static void addWaypoint(BlockPos pos, String name, String initials, Purpose purpose, WpColor color, boolean temp) {
-        if (!StardustUtil.XAERO_AVAILABLE) return;
+        if (!MizuUtil.XAERO_AVAILABLE) return;
         XaeroIntegration.addWaypoint(pos, name, initials, purpose, color, temp);
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static void removeWaypoints(String name, Predicate<BlockPos> posPredicate, Optional<Integer> yOverride) {
-        if (!StardustUtil.XAERO_AVAILABLE) return;
+        if (!MizuUtil.XAERO_AVAILABLE) return;
         XaeroIntegration.removeWaypoints(name, posPredicate, yOverride);
     }
 
