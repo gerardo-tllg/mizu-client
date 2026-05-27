@@ -643,5 +643,6 @@ public class Modules extends System<Modules> {
         add(new meteordevelopment.meteorclient.systems.modules.hunting.PortalScanner());
         add(new meteordevelopment.meteorclient.systems.modules.hunting.Search());
         add(new meteordevelopment.meteorclient.systems.modules.hunting.VanityESP());
+        add(new meteordevelopment.meteorclient.systems.modules.hunting.YGoal());
     }
 }
