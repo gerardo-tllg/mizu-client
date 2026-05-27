@@ -11,6 +11,7 @@ import meteordevelopment.meteorclient.gui.themes.meteor.MeteorWidget;
 import meteordevelopment.meteorclient.gui.utils.AlignmentX;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WPressable;
 import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.utils.render.color.Color;
 import net.minecraft.util.math.MathHelper;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
@@ -18,12 +19,20 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
 
 public class WMeteorModule extends WPressable implements MeteorWidget {
+    /**
+     * Live search query written by the ModulesScreen search bar.
+     * Empty string means no filter is active.
+     * Stored in lowercase; matching is case-insensitive.
+     */
+    public static String searchQuery = "";
+
+    /** Reusable Color instance for the search-match highlight quad (avoids per-frame allocation). */
+    private static final Color SEARCH_MATCH_COLOR = new Color(0, 0, 0, 0);
+
     private final Module module;
 
     private double titleWidth;
-
     private double animationProgress1;
-
     private double animationProgress2;
 
     public WMeteorModule(Module module) {
@@ -60,16 +69,39 @@ public class WMeteorModule extends WPressable implements MeteorWidget {
         else if (button == GLFW_MOUSE_BUTTON_RIGHT) mc.setScreen(theme.moduleScreen(module));
     }
 
+    /** Returns true if this module's title or description matches the current search query. */
+    private boolean matchesSearch() {
+        if (searchQuery.isEmpty()) return true;
+        if (module.title.toLowerCase().contains(searchQuery)) return true;
+        return module.description != null && module.description.toLowerCase().contains(searchQuery);
+    }
+
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
         MeteorGuiTheme theme = theme();
         double pad = pad();
+
+        boolean searching = !searchQuery.isEmpty();
+        boolean matches   = !searching || matchesSearch();
+
+        // Dim non-matching modules to 30% opacity so matching ones stand out clearly
+        if (searching && !matches) renderer.setAlpha(0.3);
 
         animationProgress1 += delta * 4 * ((module.isActive() || mouseOver) ? 1 : -1);
         animationProgress1 = MathHelper.clamp(animationProgress1, 0, 1);
 
         animationProgress2 += delta * 6 * (module.isActive() ? 1 : -1);
         animationProgress2 = MathHelper.clamp(animationProgress2, 0, 1);
+
+        // Subtle accent-tinted highlight behind matching modules
+        if (searching && matches) {
+            Color ac = theme.accentColor.get();
+            SEARCH_MATCH_COLOR.r = ac.r;
+            SEARCH_MATCH_COLOR.g = ac.g;
+            SEARCH_MATCH_COLOR.b = ac.b;
+            SEARCH_MATCH_COLOR.a = 30;
+            renderer.quad(x, y, width, height, SEARCH_MATCH_COLOR);
+        }
 
         if (animationProgress1 > 0) {
             renderer.quad(x, y, width * animationProgress1, height, theme.moduleBackground.get());
@@ -89,5 +121,8 @@ public class WMeteorModule extends WPressable implements MeteorWidget {
         }
 
         renderer.text(module.title, x, y + pad, theme.textColor.get(), false);
+
+        // Restore full opacity after dimming
+        if (searching && !matches) renderer.setAlpha(1);
     }
 }

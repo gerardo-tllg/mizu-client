@@ -8,6 +8,7 @@ package meteordevelopment.meteorclient.gui.screens;
 import meteordevelopment.meteorclient.gui.GuiTheme;
 import meteordevelopment.meteorclient.gui.tabs.TabScreen;
 import meteordevelopment.meteorclient.gui.tabs.Tabs;
+import meteordevelopment.meteorclient.gui.themes.meteor.widgets.WMeteorModule;
 import meteordevelopment.meteorclient.gui.utils.Cell;
 import meteordevelopment.meteorclient.gui.widgets.containers.WContainer;
 import meteordevelopment.meteorclient.gui.widgets.containers.WSection;
@@ -182,6 +183,16 @@ public class ModulesScreen extends TabScreen {
     }
 
     @Override
+    protected void onClosed() {
+        super.onClosed();
+        // Clear search state so the next GUI open starts with no filter active
+        WMeteorModule.searchQuery = "";
+        if (controller != null && controller.searchBox != null) {
+            controller.searchBox.set("");
+        }
+    }
+
+    @Override
     public boolean toClipboard() {
         return NbtUtils.toClipboard(Modules.get());
     }
@@ -200,8 +211,18 @@ public class ModulesScreen extends TabScreen {
         public final List<WWindow> windows = new ArrayList<>();
         private Cell<WWindow> favorites;
 
+        /** The search bar rendered at the top of the GUI above all category panels. */
+        WTextBox searchBox;
+
         @Override
         public void init() {
+            // ── Search bar ─────────────────────────────────────────────────────
+            // Must be added first so it sits at cells index 0.
+            searchBox = add(theme.textBox("", "Search modules...")).widget();
+            searchBox.action = () ->
+                WMeteorModule.searchQuery = searchBox.get().toLowerCase();
+
+            // ── Category windows ────────────────────────────────────────────────
             List<Module> moduleList = new ArrayList<>();
             for (Category category : Modules.loopCategories()) {
                 for (Module module : Modules.get().getGroup(category)) {
@@ -240,15 +261,30 @@ public class ModulesScreen extends TabScreen {
 
         @Override
         protected void onCalculateWidgetPositions() {
+            if (cells.isEmpty()) return;
+
             double pad = theme.scale(4);
-            double h = theme.scale(40);
+            double h   = theme.scale(40);
+            double windowWidth  = getWindowWidth();
+            double windowHeight = getWindowHeight();
 
+            // ── Search bar (index 0) — centred at the top of the screen ─────────
+            double searchW = theme.scale(240);
+            Cell<?> searchCell = cells.get(0);
+            searchCell.widget().width = searchW;
+            searchCell.x      = Math.round((windowWidth - searchW) / 2.0);
+            searchCell.y      = this.y + pad;
+            searchCell.width  = searchW;
+            searchCell.height = searchCell.widget().height;
+            searchCell.alignWidget();
+
+            // ── Category windows (index 1+) — start below the search bar ────────
+            double topOffset = searchCell.widget().height + pad * 3;
             double x = this.x + pad;
-            double y = this.y;
+            double y = this.y + topOffset;
 
-            for (Cell<?> cell : cells) {
-                double windowWidth = getWindowWidth();
-                double windowHeight = getWindowHeight();
+            for (int i = 1; i < cells.size(); i++) {
+                Cell<?> cell = cells.get(i);
 
                 if (x + cell.width > windowWidth) {
                     x = x + pad;
@@ -267,7 +303,7 @@ public class ModulesScreen extends TabScreen {
                 cell.x = x;
                 cell.y = y;
 
-                cell.width = cell.widget().width;
+                cell.width  = cell.widget().width;
                 cell.height = cell.widget().height;
 
                 cell.alignWidget();
