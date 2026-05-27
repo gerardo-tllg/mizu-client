@@ -1,49 +1,62 @@
+# Mizu Client
 
-<p align="center">
-<img src="assets/meteor-client/icon.png" alt="mizu-client-logo" width="15%"/>
-</p>
+A Minecraft 1.21.5 Fabric utility mod built for anarchy servers.
 
-<h1 align="center">Mizu</h1>
-<p align="center">A powerful Minecraft Fabric Utility Mod.</p>
+Mizu is a fork of [Meteor Client](https://github.com/MeteorDevelopment/meteor-client) extended with a custom **Hunting** category containing modules designed for long-distance travel, player tracking, portal operations, and automated survival on anarchy servers such as 2b2t.
 
-## Usage
+---
 
-### Building
-- Clone this repository
-- Run `./gradlew build`
+## Features
 
-### Installation
-Run `./gradlew build` and install the jar from `build/libs/`.
+### Hunting Modules
+| Module | Description |
+|---|---|
+| AFKVanillaFly | Elytra AFK flight using vanilla mechanics |
+| AutoEXPPlus | Automated XP bottle repair loop |
+| AutoLogPlus | Condition-based auto-logout |
+| AutoPortal | Automated nether portal construction |
+| AutoRegear | Restocks gear from stashes on death |
+| BaritoneElytraGoto | Baritone-powered elytra navigation |
+| BetterStashFinder | Xaero-integrated stash detection |
+| DiscordNotifs | Discord webhook alerts for in-game events |
+| ElytraFlyPlusPlus | Enhanced elytra flight controller |
+| GotoPosition | Walks in a straight line to coordinates |
+| HighlightOldLava | Highlights lava that indicates player activity |
+| LavaFlow | Detects flowing lava as evidence of nearby players |
+| LogoutCoords | Disconnects when a target XZ coordinate is reached |
+| NetherMobDetector | Flags overworld mobs in the Nether |
+| Pitch40Util | Maintains 40-degree pitch for efficient elytra flight |
+| PortalScanner | Classifies nether portal frames by type |
+| Search | ESP and alerts for high-value dropped items |
+| TrailFollower | Follows chunk-load trails via Xaero |
+| VanityESP | ESP for players with custom render options |
+| WaypointFly | Sequentially flies to Xaero temporary waypoints |
+| YGoal | Gets to a target Y level via Baritone or elytra+rockets |
 
-## Contributions
-We will review and help with all reasonable pull requests as long as the guidelines below are met.
+---
 
-- The license header must be applied to all java source code files.
-- IDE or system-related files should be added to the `.gitignore`, never committed in pull requests.
-- In general, check existing code to make sure your code matches relatively close to the code already in the project.
-- Favour readability over compactness.
-- If you need help, check out the [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html) for a reference.
+## Building
 
-## Bugs and Suggestions
-Bug reports and suggestions should be made in this repo's [issue tracker](https://github.com/MeteorDevelopment/meteor-client/issues) using the templates provided.  
-Please provide as much information as you can to best help us understand your issue and give a better chance of it being resolved.
+Requirements: Java 21, Git
 
-## Donations
-All of our work is completely free and non-profit (donations pay only for hosting costs), therefore we are very grateful for all donations made to support us in running our community.  
-Donations can be made via our [website](https://meteorclient.com/donate) and the minimum amount to get donor benefits is €5.  
-You will be rewarded with a role on our Discord server and a customisable in-game cape.  
-⚠️ _Make sure to create a Meteor account and link your Discord and Minecraft accounts to fully experience your rewards._ ⚠️
+```bash
+git clone <repo-url>
+cd mizu-client
+./gradlew build
+```
 
-## Credits
-[Cabaletta](https://github.com/cabaletta) and [WagYourTail](https://github.com/wagyourtail) for [Baritone](https://github.com/cabaletta/baritone)  
-The [Fabric Team](https://github.com/FabricMC) for [Fabric](https://github.com/FabricMC/fabric-loader) and [Yarn](https://github.com/FabricMC/yarn)
+The output jar is in `build/libs/`. Install it as a Fabric mod alongside Fabric Loader and Fabric API for Minecraft 1.21.5.
 
-## Licensing
-This project is licensed under the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.en.html). 
+### Optional dependencies
+- [Baritone](https://github.com/cabaletta/baritone) — required by AutoRegear, BaritoneElytraGoto, ElytraFlyPlusPlus, TrailFollower, YGoal (Baritone mode)
+- [Xaero's Minimap](https://www.curseforge.com/minecraft/mc-mods/xaeros-minimap) — required by BetterStashFinder, WaypointFly
 
-If you use **ANY** code from the source:
-- You must disclose the source code of your modified work and the source code you took from this project. This means you are not allowed to use code from this project (even partially) in a closed-source and/or obfuscated application.
-- You must state clearly and obviously to all end users that you are using code from this project.
-- Your application must also be licensed under the same license.
+---
 
-*If you have any other questions, reach out to the Mizu team.*
+## License
+
+Licensed under the [GNU General Public License v3.0](LICENSE).
+
+Based on [Meteor Client](https://github.com/MeteorDevelopment/meteor-client) by MeteorDevelopment.  
+[Baritone](https://github.com/cabaletta/baritone) by Cabaletta and WagYourTail.  
+[Fabric](https://github.com/FabricMC/fabric-loader) and [Yarn](https://github.com/FabricMC/yarn) by the Fabric Team.
