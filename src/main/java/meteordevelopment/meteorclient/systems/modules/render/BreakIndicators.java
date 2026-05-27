@@ -1,0 +1,304 @@
+/*
+ * This file is part of the Meteor Client distribution
+ * (https://github.com/MeteorDevelopment/meteor-client). Copyright (c) Meteor Development.
+ */
+
+package meteordevelopment.meteorclient.systems.modules.render;
+
+import meteordevelopment.meteorclient.events.packets.PacketEvent;
+import meteordevelopment.meteorclient.events.render.Render3DEvent;
+import meteordevelopment.meteorclient.renderer.ShapeMode;
+import meteordevelopment.meteorclient.settings.*;
+import meteordevelopment.meteorclient.systems.friends.Friends;
+import meteordevelopment.meteorclient.systems.modules.Categories;
+import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.utils.player.FindItemResult;
+import meteordevelopment.meteorclient.utils.player.InvUtils;
+import meteordevelopment.meteorclient.utils.render.RenderUtils;
+import meteordevelopment.meteorclient.utils.render.color.Color;
+import meteordevelopment.meteorclient.utils.render.color.SettingColor;
+import meteordevelopment.meteorclient.utils.world.BlockUtils;
+import meteordevelopment.orbit.EventHandler;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.packet.s2c.play.BlockBreakingProgressS2CPacket;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.shape.VoxelShape;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Collectors;
+
+public class BreakIndicators extends Module {
+    private final SettingGroup sgGeneral = settings.getDefaultGroup();
+    private final SettingGroup sgRender = settings.createGroup("Render");
+
+    private final Setting<Double> rebreakCompletionAmount = sgGeneral.add(new DoubleSetting.Builder()
+            .name("rebreak-completion-amount").description(
+                    "Determines how fast rendering increases of a suspected rebreak block. Smaller is faster.")
+            .defaultValue(0.7).min(0).sliderMax(1.5).build());
+
+    private final Setting<Double> completionAmount = sgGeneral
+            .add(new DoubleSetting.Builder().name("full-completion-amount")
+                    .description("Determines how fast rendering increases. Smaller is faster.")
+                    .defaultValue(1.0).min(0).sliderMax(1.5).build());
+
+    private final Setting<Double> removeCompletionAmount = sgGeneral.add(new DoubleSetting.Builder()
+            .name("force-remove-completion-amount")
+            .description(
+                    "Determines how long it takes to forcibly remove a block from being rendered.")
+            .defaultValue(1.3).min(0.0).sliderMax(1.5).build());
+
+    private final Setting<Boolean> ignoreFriends = sgGeneral.add(new BoolSetting.Builder()
+            .name("ignore-friends").description("Doesn't render blocks that friends are breaking.")
+            .defaultValue(false).build());
+
+    private final Setting<Boolean> render = sgRender.add(new BoolSetting.Builder().name("do-render")
+            .description("Renders the blocks in queue to be broken.").defaultValue(true).build());
+
+    private final Setting<Boolean> useDoubleminePrediction = sgRender
+            .add(new BoolSetting.Builder().name("use-doublemine-predicition")
+                    .description("Does some fancy stuff to make indicators more accurate.")
+                    .defaultValue(false).build());
+
+    private final Setting<ShapeMode> shapeMode = sgRender.add(new EnumSetting.Builder<ShapeMode>()
+            .name("shape-mode").description("How the shapes are rendered.")
+            .defaultValue(ShapeMode.Both).visible(render::get).build());
+
+    private final Setting<SettingColor> sideColor = sgRender.add(new ColorSetting.Builder()
+            .name("side-color").description("The side color of the rendering.")
+            .defaultValue(new SettingColor(255, 0, 80, 10))
+            .visible(() -> render.get() && shapeMode.get().sides()).build());
+
+    private final Setting<SettingColor> lineColor = sgRender.add(new ColorSetting.Builder()
+            .name("line-color").description("The line color of the rendering.")
+            .defaultValue(new SettingColor(255, 255, 255, 40))
+            .visible(() -> render.get() && shapeMode.get().lines()).build());
+
+    private final Queue<BlockBreak> _breakPackets = new ConcurrentLinkedQueue<>();
+
+    public final Map<BlockPos, BlockBreak> breakStartTimes = new HashMap<>();
+    private final Map<BlockPos, BlockBreak> predictedDoublemine = new HashMap<>();
+
+    public BreakIndicators() {
+        super(Categories.Render, "break-indicators",
+                "Renders the progress of a block being broken.");
+    }
+
+    @EventHandler
+    private void onPacket(PacketEvent.Receive event) {
+        if (event.packet instanceof BlockBreakingProgressS2CPacket packet) {
+            Entity entity = mc.world.getEntityById(packet.getEntityId());
+
+            _breakPackets.add(new BlockBreak(packet.getPos(),
+                    RenderUtils.getCurrentGameTickCalculated(), entity));
+        }
+    }
+
+    public boolean isBlockBeingBroken(BlockPos blockPos) {
+        return breakStartTimes.containsKey(blockPos);
+    }
+
+    public boolean isBeingDoublemined(BlockPos blockPos) {
+        return predictedDoublemine.containsKey(blockPos);
+    }
+
+    public PlayerEntity getPlayerDoubleminingBlock(BlockPos blockPos) {
+        return (PlayerEntity)predictedDoublemine.get(blockPos).entity;
+    }
+
+    public double getBlockProgress(BlockPos blockPos) {
+        if (!breakStartTimes.containsKey(blockPos)) {
+            return 0.0;
+        }
+
+        return breakStartTimes.get(blockPos).getBreakProgress(RenderUtils.getCurrentGameTickCalculated());
+    }
+
+    @EventHandler
+    private void onRender(Render3DEvent event) {
+        double currentGameTickCalculated = RenderUtils.getCurrentGameTickCalculated();
+
+        // Concurrent queue implementation to not have to block the networking thread
+        while (!_breakPackets.isEmpty()) {
+            BlockBreak breakEvent = _breakPackets.remove();
+
+            if (breakEvent.entity != null && breakEvent.entity instanceof PlayerEntity) {
+                List<BlockBreak> playerBreakingBlocks = breakStartTimes.values().stream()
+                        .filter(x -> x.entity == breakEvent.entity
+                                && !x.blockPos.equals(breakEvent.blockPos))
+                        .sorted((block1, block2) -> Double.compare(block1.startTick,
+                                block2.startTick))
+                        .toList();
+
+                // Only remove the oldest block if player is breaking 3+ blocks (more permissive for double mining)
+                if (playerBreakingBlocks.size() >= 3) {
+                    BlockBreak oldestBlock = playerBreakingBlocks.get(0);
+                    // Only remove if the block is significantly progressed or very old
+                    double oldestProgress = oldestBlock.getBreakProgress(currentGameTickCalculated);
+                    if (oldestProgress > 0.8) {
+                        predictedDoublemine.remove(oldestBlock.blockPos);
+                    }
+                }
+            }
+
+            if (!breakStartTimes.containsKey(breakEvent.blockPos)) {
+                breakStartTimes.put(breakEvent.blockPos, breakEvent);
+            }
+
+            // Always add to predictedDoublemine if not present
+            if (!predictedDoublemine.containsKey(breakEvent.blockPos)) {
+                predictedDoublemine.put(breakEvent.blockPos, breakEvent);
+            }
+        }
+
+        Iterator<Map.Entry<BlockPos, BlockBreak>> iterator = breakStartTimes.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<BlockPos, BlockBreak> entry = iterator.next();
+            // Remove block if it is
+            // - Air (broken)
+            // - Past removeCompletionAmount
+            // - Can't be broken (such as water)
+            if (mc.world.getBlockState(entry.getKey()).isAir()
+                    || entry.getValue().getBreakProgress(
+                            currentGameTickCalculated) > removeCompletionAmount.get()
+                    || !BlockUtils.canBreak(entry.getKey())) {
+
+                iterator.remove();
+
+                continue;
+            }
+        }
+
+        iterator = predictedDoublemine.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<BlockPos, BlockBreak> entry = iterator.next();
+            // Remove block if it is
+            // - Air (broken)
+            // - Past removeCompletionAmount
+            // - Can't be broken (such as water)
+            if (mc.world.getBlockState(entry.getKey()).isAir()
+                    || entry.getValue().getBreakProgress(
+                            currentGameTickCalculated) > removeCompletionAmount.get()
+                    || !BlockUtils.canBreak(entry.getKey())) {
+
+                iterator.remove();
+
+                continue;
+            }
+        }
+
+        if (useDoubleminePrediction.get()) {
+            for (Map.Entry<BlockPos, BlockBreak> entry : predictedDoublemine.entrySet()) {
+                if (ignoreFriends.get() && entry.getValue().entity != null
+                        && entry.getValue().entity instanceof PlayerEntity player
+                        && Friends.get().isFriend(player)) {
+                    continue;
+                }
+
+                entry.getValue().renderBlock(event, currentGameTickCalculated);
+            }
+        } else {
+            for (Map.Entry<BlockPos, BlockBreak> entry : breakStartTimes.entrySet()) {
+                if (ignoreFriends.get() && entry.getValue().entity != null
+                        && entry.getValue().entity instanceof PlayerEntity player
+                        && Friends.get().isFriend(player)) {
+                    continue;
+                }
+
+                entry.getValue().renderBlock(event, currentGameTickCalculated);
+            }
+        }
+
+        Map<PlayerEntity, List<BlockBreak>> doublemineBreakingBlocks = predictedDoublemine.values()
+                // Sort by time
+                .stream().sorted(Comparator.comparingDouble(blockBreak -> blockBreak.startTick))
+                .filter(blockBreak -> blockBreak.entity instanceof PlayerEntity)
+                // Collect entities
+                .collect(Collectors.groupingBy(blockBreak -> (PlayerEntity) blockBreak.entity,
+                        Collectors.toList()));
+
+        for (Map.Entry<PlayerEntity, List<BlockBreak>> entry : doublemineBreakingBlocks.entrySet()) {
+            entry.getValue().forEach(x -> x.isRebreak = false);
+
+            if (entry.getValue().size() >= 2) {
+                entry.getValue().getLast().isRebreak = true;
+            }
+        }
+    }
+
+    public class BlockBreak {
+        public BlockPos blockPos;
+
+        public double startTick;
+
+        public Entity entity;
+
+        public boolean isRebreak = false;
+
+        public BlockBreak(BlockPos blockPos, double startTick, Entity entity) {
+            this.blockPos = blockPos;
+            this.startTick = startTick;
+            this.entity = entity;
+        }
+
+        public void renderBlock(Render3DEvent event, double currentTick) {
+            VoxelShape shape = mc.world.getBlockState(blockPos).getOutlineShape(mc.world, blockPos);
+            if (shape == null || shape.isEmpty()) {
+                event.renderer.box(blockPos, sideColor.get(), lineColor.get(), shapeMode.get(), 0);
+                return;
+            }
+
+            Box orig = shape.getBoundingBox();
+
+            double completion = isRebreak ? rebreakCompletionAmount.get() : completionAmount.get();
+
+            double shrinkFactor = Math.clamp(1d - (getBreakProgress(currentTick) * (1 / completion)), 0, 1.0);
+            BlockPos pos = blockPos;
+
+            Box box = orig.shrink(orig.getLengthX() * shrinkFactor,
+                    orig.getLengthY() * shrinkFactor, orig.getLengthZ() * shrinkFactor);
+
+            double xShrink = (orig.getLengthX() * shrinkFactor) / 2;
+            double yShrink = (orig.getLengthY() * shrinkFactor) / 2;
+            double zShrink = (orig.getLengthZ() * shrinkFactor) / 2;
+
+            double x1 = pos.getX() + box.minX + xShrink;
+            double y1 = pos.getY() + box.minY + yShrink;
+            double z1 = pos.getZ() + box.minZ + zShrink;
+            double x2 = pos.getX() + box.maxX + xShrink;
+            double y2 = pos.getY() + box.maxY + yShrink;
+            double z2 = pos.getZ() + box.maxZ + zShrink;
+
+            Color color = sideColor.get();
+
+            event.renderer.box(x1, y1, z1, x2, y2, z2, color, lineColor.get(), shapeMode.get(), 0);
+        }
+
+        public double getBreakProgress(double currentTick) {
+            BlockState state = mc.world.getBlockState(blockPos);
+
+            FindItemResult slot = InvUtils.findFastestToolHotbar(mc.world.getBlockState(blockPos));
+
+            double breakingSpeed = BlockUtils.getBlockBreakingSpeed(
+                    slot.found() ? slot.slot() : mc.player.getInventory().getSelectedSlot(), state, true);
+
+            // Apply SilentMine speed-percentage adjustment if the local player is breaking this block
+            if (entity == mc.player) {
+                meteordevelopment.meteorclient.systems.modules.player.SilentMine silentMine = 
+                    meteordevelopment.meteorclient.systems.modules.Modules.get()
+                        .get(meteordevelopment.meteorclient.systems.modules.player.SilentMine.class);
+                
+                if (silentMine != null && silentMine.isActive()) {
+                    double speedMultiplier = silentMine.speedPercentage.get() / 100.0;
+                    breakingSpeed = breakingSpeed / speedMultiplier;
+                }
+            }
+
+            return BlockUtils.getBreakDelta(breakingSpeed, state)
+                    * (double) (currentTick - startTick);
+        }
+    }
+}
