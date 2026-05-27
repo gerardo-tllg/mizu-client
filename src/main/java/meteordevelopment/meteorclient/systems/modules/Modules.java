@@ -627,6 +627,7 @@ public class Modules extends System<Modules> {
         if (net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("xaerominimap")) {
             try {
                 add(new meteordevelopment.meteorclient.systems.modules.hunting.BetterStashFinder());
+                add(new meteordevelopment.meteorclient.systems.modules.hunting.WaypointFly());
             } catch (Throwable e) {
                 MeteorClient.LOG.error("Failed to load Xaero's Minimap-dependent hunting modules", e);
             }
@@ -636,6 +637,7 @@ public class Modules extends System<Modules> {
         add(new meteordevelopment.meteorclient.systems.modules.hunting.GotoPosition());
         add(new meteordevelopment.meteorclient.systems.modules.hunting.HighlightOldLava());
         add(new meteordevelopment.meteorclient.systems.modules.hunting.LavaFlow());
+        add(new meteordevelopment.meteorclient.systems.modules.hunting.LogoutCoords());
         add(new meteordevelopment.meteorclient.systems.modules.hunting.NetherMobDetector());
         add(new meteordevelopment.meteorclient.systems.modules.hunting.Pitch40Util());
         add(new meteordevelopment.meteorclient.systems.modules.hunting.PortalScanner());
