@@ -33,6 +33,11 @@ import meteordevelopment.meteorclient.utils.misc.Keybind;
 import meteordevelopment.meteorclient.utils.misc.Pool;
 import meteordevelopment.meteorclient.utils.player.FindItemResult;
 import meteordevelopment.meteorclient.utils.player.InvUtils;
+import meteordevelopment.meteorclient.events.world.TickEvent;
+import meteordevelopment.meteorclient.events.packets.PacketEvent;
+import meteordevelopment.meteorclient.settings.IntSetting;
+import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
+import net.minecraft.network.packet.s2c.play.ChunkDeltaUpdateS2CPacket;
 import meteordevelopment.orbit.EventHandler;
 import meteordevelopment.orbit.EventPriority;
 import net.minecraft.block.Block;
@@ -40,6 +45,8 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.EndCrystalEntity;
+import meteordevelopment.meteorclient.systems.modules.combat.predict.CrystalPredictor;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket;
@@ -108,6 +115,22 @@ public class AutoCrystal extends Module {
     private long lastBreakTimeMS;
     private AutoMine autoMine;
     private Set<BlockPos> _calcIgnoreSet;
+    private int tickCounter = 0;
+    private boolean placeThisTick = false;
+    private boolean breakThisTick = false;
+    private Vec3d lastCachePlayerPos = null;
+    private boolean cacheIsDirty = true;
+    private final Setting<Boolean> prediction;
+    private final Setting<Integer> predictionTicks;
+    private final Setting<Boolean> useKalman;
+    private final Setting<Boolean> useMarkov;
+    private final Setting<Boolean> useKNN;
+    private final Setting<Boolean> showPrediction;
+    private final Setting<Boolean> dynamicPingCompensation;
+    private final Setting<Double> predictBlockThreshold;
+    private final Setting<Boolean> showPingDebug;
+    private final CrystalPredictor crystalPredictor;
+    public Vec3d lastPredictedPos = null;
 
     public AutoCrystal() {
         super(Categories.Combat, "auto-crystal", "Automatically places and attacks crystals.");
@@ -143,6 +166,32 @@ public class AutoCrystal extends Module {
             .name("anti-surround").description("Ignores auto-mine blocks from calculations to place outside of their surround.").defaultValue(true).build());
         this.placeDelay = this.sgPlace.add(new DoubleSetting.Builder()
             .name("place-delay").description("The number of seconds to wait to retry placing a crystal at a position.").defaultValue(0.05).min(0.0).sliderMax(0.6).build());
+        this.prediction = this.sgPlace.add(new BoolSetting.Builder()
+            .name("prediction").description("Predicts target movement when selecting place positions.").defaultValue(true).build());
+        this.predictionTicks = this.sgPlace.add(new IntSetting.Builder()
+            .name("prediction-ticks").description("Ticks ahead to predict target position. Default 2 is correct for ~80ms ping.").defaultValue(2).min(1).sliderRange(1, 4)
+            .visible(() -> this.prediction.get()).build());
+        this.useKalman = this.sgPlace.add(new BoolSetting.Builder()
+            .name("use-kalman").description("Use Kalman filter prediction layer.").defaultValue(true)
+            .visible(() -> this.prediction.get()).build());
+        this.useMarkov = this.sgPlace.add(new BoolSetting.Builder()
+            .name("use-markov").description("Use Markov behavior model layer.").defaultValue(true)
+            .visible(() -> this.prediction.get()).build());
+        this.useKNN = this.sgPlace.add(new BoolSetting.Builder()
+            .name("use-knn").description("Use KNN pattern matching layer (needs warmup).").defaultValue(false)
+            .visible(() -> this.prediction.get()).build());
+        this.showPrediction = this.sgPlace.add(new BoolSetting.Builder()
+            .name("show-prediction").description("Render predicted target position.").defaultValue(false)
+            .visible(() -> this.prediction.get()).build());
+        this.dynamicPingCompensation = this.sgPlace.add(new BoolSetting.Builder()
+            .name("dynamic-ping").description("Use Jacobson/Karels RTT estimation to auto-calculate prediction ticks from smoothed latency with jitter resistance.").defaultValue(true)
+            .visible(() -> this.prediction.get()).build());
+        this.predictBlockThreshold = this.sgPlace.add(new DoubleSetting.Builder()
+            .name("predict-threshold").description("Extra radius (blocks) around the explosion zone accepted when placing at a predicted position.").defaultValue(0.5).min(0.1).sliderRange(0.1, 2.0)
+            .visible(() -> this.prediction.get()).build());
+        this.showPingDebug = this.sgPlace.add(new BoolSetting.Builder()
+            .name("show-ping-debug").description("Show smoothed RTT, deviation, and prediction ticks in the module info string.").defaultValue(false)
+            .visible(() -> this.prediction.get()).build());
 
         this.facePlaceMissingArmor = this.sgFacePlace.add(new BoolSetting.Builder()
             .name("face-place-missing-armor").description("Face places on missing armor").defaultValue(true).build());
@@ -197,6 +246,7 @@ public class AutoCrystal extends Module {
         this.lastPlaceTimeMS = 0L;
         this.lastBreakTimeMS = 0L;
         this._calcIgnoreSet = new HashSet<>();
+        this.crystalPredictor = new CrystalPredictor();
     }
 
     @Override
@@ -208,6 +258,11 @@ public class AutoCrystal extends Module {
         crystalBreakDelays.clear();
         crystalPlaceDelays.clear();
         renderer.onActivate();
+        crystalPredictor.reset();
+        lastPredictedPos = null;
+        cacheIsDirty = true;
+        lastCachePlayerPos = null;
+        tickCounter = 0;
     }
 
     private void update() {
@@ -245,18 +300,29 @@ public class AutoCrystal extends Module {
         }
 
         if (breakCrystals.get() && !(pauseEatBreak.get() && mc.player.isUsingItem())) {
+            List<Entity> breakCandidates = new ArrayList<>();
             for (Entity entity : mc.world.getEntities()) {
                 if (!(entity instanceof EndCrystalEntity)) continue;
                 if (!inBreakRange(entity.getPos())) continue;
                 if (!shouldBreakCrystal(entity)) continue;
-                if (!breakSpeedCheck() || (!breakCrystal(entity) && rotateBreak.get() && !MeteorClient.ROTATION.lookingAt(entity.getBoundingBox()))) {
-                    break;
+                breakCandidates.add(entity);
+            }
+            breakCandidates.sort((a, b) -> Double.compare(getMaxTargetDamage(b), getMaxTargetDamage(a)));
+
+            for (Entity entity : breakCandidates) {
+                if (breakThisTick) break;
+                if (!breakSpeedCheck()) continue;
+                if (rotateBreak.get() && !MeteorClient.ROTATION.lookingAt(entity.getBoundingBox())) {
+                    MeteorClient.ROTATION.requestRotation(entity.getPos(), 10.0);
+                    continue;
                 }
+                breakCrystal(entity);
             }
         }
     }
 
     public boolean placeCrystal(BlockPos blockPos) {
+        if (placeThisTick || CrystalTickBudget.placeUsed) return false;
         if (blockPos == null || mc.player == null) return false;
 
         BlockPos crystalBlockPos = blockPos.up();
@@ -297,10 +363,13 @@ public class AutoCrystal extends Module {
         if (placeSwingMode.get() == SwingMode.Packet) mc.getNetworkHandler().sendPacket(new HandSwingC2SPacket(hand));
 
         MeteorClient.SWAP.endSwap(true);
+        placeThisTick = true;
+        CrystalTickBudget.placeUsed = true;
         return true;
     }
 
     public boolean breakCrystal(Entity entity) {
+        if (breakThisTick || CrystalTickBudget.breakUsed) return false;
         if (mc.player == null) return false;
 
         if (rotateBreak.get()) {
@@ -325,6 +394,8 @@ public class AutoCrystal extends Module {
 
         explodedCrystals.add(entity.getId());
         lastBreakTimeMS = System.currentTimeMillis();
+        breakThisTick = true;
+        CrystalTickBudget.breakUsed = true;
         return true;
     }
 
@@ -372,7 +443,28 @@ public class AutoCrystal extends Module {
                     BlockPos pos = mutablePos.set(ex + x, ey + y, ez + z);
                     // pos is the air block; explosion center is at (pos.x+0.5, pos.y, pos.z+0.5)
                     Vec3d crystalCenter = new Vec3d(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
-                    double targetDamage = DamageUtils.crystalDamage(target, crystalCenter);
+                    double targetDamage;
+                    if (prediction.get()) {
+                        Vec3d predictedPos = crystalPredictor.predictSafe(target, predictionTicks.get());
+                        lastPredictedPos = predictedPos;
+                        Vec3d posOffset = predictedPos.subtract(target.getPos());
+                        float damageAtPredicted = DamageUtils.crystalDamage(target, predictedPos, target.getBoundingBox().offset(posOffset), crystalCenter, DamageUtils.HIT_FACTORY);
+                        float damageAtCurrent = DamageUtils.crystalDamage(target, crystalCenter);
+                        double distToPredicted = crystalCenter.distanceTo(predictedPos);
+                        double effectiveThreshold = predictBlockThreshold.get();
+                        if (dynamicPingCompensation.get() && crystalPredictor.myPingTracker.isReady()) {
+                            double myOneWay     = crystalPredictor.myPingTracker.getSmoothedOneWayMs();
+                            double targetOneWay = crystalPredictor.targetPingTracker.getOneWayMs(target.getUuid());
+                            effectiveThreshold += (myOneWay + targetOneWay) / 1000.0;
+                        }
+                        if (distToPredicted <= 12.0 + effectiveThreshold) {
+                            targetDamage = Math.max(damageAtPredicted, damageAtCurrent);
+                        } else {
+                            targetDamage = damageAtCurrent;
+                        }
+                    } else {
+                        targetDamage = DamageUtils.crystalDamage(target, crystalCenter);
+                    }
 
                     boolean shouldSet = targetDamage >= (shouldFacePlace ? 1.0 : minPlace.get()) && targetDamage > bestPos.damage;
                     boolean isSlowPlacePos = false;
@@ -398,13 +490,7 @@ public class AutoCrystal extends Module {
     }
 
     private void cachedValidPlaceSpots() {
-        int r = (int) Math.floor(placeRange.get());
-        BlockPos eyePos = BlockPos.ofFloored(mc.player.getEyePos());
-        int ex = eyePos.getX();
-        int ey = eyePos.getY();
-        int ez = eyePos.getZ();
-        Box box = new Box(0, 0, 0, 0, 0, 0);
-
+        // Always refresh _calcIgnoreSet (fast, needed even on cache hit)
         _calcIgnoreSet.clear();
         if (antiSurroundPlace.get()) {
             SilentMine silentMine = Modules.get().get(SilentMine.class);
@@ -413,6 +499,18 @@ public class AutoCrystal extends Module {
                 if (silentMine.getRebreakBlockPos() != null) _calcIgnoreSet.add(silentMine.getRebreakBlockPos());
             }
         }
+
+        // Dirty flag — skip full rebuild if world unchanged and player hasn't moved significantly
+        if (!cacheIsDirty && lastCachePlayerPos != null && mc.player.getPos().distanceTo(lastCachePlayerPos) < 0.5) {
+            return;
+        }
+
+        int r = (int) Math.floor(placeRange.get());
+        BlockPos eyePos = BlockPos.ofFloored(mc.player.getEyePos());
+        int ex = eyePos.getX();
+        int ey = eyePos.getY();
+        int ez = eyePos.getZ();
+        Box box = new Box(0, 0, 0, 0, 0, 0);
 
         cachedValidSpots.clear();
         int totalSize = (2 * r + 1) * (2 * r + 1) * (2 * r + 1);
@@ -427,6 +525,7 @@ public class AutoCrystal extends Module {
                         Block downBlock = downState.getBlock();
                         if (!downState.isAir()
                             && (downBlock == Blocks.OBSIDIAN || downBlock == Blocks.BEDROCK)
+                            && !_calcIgnoreSet.contains(downPos.toImmutable())
                             && inPlaceRange(downPos)) {
                             ((IBox) box).meteor$set(
                                 downPos.getX(), downPos.getY() + 1, downPos.getZ(),
@@ -444,6 +543,8 @@ public class AutoCrystal extends Module {
                 }
             }
         }
+        lastCachePlayerPos = mc.player.getPos();
+        cacheIsDirty = false;
     }
 
     public void preplaceCrystal(BlockPos crystalBlockPos, boolean snapAt) {
@@ -496,6 +597,13 @@ public class AutoCrystal extends Module {
     @EventHandler(priority = EventPriority.HIGHEST)
     private void onEntity(EntityAddedEvent event) {
         Entity entity = event.entity;
+
+        // Initialize predictor for new living entities (players)
+        if (entity instanceof LivingEntity livingEntity && !(entity instanceof EndCrystalEntity)) {
+            crystalPredictor.onEntityUpdate(livingEntity);
+            return;
+        }
+
         if (!(entity instanceof EndCrystalEntity)) return;
 
         BlockPos blockPos = entity.getBlockPos().down();
@@ -509,11 +617,41 @@ public class AutoCrystal extends Module {
         }
     }
 
+    @EventHandler(priority = EventPriority.HIGH)
+    private void onTick(TickEvent.Pre event) {
+        if (!isActive() || mc.player == null || mc.world == null) return;
+        tickCounter++;
+        placeThisTick = false;
+        breakThisTick = false;
+        update();
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    private void onTickBudgetReset(TickEvent.Pre event) {
+        CrystalTickBudget.reset();
+        if (!isActive() || mc.player == null || mc.world == null) return;
+        crystalPredictor.useKalman            = useKalman.get();
+        crystalPredictor.useMarkov            = useMarkov.get();
+        crystalPredictor.useKNN               = useKNN.get();
+        crystalPredictor.accountForTargetPing = dynamicPingCompensation.get();
+        for (PlayerEntity player : mc.world.getPlayers()) {
+            if (player == mc.player) continue;
+            crystalPredictor.onEntityUpdate(player);
+        }
+        crystalPredictor.tick();
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST + 1)
     private void onRender3D(Render3DEvent event) {
         if (!isActive()) return;
-        update();
         renderer.onRender3D(event);
+    }
+
+    @EventHandler
+    private void onPacketReceive(PacketEvent.Receive event) {
+        if (event.packet instanceof BlockUpdateS2CPacket || event.packet instanceof ChunkDeltaUpdateS2CPacket) {
+            cacheIsDirty = true;
+        }
     }
 
     @EventHandler
@@ -544,13 +682,20 @@ public class AutoCrystal extends Module {
 
     public boolean isValidSpot(int x, int y, int z) {
         int r = (int) Math.floor(placeRange.get());
-        int index = (x + r) * 2 * r * 2 * r + (y + r) * 2 * r + z + r;
+        int stride = 2 * r + 1;
+        int index = (x + r) * stride * stride + (y + r) * stride + (z + r);
         if (index < 0 || index >= cachedValidSpots.size()) return false;
         return cachedValidSpots.get(index);
     }
 
     @Override
     public String getInfoString() {
+        if (showPingDebug.get() && crystalPredictor.myPingTracker.isReady()) {
+            return String.format("P:%d±%d T:%d",
+                (int) crystalPredictor.myPingTracker.smoothedRTT,
+                (int) crystalPredictor.myPingTracker.deviation,
+                crystalPredictor.lastPredictionTicks);
+        }
         long currentTime = System.currentTimeMillis();
         return String.format("%d", crystalBreakDelays.values().stream()
             .filter(x -> currentTime - x <= 1000L).count());
@@ -567,6 +712,17 @@ public class AutoCrystal extends Module {
     private int getSequence() {
         if (mc.world == null) return 0;
         return ((IClientWorld) mc.world).meteor$getAndIncrementSequence();
+    }
+
+    private double getMaxTargetDamage(Entity crystal) {
+        double max = 0;
+        for (PlayerEntity player : mc.world.getPlayers()) {
+            if (player == mc.player || player.isSpectator() || player.isDead() || Friends.get().isFriend(player)) continue;
+            if (player.squaredDistanceTo(mc.player.getEyePos()) > 196.0) continue;
+            double dmg = DamageUtils.crystalDamage(player, crystal.getPos());
+            if (dmg > max) max = dmg;
+        }
+        return max;
     }
 
     public enum SwingMode {
