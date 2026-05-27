@@ -19,11 +19,11 @@ public class MsgUtil {
     private final static Map<String, String> modulePrefixes = new HashMap<>();
 
     public static String getPrefix() {
-        return Formatting.DARK_GRAY + "[" + Formatting.GRAY + "MasterClient" + Formatting.DARK_GRAY + "]";
+        return Formatting.DARK_GRAY + "[" + Formatting.GRAY + "Mizu" + Formatting.DARK_GRAY + "]";
     }
 
     public static String getRawPrefix() {
-        return "[Stardust]";
+        return "[Mizu]";
     }
 
     public static String getRawPrefix(String module) {
@@ -33,14 +33,14 @@ public class MsgUtil {
     public static void initModulePrefixes() {
         for (Module module : Modules.get().getGroup(Categories.Misc)) {
             String name = module.name;
-            String color = "MasterClient";
+            String color = "Mizu";
             modulePrefixes.put(name, color);
         }
     }
 
     public static String getModulePrefix(String module) {
         if (!modulePrefixes.containsKey(module)) {
-            return Formatting.DARK_GRAY + "[MasterClient] " + 
+            return Formatting.DARK_GRAY + "[Mizu] " + 
                 Formatting.DARK_GRAY + "[" + Formatting.GRAY + Utils.nameToTitle(module) + Formatting.DARK_GRAY + "]";
         } else {
             return Formatting.DARK_GRAY + "[" + modulePrefixes.get(module) + "] " +

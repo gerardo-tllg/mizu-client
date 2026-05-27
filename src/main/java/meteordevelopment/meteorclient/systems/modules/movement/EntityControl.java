@@ -5,7 +5,7 @@
 
 package meteordevelopment.meteorclient.systems.modules.movement;
 
-//Created by _Synful 10/07/2020
+//Created by swavez
 
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.mixin.ClientPlayerEntityAccessor;

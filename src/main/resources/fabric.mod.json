@@ -1,18 +1,17 @@
 {
   "schemaVersion": 1,
-  "name": "ReviveClient",
+  "name": "Mizu",
   "id": "meteor-client",
   "version": "${version}",
-  "description": "ReviveClient - A powerful Minecraft utility mod.",
+  "description": "Mizu - A powerful Minecraft utility mod.",
   "authors": [
-    "Crownizzle",
-    "_Synful"
+    "swavez"
   ],
   "contact": {
-    "homepage": "https://reviveclient.com",
-    "issues": "https://github.com/ReviveClient/revive-client/issues",
-    "sources": "https://github.com/ReviveClient/revive-client",
-    "discord": "https://reviveclient.com/discord"
+    "homepage": "",
+    "issues": "",
+    "sources": "",
+    "discord": ""
   },
   "license": "GPL-3.0",
   "icon": "assets/meteor-client/icon.png",
@@ -40,7 +39,7 @@
     "meteor-client:commit": "${commit}",
     "modmenu": {
       "links": {
-        "modmenu.discord": "https://reviveclient.com/discord"
+        "modmenu.discord": ""
       }
     }
   },

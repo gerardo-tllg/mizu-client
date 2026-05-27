@@ -43,7 +43,7 @@ public class Playtime2b2t extends Command {
                         if (player == null) return;
                         player.sendMessage(
                             Text.of(
-                                "§8[§7MasterClient§8] §4Player not found§7."
+                                "§8[§7Mizu§8] §4Player not found§7."
                             ), false
                         );
                     } else {
@@ -63,9 +63,9 @@ public class Playtime2b2t extends Command {
 
                             long seconds = TimeUnit.SECONDS.toSeconds(playtimeSeconds);
 
-                            String cc = "MasterClient";
+                            String cc = "Mizu";
                             StringBuilder sb = new StringBuilder()
-                                .append("§8[§7MasterClient§8] §7")
+                                .append("§8[§7Mizu§8] §7")
                                 .append(cc).append(playerString).append("§7: ").append(cc);
                             if (days != 0) sb.append(days).append(" §7Days, ").append(cc);
                             if (hours != 0) sb.append(hours).append(" §7Hours, ").append(cc);

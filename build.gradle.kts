@@ -211,7 +211,7 @@ publishing {
     publications {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
-            artifactId = "meteor-client"
+            artifactId = "mizu-client"
 
             version = properties["minecraft_version"] as String + "-SNAPSHOT"
         }

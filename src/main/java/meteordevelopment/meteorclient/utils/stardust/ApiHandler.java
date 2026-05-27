@@ -24,7 +24,7 @@ public class ApiHandler {
         if (player != null) {
             player.sendMessage(
                 Text.of(
-                    "§8[§7MasterClient§8] §4An error occurred§7, §4please try again later or check §7latest.log §4for more info§7.."
+                    "§8[§7Mizu§8] §4An error occurred§7, §4please try again later or check §7latest.log §4for more info§7.."
                 ), false
             );
         }

@@ -242,7 +242,7 @@ public class BaritonePathManager implements IPathManager {
 
         @Override
         public String displayName0() {
-            return "MasterClient";
+            return "Mizu";
         }
     }
 }

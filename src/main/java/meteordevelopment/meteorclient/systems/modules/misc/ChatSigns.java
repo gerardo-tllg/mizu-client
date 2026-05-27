@@ -514,7 +514,7 @@ public class ChatSigns extends Module {
 
         StringBuilder txt = new StringBuilder();
         if (showOldSigns.get() && couldBeOld) {
-            txt.append("?8[?7MasterClient?8] ");
+            txt.append("?8[?7Mizu?8] ");
 
             txt.append("?8[?4Old?7..?a??8] ");
             if (chatFormat.get()) txt.append("\n     ");
@@ -522,7 +522,7 @@ public class ChatSigns extends Module {
             txt.append(oldSignColor.get().label).append(oldSignFormat.get().label)
                 .append(chatFormat.get() ? signText.replace("\n", "\n     ") : signText.trim());
         } else {
-            txt.append("?8[?7MasterClient?8]").append(chatFormat.get() ? "\n      " : " ");
+            txt.append("?8[?7Mizu?8]").append(chatFormat.get() ? "\n      " : " ");
             txt.append(color).append(format)
                 .append(chatFormat.get() ? signText.replace("\n", "\n     ") : signText.trim());
         }

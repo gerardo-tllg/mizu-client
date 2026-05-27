@@ -47,7 +47,7 @@ public class LastSeen2b2t extends Command {
                         if (player == null) return;
                         player.sendMessage(
                             Text.of(
-                                "§8[§7MasterClient§8] §4That player has not been seen§7..."
+                                "§8[§7Mizu§8] §4That player has not been seen§7..."
                             ), false
                         );
                     }else {
@@ -60,12 +60,12 @@ public class LastSeen2b2t extends Command {
                             ZonedDateTime zonedTime = instant.atZone(ZoneId.systemDefault());
                             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MMMM dd yyyy, HH:mm", Locale.US);
 
-                            String cc = "MasterClient";
+                            String cc = "Mizu";
                             String formattedTimestamp = String.join(" §r§7at "+cc+"§o", zonedTime.format(fmt).split(", "));
                             if (player != null) {
                                 player.sendMessage(
                                     Text.of(
-                                        "§8[§7MasterClient§8] §7"+cc
+                                        "§8[§7Mizu§8] §7"+cc
                                             + playerString + "§7 was last seen on "+cc + formattedTimestamp + "§7."
                                     ),false
                                 );

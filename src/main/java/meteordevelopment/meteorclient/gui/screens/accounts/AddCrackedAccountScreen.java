@@ -22,7 +22,7 @@ public class AddCrackedAccountScreen extends AddAccountScreen {
 
         // Name
         t.add(theme.label("Name: "));
-        WTextBox name = t.add(theme.textBox("", "_Synful8169", (text, c) ->
+        WTextBox name = t.add(theme.textBox("", "swavez", (text, c) ->
             // Username can't contain spaces
             c != ' '
         )).minWidth(400).expandX().widget();

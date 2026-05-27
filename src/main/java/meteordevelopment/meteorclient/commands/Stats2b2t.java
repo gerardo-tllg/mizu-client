@@ -43,13 +43,13 @@ public class Stats2b2t extends Command {
                 if (response.equals("204 Undocumented")) {
                     player.sendMessage(
                         Text.of(
-                            "§8[§7MasterClient§8] §4Player not found§7..."
+                            "§8[§7Mizu§8] §4Player not found§7..."
                         ), false
                     );
                 } else {
                     try {
                         Gson gson = new Gson();
-                        String cc = "MasterClient";
+                        String cc = "Mizu";
                         PlayerStats stats = gson.fromJson(response, PlayerStats.class);
 
                         Instant firstInstant = Instant.parse(stats.firstSeen);
@@ -135,7 +135,7 @@ public class Stats2b2t extends Command {
                         String kdRatioString = String.valueOf((float) stats.killCount / (float) stats.deathCount);
                         player.sendMessage(
                             Text.of(
-                                "§8[§7MasterClient§8] §7Stats for "+cc + playerString + "§7:\n"
+                                "§8[§7Mizu§8] §7Stats for "+cc + playerString + "§7:\n"
                                 + "    §7Joins: "+cc+stats.joinCount+"\n    §7Leaves: "+cc+stats.leaveCount
                                 + "\n    §7K/D Ratio: "+cc+kdRatioString
                                 + "\n    §7Chats: "+cc+stats.chatsCount+"\n    §7Prio: "+cc+stats.prio

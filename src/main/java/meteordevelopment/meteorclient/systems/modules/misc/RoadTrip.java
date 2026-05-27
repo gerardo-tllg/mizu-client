@@ -506,7 +506,7 @@ public class RoadTrip extends Module {
                 totalSeconds -= TimeUnit.MINUTES.toSeconds(minutes);
 
                 long seconds = TimeUnit.SECONDS.toSeconds((long) totalSeconds);
-                StringBuilder sb = new StringBuilder().append("MasterClient").append("?8<?a?o??r?8> ?7?oETA: ?2?o");
+                StringBuilder sb = new StringBuilder().append("Mizu").append("?8<?a?o??r?8> ?7?oETA: ?2?o");
 
                 if (days == 0 && hours == 0 && minutes == 0 && seconds <= 3) {
                     if (totalBlocksLeft <= 69) {
