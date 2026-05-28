@@ -60,7 +60,7 @@ public class PlayerUtils {
         }*/
 
         if (Config.get().useTeamColor.get() && !color
-                .set(TextUtils.getMostPopularColor(entity.getDisplayName())).equals(WHITE)) {
+            .set(TextUtils.getMostPopularColor(entity.getDisplayName())).equals(WHITE)) {
             return color.a(defaultColor.a);
         }
 
@@ -120,7 +120,7 @@ public class PlayerUtils {
         mc.player.setPosition(x, mc.player.getY(), z);
         // In 1.21.5, PositionAndOnGround constructor requires horizontalCollision parameter
         mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(
-                mc.player.getX(), mc.player.getY(), mc.player.getZ(), mc.player.isOnGround(), mc.player.horizontalCollision));
+            mc.player.getX(), mc.player.getY(), mc.player.getZ(), mc.player.isOnGround(), mc.player.horizontalCollision));
     }
 
     public static boolean canSeeEntity(Entity entity) {
@@ -131,23 +131,23 @@ public class PlayerUtils {
             mc.player.getZ());
         ((IVec3d) vec2).meteor$set(entity.getX(), entity.getY(), entity.getZ());
         boolean canSeeFeet = mc.world
-                .raycast(new RaycastContext(vec1, vec2, RaycastContext.ShapeType.COLLIDER,
-                        RaycastContext.FluidHandling.NONE, mc.player))
-                .getType() == HitResult.Type.MISS;
+            .raycast(new RaycastContext(vec1, vec2, RaycastContext.ShapeType.COLLIDER,
+                RaycastContext.FluidHandling.NONE, mc.player))
+            .getType() == HitResult.Type.MISS;
 
         ((IVec3d) vec2).meteor$set(entity.getX(), entity.getY() + entity.getStandingEyeHeight(),
             entity.getZ());
         boolean canSeeEyes = mc.world
-                .raycast(new RaycastContext(vec1, vec2, RaycastContext.ShapeType.COLLIDER,
-                        RaycastContext.FluidHandling.NONE, mc.player))
-                .getType() == HitResult.Type.MISS;
+            .raycast(new RaycastContext(vec1, vec2, RaycastContext.ShapeType.COLLIDER,
+                RaycastContext.FluidHandling.NONE, mc.player))
+            .getType() == HitResult.Type.MISS;
 
         return canSeeFeet || canSeeEyes;
     }
 
     public static float[] calculateAngle(Vec3d target) {
         Vec3d eyesPos = new Vec3d(mc.player.getX(),
-                mc.player.getY() + mc.player.getEyeHeight(mc.player.getPose()), mc.player.getZ());
+            mc.player.getY() + mc.player.getEyeHeight(mc.player.getPose()), mc.player.getZ());
 
         double dX = target.x - eyesPos.x;
         double dY = (target.y - eyesPos.y) * -1.0D;
@@ -156,21 +156,21 @@ public class PlayerUtils {
         double dist = Math.sqrt(dX * dX + dZ * dZ);
 
         return new float[] {
-                (float) MathHelper.wrapDegrees(Math.toDegrees(Math.atan2(dZ, dX)) - 90.0D),
-                (float) MathHelper.wrapDegrees(Math.toDegrees(Math.atan2(dY, dist)))};
+            (float) MathHelper.wrapDegrees(Math.toDegrees(Math.atan2(dZ, dX)) - 90.0D),
+            (float) MathHelper.wrapDegrees(Math.toDegrees(Math.atan2(dY, dist)))};
     }
 
     public static boolean shouldPause(boolean ifBreaking, boolean ifEating, boolean ifDrinking) {
         if (ifBreaking && mc.interactionManager.isBreakingBlock())
             return true;
         if (ifEating && (mc.player.isUsingItem() && (mc.player.getMainHandStack().getItem()
-                .getComponents().contains(DataComponentTypes.FOOD)
-                || mc.player.getOffHandStack().getItem().getComponents()
-                        .contains(DataComponentTypes.FOOD))))
+            .getComponents().contains(DataComponentTypes.FOOD)
+            || mc.player.getOffHandStack().getItem().getComponents()
+            .contains(DataComponentTypes.FOOD))))
             return true;
         return ifDrinking && (mc.player.isUsingItem()
-                && (mc.player.getMainHandStack().getItem() instanceof PotionItem
-                        || mc.player.getOffHandStack().getItem() instanceof PotionItem));
+            && (mc.player.getMainHandStack().getItem() instanceof PotionItem
+            || mc.player.getOffHandStack().getItem() instanceof PotionItem));
     }
 
     public static boolean isMoving() {
@@ -179,7 +179,7 @@ public class PlayerUtils {
 
     public static boolean isSprinting() {
         return mc.player.isSprinting()
-                && (mc.player.forwardSpeed != 0 || mc.player.sidewaysSpeed != 0);
+            && (mc.player.forwardSpeed != 0 || mc.player.sidewaysSpeed != 0);
     }
 
     public static boolean isInHole(boolean doubles) {
@@ -206,7 +206,7 @@ public class PlayerUtils {
                         continue;
 
                     BlockState blockState1 =
-                            mc.world.getBlockState(blockPos.offset(direction).offset(dir));
+                        mc.world.getBlockState(blockPos.offset(direction).offset(dir));
 
                     if (blockState1.getBlock().getBlastResistance() < 600) {
                         return false;
@@ -235,7 +235,7 @@ public class PlayerUtils {
                 }
                 // Check for players holding swords
                 else if (entity instanceof PlayerEntity player && !Friends.get().isFriend(player)
-                        && isWithin(entity, 5)) {
+                    && isWithin(entity, 5)) {
                     float attackDamage = DamageUtils.getAttackDamage(player, mc.player);
                     if (attackDamage > damageTaken)
                         damageTaken = attackDamage;
@@ -272,7 +272,7 @@ public class PlayerUtils {
     }
 
     public static double distance(double x1, double y1, double z1, double x2, double y2,
-            double z2) {
+                                  double z2) {
         return Math.sqrt(squaredDistance(x1, y1, z1, x2, y2, z2));
     }
 
@@ -305,7 +305,7 @@ public class PlayerUtils {
     }
 
     public static double squaredDistance(double x1, double y1, double z1, double x2, double y2,
-            double z2) {
+                                         double z2) {
         double f = x1 - x2;
         double g = y1 - y2;
         double h = z1 - z2;
@@ -334,7 +334,7 @@ public class PlayerUtils {
 
     public static double distanceToCamera(Entity entity) {
         return distanceToCamera(entity.getX(),
-                entity.getY() + entity.getEyeHeight(entity.getPose()), entity.getZ());
+            entity.getY() + entity.getEyeHeight(entity.getPose()), entity.getZ());
     }
 
     public static double squaredDistanceToCamera(double x, double y, double z) {
@@ -344,7 +344,7 @@ public class PlayerUtils {
 
     public static double squaredDistanceToCamera(Entity entity) {
         return squaredDistanceToCamera(entity.getX(),
-                entity.getY() + entity.getEyeHeight(entity.getPose()), entity.getZ());
+            entity.getY() + entity.getEyeHeight(entity.getPose()), entity.getZ());
     }
 
     public static boolean isWithinCamera(Entity entity, double r) {
@@ -377,7 +377,7 @@ public class PlayerUtils {
 
     public static boolean isWithinReach(double x, double y, double z) {
         return squaredDistance(mc.player.getX(), mc.player.getEyeY(), mc.player.getZ(), x, y,
-                z) <= mc.player.getBlockInteractionRange() * mc.player.getBlockInteractionRange();
+            z) <= mc.player.getBlockInteractionRange() * mc.player.getBlockInteractionRange();
     }
 
     public static Dimension getDimension() {
@@ -395,7 +395,7 @@ public class PlayerUtils {
         if (mc.player == null)
             return null;
         PlayerListEntry playerListEntry =
-                mc.getNetworkHandler().getPlayerListEntry(mc.player.getUuid());
+            mc.getNetworkHandler().getPlayerListEntry(mc.player.getUuid());
         if (playerListEntry == null)
             return null;
         return playerListEntry.getGameMode();
@@ -414,7 +414,7 @@ public class PlayerUtils {
             return 0;
 
         PlayerListEntry playerListEntry =
-                mc.getNetworkHandler().getPlayerListEntry(mc.player.getUuid());
+            mc.getNetworkHandler().getPlayerListEntry(mc.player.getUuid());
         if (playerListEntry == null)
             return 0;
         return playerListEntry.getLatency();
@@ -429,15 +429,15 @@ public class PlayerUtils {
             float f = MathHelper.sin(yaw * 0.017453292F);
             float g = MathHelper.cos(yaw * 0.017453292F);
             return new Vec3d(vec3d.x * (double) g - vec3d.z * (double) f, vec3d.y,
-                    vec3d.z * (double) g + vec3d.x * (double) f);
+                vec3d.z * (double) g + vec3d.x * (double) f);
         }
     }
 
     public static boolean silentSwapEquipChestplate() {
         if (mc.player.getEquippedStack(EquipmentSlot.CHEST).getItem()
-                .equals(Items.DIAMOND_CHESTPLATE)
-                || mc.player.getEquippedStack(EquipmentSlot.CHEST).getItem()
-                        .equals(Items.NETHERITE_CHESTPLATE)) {
+            .equals(Items.DIAMOND_CHESTPLATE)
+            || mc.player.getEquippedStack(EquipmentSlot.CHEST).getItem()
+            .equals(Items.NETHERITE_CHESTPLATE)) {
             return false;
         }
 
@@ -449,7 +449,7 @@ public class PlayerUtils {
         // If we have a chestplate in our hotbar, we can immediately swap
         if (hotbarChestplateSlot.found()) {
             mc.interactionManager.clickSlot(mc.player.playerScreenHandler.syncId, 6,
-                    hotbarChestplateSlot.slot(), SlotActionType.SWAP, mc.player);
+                hotbarChestplateSlot.slot(), SlotActionType.SWAP, mc.player);
             return true;
         }
 
@@ -473,15 +473,15 @@ public class PlayerUtils {
 
         // Move chestplate to hotbarSlot
         mc.interactionManager.clickSlot(mc.player.playerScreenHandler.syncId, inventorySlot.slot(),
-                hotbarSlot.found() ? hotbarSlot.slot() : 0, SlotActionType.SWAP, mc.player);
+            hotbarSlot.found() ? hotbarSlot.slot() : 0, SlotActionType.SWAP, mc.player);
 
         // Equip chestplate
         mc.interactionManager.clickSlot(mc.player.playerScreenHandler.syncId, 6,
-                hotbarSlot.found() ? hotbarSlot.slot() : 0, SlotActionType.SWAP, mc.player);
+            hotbarSlot.found() ? hotbarSlot.slot() : 0, SlotActionType.SWAP, mc.player);
 
         // Move old item back to hotbar slot
         mc.interactionManager.clickSlot(mc.player.playerScreenHandler.syncId, inventorySlot.slot(),
-                hotbarSlot.found() ? hotbarSlot.slot() : 0, SlotActionType.SWAP, mc.player);
+            hotbarSlot.found() ? hotbarSlot.slot() : 0, SlotActionType.SWAP, mc.player);
 
         return true;
     }
@@ -495,7 +495,7 @@ public class PlayerUtils {
 
         if (inventorySlot.found()) {
             mc.interactionManager.clickSlot(mc.player.playerScreenHandler.syncId, 6,
-                    inventorySlot.slot(), SlotActionType.SWAP, mc.player);
+                inventorySlot.slot(), SlotActionType.SWAP, mc.player);
             return true;
         }
 
@@ -503,6 +503,11 @@ public class PlayerUtils {
 
         if (!inventorySlot.found()) {
             return false;
+        }
+
+        if (!inventorySlot.isHotbar()) {
+            InvUtils.move().from(inventorySlot.slot()).toArmor(2);
+            return true;
         }
 
         FindItemResult hotbarSlot = InvUtils.findInHotbar(x -> {
@@ -514,15 +519,15 @@ public class PlayerUtils {
 
         // Move elytra to hotbarSlot
         mc.interactionManager.clickSlot(mc.player.playerScreenHandler.syncId, inventorySlot.slot(),
-                hotbarSlot.found() ? hotbarSlot.slot() : 0, SlotActionType.SWAP, mc.player);
+            hotbarSlot.found() ? hotbarSlot.slot() : 0, SlotActionType.SWAP, mc.player);
 
         // Equip elytra
         mc.interactionManager.clickSlot(mc.player.playerScreenHandler.syncId, 6,
-                hotbarSlot.found() ? hotbarSlot.slot() : 0, SlotActionType.SWAP, mc.player);
+            hotbarSlot.found() ? hotbarSlot.slot() : 0, SlotActionType.SWAP, mc.player);
 
         // Move old item back to hotbar slot
         mc.interactionManager.clickSlot(mc.player.playerScreenHandler.syncId, inventorySlot.slot(),
-                hotbarSlot.found() ? hotbarSlot.slot() : 0, SlotActionType.SWAP, mc.player);
+            hotbarSlot.found() ? hotbarSlot.slot() : 0, SlotActionType.SWAP, mc.player);
 
         return true;
     }
@@ -530,7 +535,7 @@ public class PlayerUtils {
     // Thanks Vasler
     public static boolean isPlayerPhased() {
         return mc.world.getBlockCollisions(mc.player, mc.player.getBoundingBox()).iterator()
-                .hasNext();
+            .hasNext();
     }
 
     public static boolean isPlayerPhased(PlayerEntity player) {

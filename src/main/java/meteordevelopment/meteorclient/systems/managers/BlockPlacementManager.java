@@ -6,6 +6,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
 import meteordevelopment.meteorclient.systems.config.AntiCheatConfig;
+import meteordevelopment.meteorclient.utils.player.FindItemResult;
+import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.meteorclient.utils.world.BlockUtils;
 import meteordevelopment.meteorclient.utils.world.TickRate;
 import meteordevelopment.orbit.EventHandler;
@@ -78,8 +80,19 @@ public class BlockPlacementManager {
         long currentTime = System.currentTimeMillis();
 
         if ((double) placeCooldowns.values().stream().filter(x -> currentTime - x <= 1000L).count()
-                >= (Double) antiCheatConfig.blocksPerSecondCap.get()) {
+            >= (Double) antiCheatConfig.blocksPerSecondCap.get()) {
             return false;
+        }
+
+        // Range check
+        if (mc.player != null) {
+            double maxRange = antiCheatConfig.blockPlaceRange.get() > 0
+                ? antiCheatConfig.blockPlaceRange.get()
+                : mc.player.getBlockInteractionRange();
+            double dist = Math.sqrt(blockPos.getSquaredDistance(mc.player.getEyePos()));
+            if (dist > maxRange) {
+                return false;
+            }
         }
 
         if (!checkPlacement(item, blockPos, state)) {
@@ -89,15 +102,45 @@ public class BlockPlacementManager {
         Direction dir = BlockUtils.getPlaceSide(blockPos);
         Vec3d hitPos = blockPos.toCenterPos();
         BlockPos neighbour;
+        Direction airPlaceDir = Direction.UP; // fallback
 
         if (dir == null) {
-            neighbour = blockPos;
+            // No adjacent solid block - find nearest solid block for best direction
+            double closestDist = Double.MAX_VALUE;
+            for (int range = 1; range <= 3; range++) {
+                for (Direction searchDir : Direction.values()) {
+                    BlockPos candidate = blockPos.offset(searchDir, range);
+                    if (!mc.world.getBlockState(candidate).isAir()) {
+                        double dist = candidate.getSquaredDistance(mc.player.getEyePos());
+                        if (dist < closestDist) {
+                            closestDist = dist;
+                            // If directly adjacent (range 1), use as real placement face
+                            if (range == 1) {
+                                dir = searchDir;
+                            }
+                            airPlaceDir = searchDir;
+                        }
+                    }
+                }
+                if (dir != null) break; // found adjacent block, use normal placement
+            }
+
+            if (dir != null) {
+                // Found adjacent block on extended search
+                neighbour = blockPos.offset(dir);
+                hitPos = hitPos.add(dir.getOffsetX() * 0.5, dir.getOffsetY() * 0.5, dir.getOffsetZ() * 0.5);
+            } else {
+                // True air place - use direction toward nearest solid block
+                neighbour = blockPos;
+            }
         } else {
             neighbour = blockPos.offset(dir);
             hitPos = hitPos.add(dir.getOffsetX() * 0.5, dir.getOffsetY() * 0.5, dir.getOffsetZ() * 0.5);
-            if (antiCheatConfig.blockRotatePlace.get()) {
-                MeteorClient.ROTATION.snapAt(hitPos);
-            }
+        }
+
+        // Rotate toward placement target for all placement modes
+        if (antiCheatConfig.blockRotatePlace.get()) {
+            MeteorClient.ROTATION.snapAt(hitPos);
         }
 
         Long lastPlaceTime = placeCooldowns.get(blockPos);
@@ -111,24 +154,49 @@ public class BlockPlacementManager {
 
         placeCooldowns.put(blockPos, currentTime);
 
-        boolean grimAirPlaceSwap = antiCheatConfig.blockPlaceAirPlace.get()
-                && (dir == null || antiCheatConfig.forceAirPlace.get());
+        boolean shouldAirPlace = dir == null || antiCheatConfig.forceAirPlace.get();
+        boolean useGrimAirPlace = antiCheatConfig.blockPlaceAirPlace.get() && shouldAirPlace;
+        boolean useMainHandAirPlace = !useGrimAirPlace && antiCheatConfig.mainHandAirPlace.get() && shouldAirPlace;
 
-        Hand placeHand = Hand.MAIN_HAND;
-        if (grimAirPlaceSwap) {
+        if (useGrimAirPlace) {
+            // Offhand swap exploit for Grim servers - bypass SwapManager, handle swap directly
+            // Find obsidian in hotbar and switch to it via raw packet
+            int origSlot = mc.player.getInventory().selectedSlot;
+            FindItemResult obsidianResult = InvUtils.findInHotbar(item);
+            if (obsidianResult.found() && obsidianResult.isHotbar()) {
+                mc.player.getInventory().selectedSlot = obsidianResult.slot();
+                mc.getNetworkHandler().sendPacket(new net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket(obsidianResult.slot()));
+            }
+
+            // Swap mainhand to offhand
             mc.getNetworkHandler().sendPacket(new PlayerActionC2SPacket(
-                    PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ORIGIN, Direction.DOWN));
-            placeHand = Hand.OFF_HAND;
-        }
+                PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ORIGIN, Direction.DOWN));
 
-        mc.getNetworkHandler().sendPacket(new PlayerInteractBlockC2SPacket(
-                placeHand,
-                new BlockHitResult(hitPos, dir == null ? Direction.DOWN : dir.getOpposite(), neighbour, false),
+            // Place from offhand
+            mc.getNetworkHandler().sendPacket(new PlayerInteractBlockC2SPacket(
+                Hand.OFF_HAND,
+                new BlockHitResult(hitPos, dir == null ? airPlaceDir : dir.getOpposite(), neighbour, false),
                 getSequence()));
 
-        if (grimAirPlaceSwap) {
+            // Swap offhand back to mainhand
             mc.getNetworkHandler().sendPacket(new PlayerActionC2SPacket(
-                    PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ORIGIN, Direction.DOWN));
+                PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ORIGIN, Direction.DOWN));
+
+            // Restore original slot
+            mc.player.getInventory().selectedSlot = origSlot;
+            mc.getNetworkHandler().sendPacket(new net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket(origSlot));
+        } else if (useMainHandAirPlace) {
+            // Raw packet air placement - bypasses client-side LOS check
+            mc.getNetworkHandler().sendPacket(new PlayerInteractBlockC2SPacket(
+                Hand.MAIN_HAND,
+                new BlockHitResult(hitPos, dir == null ? airPlaceDir : dir.getOpposite(), neighbour, false),
+                getSequence()));
+        } else {
+            // Normal raw packet placement against adjacent block
+            mc.getNetworkHandler().sendPacket(new PlayerInteractBlockC2SPacket(
+                Hand.MAIN_HAND,
+                new BlockHitResult(hitPos, dir == null ? airPlaceDir : dir.getOpposite(), neighbour, false),
+                getSequence()));
         }
 
         return true;
@@ -139,7 +207,7 @@ public class BlockPlacementManager {
     }
 
     public boolean checkPlacement(Item item, BlockPos blockPos, BlockState state) {
-        if (!antiCheatConfig.blockPlaceAirPlace.get() && getPlaceOnDirection(blockPos) == null) {
+        if (!antiCheatConfig.blockPlaceAirPlace.get() && !antiCheatConfig.mainHandAirPlace.get() && getPlaceOnDirection(blockPos) == null) {
             return false;
         }
         if (!state.isReplaceable()) {
@@ -198,9 +266,9 @@ public class BlockPlacementManager {
         }
 
         Vec3d vec = new Vec3d(
-                (double)((float) pos.getX() + (float) dir.getOffsetX() / 2.0F),
-                (double)((float) pos.getY() + (float) dir.getOffsetY() / 2.0F),
-                (double)((float) pos.getZ() + (float) dir.getOffsetZ() / 2.0F));
+            (double)((float) pos.getX() + (float) dir.getOffsetX() / 2.0F),
+            (double)((float) pos.getY() + (float) dir.getOffsetY() / 2.0F),
+            (double)((float) pos.getZ() + (float) dir.getOffsetZ() / 2.0F));
         Vec3d dist = MeteorClient.mc.player.getEyePos().add(-vec.x, -vec.y, -vec.z);
         return dist.lengthSquared();
     }

@@ -136,7 +136,7 @@ public class ElytraLaunch extends Module {
                 resetState();
                 return;
             }
-            equipDelay = 1;
+            equipDelay = 2;
         }
 
         launchState = LaunchState.START_FLYING;
@@ -155,7 +155,25 @@ public class ElytraLaunch extends Module {
 
         FindItemResult result = InvUtils.findInHotbar(rocket);
 
+        if (!result.found()) {
+            FindItemResult inventoryResult = InvUtils.find(rocket);
+            if (inventoryResult.found() && !inventoryResult.isHotbar()) {
+                FindItemResult hotbarSlot = InvUtils.findInHotbar(x ->
+                    x.getItem() != Items.TOTEM_OF_UNDYING
+                );
+
+                int targetSlot = hotbarSlot.found() ? hotbarSlot.slot() : mc.player.getInventory().selectedSlot;
+                InvUtils.move().from(inventoryResult.slot()).toHotbar(targetSlot);
+                result = InvUtils.findInHotbar(rocket);
+            }
+        }
+
         if (result.found()) {
+            if (result.isOffhand()) {
+                mc.interactionManager.interactItem(mc.player, Hand.OFF_HAND);
+                return true;
+            }
+
             InvUtils.swap(result.slot(), true);
             mc.interactionManager.interactItem(mc.player, Hand.MAIN_HAND);
             InvUtils.swapBack();

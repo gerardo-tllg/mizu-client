@@ -18,6 +18,7 @@ import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.ColorSetting;
 import meteordevelopment.meteorclient.settings.DoubleSetting;
 import meteordevelopment.meteorclient.settings.EnumSetting;
+import meteordevelopment.meteorclient.settings.IntSetting;
 import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.friends.Friends;
@@ -65,9 +66,12 @@ public class Surround extends Module {
     private final Setting<SettingColor> skippedSideColor;
     private final Setting<SettingColor> skippedLineColor;
     private final Setting<Boolean> debugProtectShape;
+    private final Setting<Double> placeFailCooldown;
+    private final Setting<Integer> maxPlacesPerTick;
     private List<BlockPos> placePoses;
     private Map<BlockPos, Long> renderLastPlacedBlock;
     private Map<BlockPos, Long> renderLastSkippedBlock;
+    private Map<BlockPos, Long> failedPositions;
     private long lastTimeOfCrystalNearHead;
     private long lastTimeOfCrystalNearFeet;
     private long lastTimeOfExtendCrystal;
@@ -129,9 +133,24 @@ public class Surround extends Module {
             return (Boolean)this.render.get() && this.shapeMode.get() != ShapeMode.Sides;
         })).build());
         this.debugProtectShape = this.sgRender.add(((BoolSetting.Builder)((BoolSetting.Builder)((BoolSetting.Builder)(new BoolSetting.Builder()).name("debug-protect-shape")).description("Renders the crystal protect shape positions.")).defaultValue(false)).build());
+        this.placeFailCooldown = this.sgGeneral.add(new DoubleSetting.Builder()
+            .name("place-fail-cooldown")
+            .description("Seconds to wait before retrying a failed placement position.")
+            .defaultValue(0.5)
+            .min(0.0)
+            .sliderMax(2.0)
+            .build());
+        this.maxPlacesPerTick = this.sgGeneral.add(new IntSetting.Builder()
+            .name("max-places-per-tick")
+            .description("Maximum block placements to attempt per tick. Lower = less interference with eating/crystals.")
+            .defaultValue(4)
+            .min(1)
+            .sliderRange(1, 8)
+            .build());
         this.placePoses = new ArrayList();
         this.renderLastPlacedBlock = new HashMap();
         this.renderLastSkippedBlock = new HashMap();
+        this.failedPositions = new HashMap();
         this.lastTimeOfCrystalNearHead = 0L;
         this.lastTimeOfCrystalNearFeet = 0L;
         this.lastTimeOfExtendCrystal = 0L;
@@ -266,12 +285,34 @@ public class Surround extends Module {
             } else {
                 boundingBox = this.mc.player.getBoundingBox().expand(0.01D, 0.0D, 0.01D);
                 feetY = this.mc.player.getBlockPos().getY();
+                silentMine = (SilentMine)Modules.get().get(SilentMine.class);
                 minX = (int)Math.floor(boundingBox.minX);
                 bbMinX = (int)Math.floor(boundingBox.maxX);
-                bbMaxX = (int)Math.floor(boundingBox.minY);
+                bbMaxX = (int)Math.floor(boundingBox.minZ);
                 playerFeetY = (int)Math.floor(boundingBox.maxZ);
                 amIn1x1 = minX == bbMinX && bbMaxX == playerFeetY;
-                lowHealth = false;
+                extendThreatDetected = false;
+                boolean threatFromAbove = false;
+                helps = false;
+
+                if ((Boolean)this.selfTrapEnabled.get() || (Boolean)this.extendEnabled.get() && this.crawlExtendMode.get() == Surround.CrawlExtendMode.Smart) {
+                    Box headCheckBox = this.mc.player.getBoundingBox().stretch(1.5D, 0.5D, 1.5D).offset(0.0D, 0.5D, 0.0D);
+                    if (EntityUtils.intersectsWithEntity(headCheckBox, (e) -> {
+                        return e instanceof EndCrystalEntity;
+                    })) {
+                        threatFromAbove = true;
+                        this.lastTimeOfCrystalNearHead = currentTime;
+                    }
+
+                    Box feetBox = this.mc.player.getBoundingBox().stretch(1.5D, 0.0D, 1.5D).offset(0.0D, -1.0D, 0.0D);
+                    if (EntityUtils.intersectsWithEntity(feetBox, (e) -> {
+                        return e instanceof EndCrystalEntity;
+                    })) {
+                        helps = true;
+                        this.lastTimeOfCrystalNearFeet = currentTime;
+                    }
+                }
+
                 Iterator var19;
                 if (this.crawlExtendMode.get() == Surround.CrawlExtendMode.Smart && amIn1x1) {
                     Box detectionBox = this.mc.player.getBoundingBox().stretch(2.0D, 1.0D, 2.0D);
@@ -293,30 +334,51 @@ public class Surround extends Module {
                     if (closestCrystal != null) {
                         this.lastCrawlExtendCrystalOffset = closestCrystal.getBlockPos().subtract(this.mc.player.getBlockPos());
                         this.lastTimeOfCrawlExtendCrystal = currentTime;
-                        lowHealth = true;
+                        extendThreatDetected = true;
                     }
                 }
 
                 for(minX = minX; minX <= bbMinX; ++minX) {
                     for(maxX = bbMaxX; maxX <= playerFeetY; ++maxX) {
-                        rebreak = new BlockPos(minX, feetY, maxX);
-                        List<BlockPos> criticalOffsets = List.of(new BlockPos(0, 1, 0), new BlockPos(0, -1, 0), new BlockPos(1, 0, 0), new BlockPos(-1, 0, 0), new BlockPos(0, 0, 1), new BlockPos(0, 0, -1));
-                        var19 = criticalOffsets.iterator();
+                        feetPos = new BlockPos(minX, feetY, maxX);
 
-                        while(var19.hasNext()) {
-                            feetPos = (BlockPos)var19.next();
-                            t = rebreak.add(feetPos.getX(), feetPos.getY(), feetPos.getZ());
-                            if (this.mc.world.getBlockState(t).isAir()) {
-                                feetBlocks.add(t);
+                        for(int offsetX = -1; offsetX <= 1; ++offsetX) {
+                            for(perpX1 = -1; perpX1 <= 1; ++perpX1) {
+                                if (Math.abs(offsetX) + Math.abs(perpX1) == 1) {
+                                    BlockPos adjacentPos = feetPos.add(offsetX, 0, perpX1);
+                                    if (this.mc.world.getBlockState(adjacentPos).isAir()) {
+                                        feetBlocks.add(adjacentPos);
+                                    }
+
+                                    if (this.autoSelfTrapMode.get() != Surround.SelfTrapMode.None && (Boolean)this.selfTrapEnabled.get()) {
+                                        this.checkSmartDefenses(selfTrapBlocks, adjacentPos, threatFromAbove, helps, currentTime);
+                                    }
+                                }
                             }
+                        }
+
+                        t = feetPos.up();
+                        if (this.mc.world.getBlockState(t).isAir()) {
+                            feetBlocks.add(t);
+                        }
+
+                        t = new BlockPos(minX, feetY - 1, maxX);
+                        BlockState belowFeetState = this.mc.world.getBlockState(t);
+                        if (!t.equals(silentMine.getRebreakBlockPos()) && !t.equals(silentMine.getDelayedDestroyBlockPos()) && (belowFeetState.isLiquid() || belowFeetState.isAir())) {
+                            feetBlocks.add(t);
                         }
                     }
                 }
 
-                extendThreatDetected = amIn1x1 && this.crawlExtendMode.get() == Surround.CrawlExtendMode.Smart && lowHealth && (double)(currentTime - this.lastTimeOfCrawlExtendCrystal) / 1000.0D < 1.0D;
-                if (extendThreatDetected) {
-                    pos = new BlockPos(minX, feetY, bbMaxX);
-                    this.placeExtendBlocks(extendBlocks, pos, this.lastCrawlExtendCrystalOffset);
+                if ((Boolean)this.extendEnabled.get() && amIn1x1) {
+                    lowHealth = this.crawlExtendMode.get() == Surround.CrawlExtendMode.Smart && extendThreatDetected && (double)(currentTime - this.lastTimeOfCrawlExtendCrystal) / 1000.0D < 1.0D;
+                    if (lowHealth) {
+                        this.placeExtendBlocks(extendBlocks, this.mc.player.getBlockPos(), this.lastCrawlExtendCrystalOffset);
+                    }
+                }
+
+                if ((Boolean)this.selfTrapEnabled.get() && (Boolean)this.selfTrapHead.get()) {
+                    selfTrapBlocks.add(this.mc.player.getBlockPos().up(1));
                 }
             }
 
@@ -543,13 +605,36 @@ public class Surround extends Module {
                     this.renderLastSkippedBlock.put(p, now);
                 }
 
-                if (MeteorClient.BLOCK.beginPlacement(filteredPlacePoses, Items.OBSIDIAN)) {
-                    filteredPlacePoses.forEach((blockPos) -> {
-                        if (!blockPos.equals(((SilentMine)Modules.get().get(SilentMine.class)).getRebreakBlockPos()) && !blockPos.equals(((SilentMine)Modules.get().get(SilentMine.class)).getLastDelayedDestroyBlockPos()) && MeteorClient.BLOCK.placeBlock(Items.OBSIDIAN, blockPos)) {
-                            this.renderLastPlacedBlock.put(blockPos, currentTime);
-                        }
+                // Clean up expired fail cooldowns
+                long failCooldownMs = (long)(this.placeFailCooldown.get() * 1000.0);
+                this.failedPositions.entrySet().removeIf(e -> now - e.getValue() > failCooldownMs);
 
-                    });
+                // Sort by distance from player - surround closest blocks first
+                final BlockPos playerPos = this.mc.player.getBlockPos();
+                filteredPlacePoses.sort((a, b) -> {
+                    double distA = a.getSquaredDistance(playerPos);
+                    double distB = b.getSquaredDistance(playerPos);
+                    return Double.compare(distA, distB);
+                });
+
+                // Filter out positions that recently failed
+                List<BlockPos> readyToPlace = new ArrayList();
+                SilentMine sm = (SilentMine)Modules.get().get(SilentMine.class);
+                for (BlockPos blockPos : filteredPlacePoses) {
+                    if (blockPos.equals(sm.getRebreakBlockPos()) || blockPos.equals(sm.getLastDelayedDestroyBlockPos())) continue;
+                    if (this.failedPositions.containsKey(blockPos)) continue;
+                    readyToPlace.add(blockPos);
+                    if (readyToPlace.size() >= this.maxPlacesPerTick.get()) break;
+                }
+
+                if (!readyToPlace.isEmpty() && MeteorClient.BLOCK.beginPlacement(readyToPlace, Items.OBSIDIAN)) {
+                    for (BlockPos blockPos : readyToPlace) {
+                        if (MeteorClient.BLOCK.placeBlock(Items.OBSIDIAN, blockPos)) {
+                            this.renderLastPlacedBlock.put(blockPos, currentTime);
+                        } else {
+                            this.failedPositions.put(blockPos, now);
+                        }
+                    }
                     MeteorClient.BLOCK.endPlacement();
                 }
             }

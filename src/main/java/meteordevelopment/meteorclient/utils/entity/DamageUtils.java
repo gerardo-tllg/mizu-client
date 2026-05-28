@@ -58,9 +58,9 @@ public class DamageUtils {
     // Explosion damage
 
     /**
-     * It is recommended to use this {@link RaycastFactory} unless you implement custom behaviour, as soon:tm: it will be the
+    // * It is recommended to use this {@link RaycastFactory} unless you implement custom behaviour, as soon:tm: it will be the
      * target of optimizations to make it more performant.
-     * @see BlockView#raycast(RaycastContext)
+   //  * @see BlockView#raycast(RaycastContext)
      */
     public static final RaycastFactory HIT_FACTORY = (context, blockPos) -> {
         BlockState blockState = mc.world.getBlockState(blockPos);
@@ -238,7 +238,7 @@ public class DamageUtils {
     // Fall Damage
 
     /**
-     * @see LivingEntity#computeFallDamage(float, float)
+     //* @see LivingEntity#computeFallDamage(float, float)
      */
     public static float fallDamage(LivingEntity entity) {
         if (entity instanceof PlayerEntity player && player.getAbilities().flying) return 0f;
@@ -266,7 +266,7 @@ public class DamageUtils {
     // Utils
 
     /**
-     * @see LivingEntity#applyDamage(ServerWorld, DamageSource, float)
+     //* @see LivingEntity#applyDamage(ServerWorld, DamageSource, float)
      */
     public static float calculateReductions(float damage, Entity entity, DamageSource damageSource) {
         if (damageSource.isScaledWithDifficulty()) {
@@ -294,7 +294,7 @@ public class DamageUtils {
     }
 
     /**
-     * @see LivingEntity#modifyAppliedDamage(DamageSource, float)
+   //  * @see LivingEntity#modifyAppliedDamage(DamageSource, float)
      */
     private static float protectionReduction(LivingEntity player, float damage, DamageSource source) {
         if (source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY)) return damage;
@@ -337,7 +337,7 @@ public class DamageUtils {
     }
 
     /**
-     * @see LivingEntity#modifyAppliedDamage(DamageSource, float)
+     //* @see LivingEntity#modifyAppliedDamage(DamageSource, float)
      */
     private static float resistanceReduction(LivingEntity player, float damage) {
         StatusEffectInstance resistance = player.getStatusEffect(StatusEffects.RESISTANCE);

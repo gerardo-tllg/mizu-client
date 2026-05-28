@@ -35,6 +35,10 @@ public class Systems {
     }
 
     public static void init() {
+        // AntiCheatConfig must come before Modules so that modules can mirror its
+        // settings (e.g. the `anticheat` clickgui module) during their init.
+        add(new AntiCheatConfig());
+
         // Has to be loaded first so the hidden modules list in config tab can load modules
         add(new Modules());
 
@@ -45,9 +49,6 @@ public class Systems {
 
         // Registers the colors from config tab. This allows rainbow colours to work for friends.
         config.settings.registerColorSettings(null);
-
-        // Add AntiCheatConfig after Config
-        add(new AntiCheatConfig());
 
         add(new Macros());
         add(new Friends());

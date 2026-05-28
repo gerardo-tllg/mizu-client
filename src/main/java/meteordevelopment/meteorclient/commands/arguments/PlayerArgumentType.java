@@ -26,7 +26,7 @@ public class PlayerArgumentType implements ArgumentType<PlayerEntity> {
     private static final PlayerArgumentType INSTANCE = new PlayerArgumentType();
     private static final DynamicCommandExceptionType NO_SUCH_PLAYER = new DynamicCommandExceptionType(name -> Text.literal("Player with name " + name + " doesn't exist."));
 
-    private static final Collection<String> EXAMPLES = List.of("swavez", "Player123");
+    private static final Collection<String> EXAMPLES = List.of("_Synful8169", "Crownizzle");
 
     public static PlayerArgumentType create() {
         return INSTANCE;

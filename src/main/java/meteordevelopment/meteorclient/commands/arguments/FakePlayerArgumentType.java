@@ -22,7 +22,7 @@ import static net.minecraft.command.CommandSource.suggestMatching;
 
 public class FakePlayerArgumentType implements ArgumentType<String> {
     private static final FakePlayerArgumentType INSTANCE = new FakePlayerArgumentType();
-    private static final Collection<String> EXAMPLES = List.of("swavez", "Player123");
+    private static final Collection<String> EXAMPLES = List.of("_Synful8169", "Crownizzle");
 
     public static FakePlayerArgumentType create() {
         return INSTANCE;

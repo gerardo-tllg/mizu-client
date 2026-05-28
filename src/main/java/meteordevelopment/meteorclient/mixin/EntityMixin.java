@@ -11,7 +11,6 @@ import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.events.entity.LivingEntityMoveEvent;
 import meteordevelopment.meteorclient.events.entity.player.JumpVelocityMultiplierEvent;
 import meteordevelopment.meteorclient.events.entity.player.PlayerMoveEvent;
-import meteordevelopment.meteorclient.mixininterface.ICamera;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.systems.modules.combat.Hitboxes;
 import meteordevelopment.meteorclient.systems.modules.movement.*;
@@ -20,14 +19,12 @@ import meteordevelopment.meteorclient.systems.modules.render.ESP;
 import meteordevelopment.meteorclient.systems.modules.render.FreeLook;
 import meteordevelopment.meteorclient.systems.modules.render.Freecam;
 import meteordevelopment.meteorclient.systems.modules.render.NoRender;
-import meteordevelopment.meteorclient.systems.modules.world.HighwayBuilder;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.entity.fakeplayer.FakePlayerEntity;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import meteordevelopment.meteorclient.utils.render.postprocess.PostProcessShaders;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.render.Camera;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
@@ -73,26 +70,6 @@ public abstract class EntityMixin {
 
         if (Modules.get().get(Flight.class).isActive()) info.setReturnValue(false);
         if (Modules.get().get(NoSlow.class).fluidDrag()) info.setReturnValue(false);
-    }
-
-    @Inject(method = "onBubbleColumnSurfaceCollision", at = @At("HEAD"))
-    private void onBubbleColumnSurfaceCollision(CallbackInfo info) {
-        if ((Object) this != mc.player) return;
-
-        Jesus jesus = Modules.get().get(Jesus.class);
-        if (jesus.isActive()) {
-            jesus.isInBubbleColumn = true;
-        }
-    }
-
-    @Inject(method = "onBubbleColumnCollision", at = @At("HEAD"))
-    private void onBubbleColumnCollision(CallbackInfo info) {
-        if ((Object) this != mc.player) return;
-
-        Jesus jesus = Modules.get().get(Jesus.class);
-        if (jesus.isActive()) {
-            jesus.isInBubbleColumn = true;
-        }
     }
 
     @ModifyExpressionValue(method = "updateSwimming", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;isSubmergedInWater()Z"))
@@ -213,11 +190,6 @@ public abstract class EntityMixin {
 
         if (freecam.isActive()) {
             freecam.changeLookDirection(cursorDeltaX * 0.15, cursorDeltaY * 0.15);
-            ci.cancel();
-        }
-        else if (Modules.get().isActive(HighwayBuilder.class)) {
-            Camera camera = mc.gameRenderer.getCamera();
-            ((ICamera) camera).meteor$setRot(camera.getYaw() + cursorDeltaX * 0.15, camera.getPitch() + cursorDeltaY * 0.15);
             ci.cancel();
         }
         else if (freeLook.cameraMode()) {

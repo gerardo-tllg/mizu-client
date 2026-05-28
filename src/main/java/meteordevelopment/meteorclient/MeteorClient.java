@@ -13,7 +13,7 @@ import meteordevelopment.meteorclient.events.meteor.MouseButtonEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.gui.GuiThemes;
 import meteordevelopment.meteorclient.gui.WidgetScreen;
-import meteordevelopment.meteorclient.gui.tabs.Tabs;
+import meteordevelopment.meteorclient.gui.newgui.NewGuiScreen;
 import meteordevelopment.meteorclient.systems.Systems;
 import meteordevelopment.meteorclient.systems.config.Config;
 import meteordevelopment.meteorclient.systems.hud.screens.HudEditorScreen;
@@ -59,7 +59,7 @@ public class MeteorClient implements ClientModInitializer {
     public static final IEventBus EVENT_BUS = new EventBus();
     public static final File FOLDER = FabricLoader.getInstance().getGameDir().resolve(MOD_ID).toFile();
     public static final Logger LOG;
-    
+
     // Managers - added for 1.21.5 compatibility
     public static meteordevelopment.meteorclient.systems.managers.RotationManager ROTATION;
     public static meteordevelopment.meteorclient.systems.managers.InformationManager INFO;
@@ -73,9 +73,9 @@ public class MeteorClient implements ClientModInitializer {
         } catch (Exception e) {
             throw new RuntimeException("Failed to register lambda factory for meteorclient", e);
         }
-        
+
         // Managers will be initialized after Systems.init() to ensure configs are loaded
-        
+
         MOD_META = FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow().getMetadata();
 
         NAME = MOD_META.getName();
@@ -191,7 +191,7 @@ public class MeteorClient implements ClientModInitializer {
 
     private void toggleGui() {
         if (Utils.canCloseGui()) mc.currentScreen.close();
-        else if (Utils.canOpenGui()) Tabs.get().getFirst().openScreen(GuiThemes.get());
+        else if (Utils.canOpenGui()) mc.setScreen(new NewGuiScreen());
     }
 
     // Hide HUD

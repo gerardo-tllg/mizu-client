@@ -24,7 +24,9 @@ public class AntiCheatConfig extends System<AntiCheatConfig> {
     public final Setting<Boolean> grimSnapRotation;
     public final Setting<Boolean> blockRotatePlace;
     public final Setting<Boolean> blockPlaceAirPlace;
+    public final Setting<Boolean> mainHandAirPlace;
     public final Setting<Boolean> forceAirPlace;
+    public final Setting<Double> blockPlaceRange;
     public final Setting<Double> blockPlacePerBlockCooldown;
     public final Setting<Double> blocksPerSecondCap;
     public final Setting<Boolean> blockPlaceTpsSync;
@@ -80,15 +82,30 @@ public class AntiCheatConfig extends System<AntiCheatConfig> {
 
         this.blockPlaceAirPlace = this.sgBlockPlacement.add(new BoolSetting.Builder()
             .name("grim-air-place")
-            .description("Allow air placing blocks.")
+            .description("Allow air placing blocks using offhand swap exploit (for Grim servers).")
+            .defaultValue(false)
+            .build());
+
+        this.mainHandAirPlace = this.sgBlockPlacement.add(new BoolSetting.Builder()
+            .name("main-hand-air-place")
+            .description("Allow air placing blocks using vanilla interaction (works on most servers).")
             .defaultValue(true)
+            .visible(() -> !this.blockPlaceAirPlace.get())
             .build());
 
         this.forceAirPlace = this.sgBlockPlacement.add(new BoolSetting.Builder()
             .name("force-air-place")
             .description("Only air place blocks.")
-            .defaultValue(true)
-            .visible(() -> this.blockPlaceAirPlace.get())
+            .defaultValue(false)
+            .visible(() -> this.blockPlaceAirPlace.get() || this.mainHandAirPlace.get())
+            .build());
+
+        this.blockPlaceRange = this.sgBlockPlacement.add(new DoubleSetting.Builder()
+            .name("place-range")
+            .description("Max range for block placement. 0 = use vanilla interaction range.")
+            .defaultValue(0.0)
+            .min(0.0)
+            .sliderMax(6.0)
             .build());
 
         this.blockPlacePerBlockCooldown = this.sgBlockPlacement.add(new DoubleSetting.Builder()

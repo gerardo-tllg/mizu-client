@@ -11,9 +11,9 @@ import meteordevelopment.meteorclient.renderer.ShapeMode;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.meteorclient.systems.modules.Module;
-import meteordevelopment.meteorclient.utils.render.RenderUtils;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 import meteordevelopment.orbit.EventHandler;
+import net.minecraft.client.render.Camera;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.util.math.BlockPos;
@@ -223,14 +223,17 @@ public class LavaFlow extends Module {
     @EventHandler
     private void onRender(Render3DEvent event) {
         if (!render.get() || mc.player == null) return;
+        Camera camera = mc.gameRenderer.getCamera();
+        double camX = camera.getPos().x;
+        double camY = camera.getPos().y;
+        double camZ = camera.getPos().z;
+
         for (BlockPos pos : detectedFlows.keySet()) {
-            RenderUtils.renderTickingBlock(
-                pos.toImmutable(),
-                flowSideColor.get(),
-                flowLineColor.get(),
-                shapeMode.get(),
-                0, 8, true, false
-            );
+            double ox = pos.getX() - camX;
+            double oy = pos.getY() - camY;
+            double oz = pos.getZ() - camZ;
+            event.renderer.box(ox, oy, oz, ox + 1, oy + 1, oz + 1,
+                flowSideColor.get(), flowLineColor.get(), shapeMode.get(), 0);
         }
     }
 }

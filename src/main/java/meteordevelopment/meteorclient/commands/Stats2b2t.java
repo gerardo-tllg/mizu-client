@@ -7,11 +7,12 @@ import com.google.gson.Gson;
 import meteordevelopment.meteorclient.systems.modules.Categories;
 import net.minecraft.text.Text;
 import java.time.ZonedDateTime;
-import meteordevelopment.meteorclient.utils.mizu.LogUtil;
+import meteordevelopment.meteorclient.utils.stardust.LogUtil;
 import java.util.concurrent.TimeUnit;
+import meteordevelopment.meteorclient.utils.stardust.StardustUtil;
 import java.time.format.DateTimeFormatter;
 import net.minecraft.command.CommandSource;
-import meteordevelopment.meteorclient.utils.mizu.ApiHandler;
+import meteordevelopment.meteorclient.utils.stardust.ApiHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import meteordevelopment.meteorclient.commands.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -42,13 +43,13 @@ public class Stats2b2t extends Command {
                 if (response.equals("204 Undocumented")) {
                     player.sendMessage(
                         Text.of(
-                            "§8[§7Mizu§8] §4Player not found§7..."
+                            "§8[§7MasterClient§8] §4Player not found§7..."
                         ), false
                     );
                 } else {
                     try {
                         Gson gson = new Gson();
-                        String cc = "Mizu";
+                        String cc = "MasterClient";
                         PlayerStats stats = gson.fromJson(response, PlayerStats.class);
 
                         Instant firstInstant = Instant.parse(stats.firstSeen);
@@ -134,7 +135,7 @@ public class Stats2b2t extends Command {
                         String kdRatioString = String.valueOf((float) stats.killCount / (float) stats.deathCount);
                         player.sendMessage(
                             Text.of(
-                                "§8[§7Mizu§8] §7Stats for "+cc + playerString + "§7:\n"
+                                "§8[§7MasterClient§8] §7Stats for "+cc + playerString + "§7:\n"
                                 + "    §7Joins: "+cc+stats.joinCount+"\n    §7Leaves: "+cc+stats.leaveCount
                                 + "\n    §7K/D Ratio: "+cc+kdRatioString
                                 + "\n    §7Chats: "+cc+stats.chatsCount+"\n    §7Prio: "+cc+stats.prio

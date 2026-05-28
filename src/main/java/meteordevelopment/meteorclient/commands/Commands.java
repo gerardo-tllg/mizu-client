@@ -44,7 +44,6 @@ public class Commands {
         add(new ResetCommand());
         add(new SayCommand());
         add(new ServerCommand());
-        add(new SwarmCommand());
         add(new ToggleCommand());
         add(new SettingCommand());
         add(new SpectateCommand());
@@ -66,7 +65,6 @@ public class Commands {
         add(new LastSeen2b2t());
         add(new FirstSeen2b2t());
         add(new Playtime2b2t());
-        add(new meteordevelopment.meteorclient.commands.Loadout());
         add(new AutoRegearCommand());
         add(new BaritoneElytraGotoCommand());
 

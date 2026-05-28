@@ -5,10 +5,10 @@
 
 package meteordevelopment.meteorclient.systems.modules.misc;
 
-//Created by swavez
+//Created by Crownizzle & _Synful
 
-import meteordevelopment.discordipc.DiscordIPC;
-import meteordevelopment.discordipc.RichPresence;
+import meteordevelopment.meteorclient.discordipc.DiscordIPC;
+import meteordevelopment.meteorclient.discordipc.RichPresence;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.events.game.OpenScreenEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
@@ -121,7 +121,7 @@ public class DiscordPresence extends Module {
     }
 
     public DiscordPresence() {
-        super(Categories.Misc, "discord-presence", "Displays Mizu as your presence on Discord.");
+        super(Categories.Misc, "discord-presence", "Displays ReviveClient as your presence on Discord.");
 
         runInMainMenu = true;
     }
@@ -145,15 +145,16 @@ public class DiscordPresence extends Module {
 
     @Override
     public void onActivate() {
-        DiscordIPC.start(835240968533049424L, null);
+        DiscordIPC.stop();
+        DiscordIPC.start(1492306835724697781L, null);
 
         rpc.setStart(System.currentTimeMillis() / 1000L);
 
         String largeText = "%s %s".formatted(MeteorClient.NAME, MeteorClient.VERSION);
         if (!MeteorClient.BUILD_NUMBER.isEmpty()) largeText += " Build: " + MeteorClient.BUILD_NUMBER;
-        rpc.setLargeImage("meteor_client", largeText);
+        rpc.setLargeImage("overlay", largeText);
 
-        currentSmallImage = SmallImage.Swavez;
+        currentSmallImage = SmallImage.Synful;
 
         recompileLine1();
         recompileLine2();
@@ -252,7 +253,7 @@ public class DiscordPresence extends Module {
                 else if (mc.currentScreen instanceof MultiplayerScreen) rpc.setState("Selecting server");
                 else if (mc.currentScreen instanceof AddServerScreen) rpc.setState("Adding server");
                 else if (mc.currentScreen instanceof ConnectScreen || mc.currentScreen instanceof DirectConnectScreen) rpc.setState("Connecting to server");
-                else if (mc.currentScreen instanceof WidgetScreen) rpc.setState("Browsing Mizu's GUI");
+                else if (mc.currentScreen instanceof WidgetScreen) rpc.setState("Browsing ReviveClient's GUI");
                 else if (mc.currentScreen instanceof OptionsScreen || mc.currentScreen instanceof SkinOptionsScreen || mc.currentScreen instanceof SoundOptionsScreen || mc.currentScreen instanceof VideoOptionsScreen || mc.currentScreen instanceof ControlsOptionsScreen || mc.currentScreen instanceof LanguageOptionsScreen || mc.currentScreen instanceof ChatOptionsScreen || mc.currentScreen instanceof PackScreen || mc.currentScreen instanceof AccessibilityOptionsScreen) rpc.setState("Changing options");
                 else if (mc.currentScreen instanceof CreditsScreen) rpc.setState("Reading credits");
                 else if (mc.currentScreen instanceof RealmsScreen) rpc.setState("Browsing Realms");
@@ -295,7 +296,8 @@ public class DiscordPresence extends Module {
     }
 
     private enum SmallImage {
-        Swavez("swavez", "swavez");
+        Crownizzle("crownizzle", "Crownizzle"),
+        Synful("synful", "_Synful");
 
         private final String key, text;
 
@@ -309,7 +311,8 @@ public class DiscordPresence extends Module {
         }
 
         SmallImage next() {
-            return Swavez;
+            if (this == Crownizzle) return Synful;
+            return Crownizzle;
         }
     }
 }

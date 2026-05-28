@@ -13,6 +13,7 @@ import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 import meteordevelopment.orbit.EventHandler;
+import net.minecraft.client.render.Camera;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
@@ -23,6 +24,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.*;
 
@@ -215,15 +217,18 @@ public class Search extends Module {
         );
 
         long now = System.currentTimeMillis();
+        Set<UUID> scannedUuids = new HashSet<>();
 
         for (ItemEntity entity : found) {
+            UUID uuid = entity.getUuid();
+            scannedUuids.add(uuid);
+
             boolean inLava = lavaItems.get() && isNearLava(entity);
 
             if (inLava) detectedLava.add(entity);
             else        detectedNormal.add(entity);
 
             // Alert logic (respects cooldown per UUID)
-            UUID uuid      = entity.getUuid();
             long lastAlert = alertCooldowns.getOrDefault(uuid, 0L);
             if (now - lastAlert < alertCooldown.get() * 1_000L) continue;
             alertCooldowns.put(uuid, now);
@@ -247,6 +252,9 @@ public class Search extends Module {
                 )).start();
             }
         }
+
+        // Remove cooldown entries for items that are no longer in scan range (despawned/moved away)
+        alertCooldowns.keySet().removeIf(uuid -> !scannedUuids.contains(uuid));
     }
 
     // ── Render ────────────────────────────────────────────────────────────────
@@ -254,16 +262,26 @@ public class Search extends Module {
     @EventHandler
     private void onRender(Render3DEvent event) {
         if (!renderESP.get() || mc.player == null) return;
+        Camera camera = mc.gameRenderer.getCamera();
 
         for (ItemEntity e : detectedLava) {
-            Box box = e.getBoundingBox().expand(0.15);
-            event.renderer.box(box, lavaSideColor.get(), lavaLineColor.get(), shapeMode.get(), 0);
+            renderItemBox(event, e, camera, lavaSideColor.get(), lavaLineColor.get());
         }
-
         for (ItemEntity e : detectedNormal) {
-            Box box = e.getBoundingBox().expand(0.15);
-            event.renderer.box(box, itemSideColor.get(), itemLineColor.get(), shapeMode.get(), 0);
+            renderItemBox(event, e, camera, itemSideColor.get(), itemLineColor.get());
         }
+    }
+
+    private void renderItemBox(Render3DEvent event, ItemEntity e, Camera camera, SettingColor side, SettingColor line) {
+        double ix = MathHelper.lerp(event.tickDelta, e.lastX, e.getX()) - camera.getPos().x;
+        double iy = MathHelper.lerp(event.tickDelta, e.lastY, e.getY()) - camera.getPos().y;
+        double iz = MathHelper.lerp(event.tickDelta, e.lastZ, e.getZ()) - camera.getPos().z;
+        Box world = e.getBoundingBox().expand(0.15);
+        double hw = (world.maxX - world.minX) / 2.0;
+        double hd = (world.maxZ - world.minZ) / 2.0;
+        double height = world.maxY - world.minY;
+        event.renderer.box(ix - hw, iy, iz - hd, ix + hw, iy + height, iz + hd,
+            side, line, shapeMode.get(), 0);
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

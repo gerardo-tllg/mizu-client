@@ -30,6 +30,14 @@ public class Config extends System<Config> {
     private final SettingGroup sgModules = settings.createGroup("Modules");
     private final SettingGroup sgChat = settings.createGroup("Chat");
     private final SettingGroup sgMisc = settings.createGroup("Misc");
+    private final SettingGroup sgGui = settings.createGroup("GUI");
+
+    public final Setting<Boolean> cleanModulesUi = sgGui.add(new BoolSetting.Builder()
+        .name("clean-modules-ui")
+        .description("Use the clean category-select screen instead of the default layout.")
+        .defaultValue(false)
+        .build()
+    );
 
     // Visual
 

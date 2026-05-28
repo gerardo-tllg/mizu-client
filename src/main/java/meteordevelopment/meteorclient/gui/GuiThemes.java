@@ -4,7 +4,7 @@
  */
 
 package meteordevelopment.meteorclient.gui;
-
+import meteordevelopment.meteorclient.gui.themes.revive.ReviveGuiTheme;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.gui.themes.meteor.MeteorGuiTheme;
 import meteordevelopment.meteorclient.utils.PostInit;
@@ -31,6 +31,7 @@ public class GuiThemes {
 
     @PreInit
     public static void init() {
+        add(new ReviveGuiTheme());
         add(new MeteorGuiTheme());
     }
 

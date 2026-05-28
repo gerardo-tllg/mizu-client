@@ -23,14 +23,11 @@ import meteordevelopment.meteorclient.systems.config.Config;
 import meteordevelopment.meteorclient.systems.modules.combat.*;
 import meteordevelopment.meteorclient.systems.modules.combat.autocrystal.AutoCrystal;
 import meteordevelopment.meteorclient.systems.modules.misc.*;
-import meteordevelopment.meteorclient.systems.modules.misc.swarm.Swarm;
 import meteordevelopment.meteorclient.systems.modules.movement.*;
 import meteordevelopment.meteorclient.systems.modules.movement.elytrafly.ElytraFly;
-import meteordevelopment.meteorclient.systems.modules.movement.speed.Speed;
 import meteordevelopment.meteorclient.systems.modules.player.*;
 import meteordevelopment.meteorclient.systems.modules.render.*;
 import meteordevelopment.meteorclient.systems.modules.render.blockesp.BlockESP;
-import meteordevelopment.meteorclient.systems.modules.render.marker.Marker;
 import meteordevelopment.meteorclient.systems.modules.world.Timer;
 import meteordevelopment.meteorclient.systems.modules.world.*;
 import meteordevelopment.meteorclient.utils.Utils;
@@ -79,6 +76,7 @@ public class Modules extends System<Modules> {
         initWorld();
         initMisc();
         initHunting();
+        initGui();
     }
 
     @Override
@@ -390,6 +388,8 @@ public class Modules extends System<Modules> {
     private void initCombat() {
         add(new AnchorAura());
         add(new AntiAnchor());
+        add(new MaceDive());
+        add(new AntiMace());
         add(new AntiAnvil());
         add(new AntiBed());
         add(new AntiDigDown());
@@ -416,88 +416,48 @@ public class Modules extends System<Modules> {
         add(new MaceAura());
         add(new Offhand());
         add(new PearlPhase());
-        add(new Quiver());
         add(new SelfAnvil());
-        add(new SelfWeb());
         add(new Surround());
         add(new SwordAura());
     }
 
     private void initPlayer() {
-        add(new AntiHunger());
         add(new AutoEat());
-        add(new AutoClicker());
-        add(new AutoFish());
-        add(new AutoGap());
-        add(new AutoMend());
         add(new AutoReplenish());
         add(new AutoTool());
         add(new BreakDelay());
         add(new ChestSwap());
-        add(new EXPThrower());
         add(new FakePlayer());
         add(new FastUse());
-        add(new GhostHand());
         add(new HotbarLock());
         add(new InstantRebreak());
         add(new LiquidInteract());
         add(new MiddleClickExtra());
         add(new Multitask());
-        add(new NoInteract());
-        add(new NoMiningTrace());
         add(new NoRotate());
         add(new NoStatusEffects());
         add(new OffhandCrash());
-        add(new Portals());
-        add(new PotionSaver());
-        add(new PotionSpoof());
-        add(new Reach());
         add(new Rotation());
         add(new SilentMine());
         add(new SpeedMine());
     }
 
     private void initMovement() {
-        add(new AirJump());
-        add(new Anchor());
         add(new AntiAFK());
-        add(new AntiVoid());
-        add(new AutoJump());
         add(new AutoWalk());
         add(new AutoWasp());
-        add(new Blink());
-        add(new BoatFly());
-        add(new ClickTP());
-        add(new ElytraBoost());
-        add(new ElytraFakeFly());
         add(new ElytraFly());
         add(new ElytraLaunch());
-        add(new ElytraSpeed());
         add(new EntityControl());
-        add(new EntitySpeed());
-        add(new FastClimb());
         add(new Flight());
         add(new GrimDisabler());
         add(new GUIMove());
-        add(new HighJump());
-        add(new Jesus());
-        add(new LongJump());
         add(new MovementFix());
         add(new NoFall());
-        add(new NoJumpDelay());
         add(new NoSlow());
-        add(new Parkour());
-        add(new ReverseStep());
-        add(new SafeWalk());
         add(new Scaffold());
-        add(new Slippy());
         add(new Sneak());
-        add(new Speed());
-        add(new Spider());
         add(new Sprint());
-        add(new Step());
-        add(new TridentBoost());
-        add(new VanillaFakeFly());
         add(new Velocity());
         add(new VelocityBypass());
     }
@@ -509,37 +469,26 @@ public class Modules extends System<Modules> {
         add(new BlockSelection());
         add(new Blur());
         add(new BossStack());
-        add(new Breadcrumbs());
         add(new BreakIndicators());
-        add(new CameraTweaks());
         add(new Chams());
-        add(new CityESP());
         add(new EntityOwner());
         add(new ESP());
         add(new FootprintESP());
-        add(new FOVChanger());
         add(new Freecam());
         add(new FreeLook());
         add(new Fullbright());
         add(new HandView());
         add(new HoleESP());
-        add(new ItemHighlight());
-        add(new LightOverlay());
         add(new LogoutSpots());
-        add(new Marker());
         add(new Nametags());
         add(new NoRender());
         add(new PhaseESP());
         add(new PopChams());
         add(new StorageESP());
-        add(new TimeChanger());
         add(new Tracers());
-        add(new Trail());
         add(new Trajectories());
         add(new TunnelESP());
         add(new UnfocusedCPU());
-        add(new VoidESP());
-        add(new WallHack());
         add(new WaypointsModule());
         add(new Xray());
         add(new Zoom());
@@ -548,28 +497,16 @@ public class Modules extends System<Modules> {
     private void initWorld() {
         add(new AirPlace());
         add(new Ambience());
-        add(new AutoBreed());
-        add(new AutoBrewer());
         add(new AutoMount());
-        add(new AutoNametag());
-        add(new AutoShearer());
         add(new AutoSign());
-        add(new AutoSmelter());
         add(new BuildHeight());
-        add(new ChestScanner());
-        add(new Collisions());
         add(new EChestFarmer());
-        add(new EndermanLook());
-add(new HighwayBuilder());
         add(new LiquidFiller());
-        add(new MountBypass());
         add(new NoGhostBlocks());
         add(new Nuker());
         add(new PacketMine());
         add(new StashFinder());
-        add(new SpawnProofer());
         add(new Timer());
-        add(new VeinMiner());
 
         if (BaritoneUtils.IS_AVAILABLE) {
             add(new Excavator());
@@ -582,26 +519,17 @@ add(new HighwayBuilder());
         add(new AntiPacketKick());
         add(new AutoLog());
         add(new AutoReconnect());
+        add(new ChatFilterBypass());
         add(new AutoRespawn());
         add(new BetterBeacons());
         add(new BetterChat());
-        add(new BookBot());
         add(new ChatSigns());
         add(new DiscordPresence());
         add(new InventoryTweaks());
-        add(new Loadouts());
-        add(new MessageAura());
-        add(new NameProtect());
         add(new Notebot());
         add(new Notifier());
         add(new PacketCanceller());
-        add(new RoadTrip());
-        add(new ServerSpoof());
-        add(new SoundBlocker());
         add(new Spam());
-        add(new StashBrander());
-        add(new Swarm());
-        add(new WheelPicker());
     }
 
     private void initHunting() {
@@ -643,5 +571,11 @@ add(new HighwayBuilder());
         add(new meteordevelopment.meteorclient.systems.modules.hunting.Search());
         add(new meteordevelopment.meteorclient.systems.modules.hunting.VanityESP());
         add(new meteordevelopment.meteorclient.systems.modules.hunting.YGoal());
+    }
+
+    private void initGui() {
+        add(new meteordevelopment.meteorclient.systems.modules.gui.Gui());
+        add(new meteordevelopment.meteorclient.systems.modules.gui.AntiCheat());
+        add(new meteordevelopment.meteorclient.systems.modules.gui.Hud());
     }
 }

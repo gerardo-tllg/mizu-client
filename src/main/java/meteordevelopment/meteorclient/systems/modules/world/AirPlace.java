@@ -5,6 +5,7 @@
 
 package meteordevelopment.meteorclient.systems.modules.world;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.item.SpawnEggItem;
 import meteordevelopment.meteorclient.events.render.Render3DEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
@@ -19,6 +20,7 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
 
 public class AirPlace extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -28,7 +30,7 @@ public class AirPlace extends Module {
 
     private final Setting<Boolean> render = sgGeneral.add(new BoolSetting.Builder()
         .name("render")
-        .description("Renders a block overlay where the obsidian will be placed.")
+        .description("Renders a block overlay where the block will be placed.")
         .defaultValue(true)
         .build()
     );
@@ -81,6 +83,7 @@ public class AirPlace extends Module {
 
     @EventHandler
     private void onTick(TickEvent.Post event) {
+        if (mc.player == null || mc.world == null) return;
         double r = customRange.get() ? range.get() : mc.player.getBlockInteractionRange();
         hitResult = mc.getCameraEntity().raycast(r, 0, false);
 
@@ -93,11 +96,18 @@ public class AirPlace extends Module {
 
     @EventHandler
     private void onRender(Render3DEvent event) {
+        if (mc.player == null || mc.world == null) return;
         if (!(hitResult instanceof BlockHitResult blockHitResult)
-            || !mc.world.getBlockState(blockHitResult.getBlockPos()).isReplaceable()
             || !(mc.player.getMainHandStack().getItem() instanceof BlockItem) && !(mc.player.getMainHandStack().getItem() instanceof SpawnEggItem)
             || !render.get()) return;
 
-        event.renderer.box(blockHitResult.getBlockPos(), sideColor.get(), lineColor.get(), shapeMode.get(), 0);
+        BlockState hitState = mc.world.getBlockState(blockHitResult.getBlockPos());
+        BlockPos renderPos = hitState.isReplaceable()
+            ? blockHitResult.getBlockPos()
+            : blockHitResult.getBlockPos().offset(blockHitResult.getSide());
+
+        if (!mc.world.getBlockState(renderPos).isReplaceable()) return;
+
+        event.renderer.box(renderPos, sideColor.get(), lineColor.get(), shapeMode.get(), 0);
     }
 }

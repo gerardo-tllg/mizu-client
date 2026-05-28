@@ -7,11 +7,9 @@ package meteordevelopment.meteorclient.mixin;
 
 import meteordevelopment.meteorclient.mixininterface.ICamera;
 import meteordevelopment.meteorclient.systems.modules.Modules;
-import meteordevelopment.meteorclient.systems.modules.render.CameraTweaks;
 import meteordevelopment.meteorclient.systems.modules.render.FreeLook;
 import meteordevelopment.meteorclient.systems.modules.render.Freecam;
 import meteordevelopment.meteorclient.systems.modules.render.NoRender;
-import meteordevelopment.meteorclient.systems.modules.world.HighwayBuilder;
 import net.minecraft.block.enums.CameraSubmersionType;
 import net.minecraft.client.render.Camera;
 import net.minecraft.entity.Entity;
@@ -49,15 +47,7 @@ public abstract class CameraMixin implements ICamera {
     private float modifyClipToSpace(float d) {
         if (Modules.get().get(Freecam.class).isActive()) return 0;
 
-        CameraTweaks cameraTweaks = Modules.get().get(CameraTweaks.class);
-        return cameraTweaks.isActive() ? (float) cameraTweaks.distance : d;
-    }
-
-    @Inject(method = "clipToSpace", at = @At("HEAD"), cancellable = true)
-    private void onClipToSpace(float desiredCameraDistance, CallbackInfoReturnable<Float> info) {
-        if (Modules.get().get(CameraTweaks.class).clip()) {
-            info.setReturnValue(desiredCameraDistance);
-        }
+        return d;
     }
 
     @Inject(method = "update", at = @At("HEAD"))
@@ -91,10 +81,6 @@ public abstract class CameraMixin implements ICamera {
         if (freecam.isActive()) {
             args.set(0, (float) freecam.getYaw(tickDelta));
             args.set(1, (float) freecam.getPitch(tickDelta));
-        }
-        else if (Modules.get().isActive(HighwayBuilder.class)) {
-            args.set(0, yaw);
-            args.set(1, pitch);
         }
         else if (freeLook.isActive()) {
             args.set(0, freeLook.cameraYaw);

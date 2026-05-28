@@ -167,7 +167,7 @@ public class InvUtils {
         float bestScore = 1;
         int slot = -1;
 
-        for (int i = 0; i < mc.player.getInventory().size(); i++) {
+        for (int i = 0; i < 36; i++) {
             ItemStack stack = mc.player.getInventory().getStack(i);
             if (!stack.isSuitableFor(state))
                 continue;

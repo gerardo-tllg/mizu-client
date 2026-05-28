@@ -1,13 +1,14 @@
 package meteordevelopment.meteorclient.commands;
 
 import net.minecraft.text.Text;
-import meteordevelopment.meteorclient.utils.mizu.LogUtil;
+import meteordevelopment.meteorclient.utils.stardust.LogUtil;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonElement;
 import java.util.concurrent.TimeUnit;
+import meteordevelopment.meteorclient.utils.stardust.StardustUtil;
 import net.minecraft.command.CommandSource;
 import net.minecraft.client.MinecraftClient;
-import meteordevelopment.meteorclient.utils.mizu.ApiHandler;
+import meteordevelopment.meteorclient.utils.stardust.ApiHandler;
 import meteordevelopment.meteorclient.commands.Command;
 import net.minecraft.client.network.ClientPlayerEntity;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -42,7 +43,7 @@ public class Playtime2b2t extends Command {
                         if (player == null) return;
                         player.sendMessage(
                             Text.of(
-                                "§8[§7Mizu§8] §4Player not found§7."
+                                "§8[§7MasterClient§8] §4Player not found§7."
                             ), false
                         );
                     } else {
@@ -62,9 +63,9 @@ public class Playtime2b2t extends Command {
 
                             long seconds = TimeUnit.SECONDS.toSeconds(playtimeSeconds);
 
-                            String cc = "Mizu";
+                            String cc = "MasterClient";
                             StringBuilder sb = new StringBuilder()
-                                .append("§8[§7Mizu§8] §7")
+                                .append("§8[§7MasterClient§8] §7")
                                 .append(cc).append(playerString).append("§7: ").append(cc);
                             if (days != 0) sb.append(days).append(" §7Days, ").append(cc);
                             if (hours != 0) sb.append(hours).append(" §7Hours, ").append(cc);

@@ -8,6 +8,7 @@ package meteordevelopment.meteorclient.systems.modules.render;
 import meteordevelopment.meteorclient.events.render.Render2DEvent;
 import meteordevelopment.meteorclient.events.render.Render3DEvent;
 import meteordevelopment.meteorclient.renderer.Renderer2D;
+import net.minecraft.client.render.Camera;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.config.Config;
 import meteordevelopment.meteorclient.systems.friends.Friends;
@@ -24,17 +25,13 @@ import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ExperienceOrbEntity;
-import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.util.math.Vec2f;
 import org.joml.Vector2f;
 import org.joml.Vector3d;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.List;
 import java.util.Set;
 
 public class Tracers extends Module {
@@ -53,22 +50,6 @@ public class Tracers extends Module {
         .name("entities")
         .description("Select specific entities.")
         .defaultValue(EntityType.PLAYER)
-        .build()
-    );
-
-    private final Setting<List<Item>> itemTargets = sgGeneral.add(new ItemListSetting.Builder()
-        .name("items")
-        .description("Select specific items to target.")
-        .visible(() ->  entities.get().contains(EntityType.ITEM))
-        .build()
-    );
-
-    private final Setting<Integer> minExperienceOrbSize = sgGeneral.add(new IntSetting.Builder()
-        .name("minimum-experience-orb-size")
-        .description("Only draws tracers to specific sizes of xp orbs.")
-        .visible(() ->  entities.get().contains(EntityType.EXPERIENCE_ORB))
-        .defaultValue(0)
-        .min(0).sliderMax(10)
         .build()
     );
 
@@ -231,32 +212,14 @@ public class Tracers extends Module {
     );
 
     private int count;
-    private Instant initTimer = Instant.now();
+    private final Instant initTimer = Instant.now();
 
     public Tracers() {
         super(Categories.Render, "tracers", "Displays tracer lines to specified entities.");
     }
 
     private boolean shouldBeIgnored(Entity entity) {
-        boolean normalIgnore = !PlayerUtils.isWithin(entity, maxDist.get()) || (!Modules.get().isActive(Freecam.class) && entity == mc.player) || !entities.get().contains(entity.getType()) || (ignoreSelf.get() && entity == mc.player) || (ignoreFriends.get() && entity instanceof PlayerEntity && Friends.get().isFriend((PlayerEntity) entity)) || (!showInvis.get() && entity.isInvisible()) | !EntityUtils.isInRenderDistance(entity);
-
-        if (normalIgnore) {
-            return true;
-        }
-
-        if (entity instanceof ItemEntity item) {
-            if (!itemTargets.get().contains(item.getStack().getItem())) {
-                return true;
-            }
-        }
-
-        if (entity instanceof ExperienceOrbEntity exp) {
-            if (exp.getOrbSize() < minExperienceOrbSize.get()) {
-                return true;
-            }
-        }
-
-        return false;
+        return !PlayerUtils.isWithin(entity, maxDist.get()) || (!Modules.get().isActive(Freecam.class) && entity == mc.player) || !entities.get().contains(entity.getType()) || (ignoreSelf.get() && entity == mc.player) || (ignoreFriends.get() && entity instanceof PlayerEntity && Friends.get().isFriend((PlayerEntity) entity)) || (!showInvis.get() && entity.isInvisible()) | !EntityUtils.isInRenderDistance(entity);
     }
 
     private Color getEntityColor(Entity entity) {
@@ -289,21 +252,27 @@ public class Tracers extends Module {
         if (mc.options.hudHidden || style.get() == TracerStyle.Offscreen) return;
         count = 0;
 
+        Camera camera = mc.gameRenderer.getCamera();
+        double camX = camera.getPos().x;
+        double camY = camera.getPos().y;
+        double camZ = camera.getPos().z;
+
         for (Entity entity : mc.world.getEntities()) {
             if (shouldBeIgnored(entity)) continue;
 
             Color color = getEntityColor(entity);
 
-            double x = entity.lastRenderX + (entity.getX() - entity.lastRenderX) * event.tickDelta;
-            double y = entity.lastRenderY + (entity.getY() - entity.lastRenderY) * event.tickDelta;
-            double z = entity.lastRenderZ + (entity.getZ() - entity.lastRenderZ) * event.tickDelta;
+            double baseY = entity.lastY + (entity.getY() - entity.lastY) * event.tickDelta - camY;
+            double x = entity.lastX + (entity.getX() - entity.lastX) * event.tickDelta - camX;
+            double y = baseY;
+            double z = entity.lastZ + (entity.getZ() - entity.lastZ) * event.tickDelta - camZ;
 
             double height = entity.getBoundingBox().maxY - entity.getBoundingBox().minY;
             if (target.get() == Target.Head) y += height;
             else if (target.get() == Target.Body) y += height / 2;
 
-            event.renderer.line(RenderUtils.center.x, RenderUtils.center.y, RenderUtils.center.z, x, y, z, color);
-            if (stem.get()) event.renderer.line(x, entity.getY(), z, x, entity.getY() + height, z, color);
+            event.depthRenderer.line(0, 0, 0, x, y, z, color);
+            if (stem.get()) event.depthRenderer.line(x, baseY, z, x, baseY + height, z, color);
 
             count++;
         }
@@ -326,13 +295,13 @@ public class Tracers extends Module {
 
             Vec2f screenCenter = new Vec2f(mc.getWindow().getFramebufferWidth() / 2.f, mc.getWindow().getFramebufferHeight() / 2.f);
 
-            Vector3d projection = new Vector3d(entity.lastRenderX, entity.lastRenderY, entity.lastRenderZ);
+            Vector3d projection = new Vector3d(entity.lastX, entity.lastY, entity.lastZ);
             boolean projSucceeded = NametagUtils.to2D(projection, 1, false, false);
 
             if (projSucceeded && projection.x > 0.f && projection.x < mc.getWindow().getFramebufferWidth() && projection.y > 0.f && projection.y < mc.getWindow().getFramebufferHeight())
                 continue;
 
-            projection = new Vector3d(entity.lastRenderX, entity.lastRenderY, entity.lastRenderZ);
+            projection = new Vector3d(entity.lastX, entity.lastY, entity.lastZ);
             NametagUtils.to2D(projection, 1, false, true);
 
             Vector2f angle = vectorAngles(new Vector3d(screenCenter.x - projection.x, screenCenter.y - projection.y, 0));

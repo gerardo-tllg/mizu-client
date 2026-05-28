@@ -14,6 +14,8 @@ import meteordevelopment.meteorclient.gui.tabs.WindowTabScreen;
 import meteordevelopment.meteorclient.gui.widgets.containers.WHorizontalList;
 import meteordevelopment.meteorclient.gui.widgets.input.WDropdown;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WButton;
+import meteordevelopment.meteorclient.gui.widgets.pressable.WCheckbox;
+import meteordevelopment.meteorclient.systems.config.Config;
 import meteordevelopment.meteorclient.utils.misc.NbtUtils;
 import net.minecraft.client.gui.screen.Screen;
 
@@ -37,19 +39,18 @@ public class GuiTab extends Tab {
     private static class GuiScreen extends WindowTabScreen {
         public GuiScreen(GuiTheme theme, Tab tab) {
             super(theme, tab);
-
             theme.settings.onActivated();
         }
 
         @Override
         public void initWidgets() {
+            // ── Theme selector row ──────────────────────────────────────
             WHorizontalList opts = add(theme.horizontalList()).expandX().widget();
 
             opts.add(theme.label("Theme:"));
             WDropdown<String> themeW = opts.add(theme.dropdown(GuiThemes.getNames(), GuiThemes.get().name)).widget();
             themeW.action = () -> {
                 GuiThemes.select(themeW.get());
-
                 mc.setScreen(null);
                 tab.openScreen(GuiThemes.get());
             };
@@ -72,6 +73,13 @@ public class GuiTab extends Tab {
             pasteButton.action = this::fromClipboard;
             pasteButton.tooltip = "Paste config";
 
+            // ── Clean Modules UI toggle ─────────────────────────────────
+            WHorizontalList uiRow = add(theme.horizontalList()).expandX().widget();
+            uiRow.add(theme.label("Clean Modules UI:"));
+            WCheckbox cleanUi = uiRow.add(theme.checkbox(Config.get().cleanModulesUi.get())).widget();
+            cleanUi.action = () -> Config.get().cleanModulesUi.set(cleanUi.checked);
+
+            // ── Theme color settings ────────────────────────────────────
             add(theme.settings(theme.settings)).expandX();
         }
 

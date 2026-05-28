@@ -13,6 +13,7 @@ import meteordevelopment.meteorclient.events.game.GameJoinedEvent;
 import meteordevelopment.meteorclient.events.game.GameLeftEvent;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
+import meteordevelopment.meteorclient.mixininterface.IChatHud;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.friends.Friends;
 import meteordevelopment.meteorclient.systems.modules.Categories;
@@ -20,6 +21,7 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.entity.fakeplayer.FakePlayerEntity;
 import meteordevelopment.meteorclient.utils.player.ChatUtils;
 import meteordevelopment.meteorclient.utils.player.PlayerUtils;
+import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.entity.Entity;
@@ -188,12 +190,64 @@ public class Notifier extends Module {
         .build()
     );
 
+    private final Setting<Boolean> replaceNotifications = sgJoinsLeaves.add(new BoolSetting.Builder()
+        .name("replace-notifications")
+        .description("Join/leave notifications replace each other instead of stacking in chat.")
+        .defaultValue(false)
+        .build()
+    );
+
+    private final Setting<SettingColor> joinBracketColor = sgJoinsLeaves.add(new ColorSetting.Builder()
+        .name("join-bracket-color")
+        .description("Color of the brackets on join notifications.")
+        .defaultValue(new SettingColor(Formatting.GRAY))
+        .build()
+    );
+
+    private final Setting<SettingColor> joinSymbolColor = sgJoinsLeaves.add(new ColorSetting.Builder()
+        .name("join-symbol-color")
+        .description("Color of the + symbol on join notifications.")
+        .defaultValue(new SettingColor(Formatting.GREEN))
+        .build()
+    );
+
+    private final Setting<SettingColor> joinNameColor = sgJoinsLeaves.add(new ColorSetting.Builder()
+        .name("join-name-color")
+        .description("Color of the player name on join notifications.")
+        .defaultValue(new SettingColor(255, 255, 255, 255))
+        .build()
+    );
+
+    private final Setting<SettingColor> leaveBracketColor = sgJoinsLeaves.add(new ColorSetting.Builder()
+        .name("leave-bracket-color")
+        .description("Color of the brackets on leave notifications.")
+        .defaultValue(new SettingColor(Formatting.GRAY))
+        .build()
+    );
+
+    private final Setting<SettingColor> leaveSymbolColor = sgJoinsLeaves.add(new ColorSetting.Builder()
+        .name("leave-symbol-color")
+        .description("Color of the - symbol on leave notifications.")
+        .defaultValue(new SettingColor(Formatting.RED))
+        .build()
+    );
+
+    private final Setting<SettingColor> leaveNameColor = sgJoinsLeaves.add(new ColorSetting.Builder()
+        .name("leave-name-color")
+        .description("Color of the player name on leave notifications.")
+        .defaultValue(new SettingColor(255, 255, 255, 255))
+        .build()
+    );
+
     private int timer;
     private boolean loginPacket = true;
     private final Object2IntMap<UUID> totemPopMap = new Object2IntOpenHashMap<>();
     private final Object2IntMap<UUID> chatIdMap = new Object2IntOpenHashMap<>();
     private final Map<Integer, Vec3d> pearlStartPosMap = new HashMap<>();
     private final ArrayListDeque<Text> messageQueue = new ArrayListDeque<>();
+
+    // Fixed ID passed to meteor$add so each replace-mode message overwrites the last.
+    private static final int JOIN_LEAVE_CHAT_ID = "notifier-joinleave".hashCode();
 
     private final Random random = new Random();
 
@@ -333,10 +387,15 @@ public class Notifier extends Module {
             timer++;
             while (timer >= notificationDelay.get() && !messageQueue.isEmpty()) {
                 timer = 0;
-                if (simpleNotifications.get()) {
-                    mc.player.sendMessage(messageQueue.removeFirst(), false);
+                Text msg = messageQueue.removeFirst();
+                if (replaceNotifications.get()) {
+                    // Call meteor$add directly — same as ChatUtils internally does,
+                    // but WITHOUT prepending the [ReviveClient] prefix.
+                    ((IChatHud) mc.inGameHud.getChatHud()).meteor$add(msg, JOIN_LEAVE_CHAT_ID);
+                } else if (simpleNotifications.get()) {
+                    mc.player.sendMessage(msg, false);
                 } else {
-                    ChatUtils.sendMsg(messageQueue.removeFirst());
+                    ChatUtils.sendMsg(msg);
                 }
             }
         }
@@ -360,23 +419,34 @@ public class Notifier extends Module {
         return chatIdMap.computeIfAbsent(entity.getUuid(), value -> random.nextInt());
     }
 
+    /**
+     * Builds a themed join/leave notification Text using the current color settings.
+     * Format: [+] PlayerName  or  [-] PlayerName
+     */
+    private MutableText buildNotification(String name, boolean isJoin) {
+        SettingColor bracketColor = isJoin ? joinBracketColor.get() : leaveBracketColor.get();
+        SettingColor symbolColor = isJoin ? joinSymbolColor.get() : leaveSymbolColor.get();
+        SettingColor nameColor   = isJoin ? joinNameColor.get()   : leaveNameColor.get();
+        String symbol = isJoin ? "+" : "-";
+
+        MutableText msg = Text.literal("[").setStyle(bracketColor.toStyle());
+        msg.append(Text.literal(symbol).setStyle(symbolColor.toStyle()));
+        msg.append(Text.literal("] ").setStyle(bracketColor.toStyle()));
+        msg.append(Text.literal(name).setStyle(nameColor.toStyle()));
+        return msg;
+    }
+
     private void createJoinNotifications(PlayerListS2CPacket packet) {
         for (PlayerListS2CPacket.Entry entry : packet.getPlayerAdditionEntries()) {
             if (entry.profile() == null) continue;
 
-            if (simpleNotifications.get()) {
-                messageQueue.addLast(Text.literal(
-                    Formatting.GRAY + "["
-                        + Formatting.GREEN + "+"
-                        + Formatting.GRAY + "] "
-                        + entry.profile().getName()
-                ));
+            String name = entry.profile().getName();
+
+            if (simpleNotifications.get() || replaceNotifications.get()) {
+                messageQueue.addLast(buildNotification(name, true));
             } else {
-                messageQueue.addLast(Text.literal(
-                    Formatting.WHITE
-                        + entry.profile().getName()
-                        + Formatting.GRAY + " joined."
-                ));
+                messageQueue.addLast(Text.literal(name).formatted(Formatting.WHITE)
+                    .append(Text.literal(" joined.").formatted(Formatting.GRAY)));
             }
         }
     }
@@ -388,19 +458,13 @@ public class Notifier extends Module {
             PlayerListEntry toRemove = mc.getNetworkHandler().getPlayerListEntry(id);
             if (toRemove == null) continue;
 
-            if (simpleNotifications.get()) {
-                messageQueue.addLast(Text.literal(
-                    Formatting.GRAY + "["
-                        + Formatting.RED + "-"
-                        + Formatting.GRAY + "] "
-                        + toRemove.getProfile().getName()
-                ));
+            String name = toRemove.getProfile().getName();
+
+            if (simpleNotifications.get() || replaceNotifications.get()) {
+                messageQueue.addLast(buildNotification(name, false));
             } else {
-                messageQueue.addLast(Text.literal(
-                    Formatting.WHITE
-                        + toRemove.getProfile().getName()
-                        + Formatting.GRAY + " left."
-                ));
+                messageQueue.addLast(Text.literal(name).formatted(Formatting.WHITE)
+                    .append(Text.literal(" left.").formatted(Formatting.GRAY)));
             }
         }
     }

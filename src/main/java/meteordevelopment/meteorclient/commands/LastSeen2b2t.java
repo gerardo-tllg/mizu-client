@@ -5,13 +5,14 @@ import java.util.Locale;
 import java.time.Instant;
 import net.minecraft.text.Text;
 import java.time.ZonedDateTime;
-import meteordevelopment.meteorclient.utils.mizu.LogUtil;
+import meteordevelopment.meteorclient.utils.stardust.LogUtil;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonElement;
+import meteordevelopment.meteorclient.utils.stardust.StardustUtil;
 import java.time.format.DateTimeFormatter;
 import net.minecraft.command.CommandSource;
 import net.minecraft.client.MinecraftClient;
-import meteordevelopment.meteorclient.utils.mizu.ApiHandler;
+import meteordevelopment.meteorclient.utils.stardust.ApiHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import meteordevelopment.meteorclient.commands.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -46,7 +47,7 @@ public class LastSeen2b2t extends Command {
                         if (player == null) return;
                         player.sendMessage(
                             Text.of(
-                                "§8[§7Mizu§8] §4That player has not been seen§7..."
+                                "§8[§7MasterClient§8] §4That player has not been seen§7..."
                             ), false
                         );
                     }else {
@@ -59,12 +60,12 @@ public class LastSeen2b2t extends Command {
                             ZonedDateTime zonedTime = instant.atZone(ZoneId.systemDefault());
                             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MMMM dd yyyy, HH:mm", Locale.US);
 
-                            String cc = "Mizu";
+                            String cc = "MasterClient";
                             String formattedTimestamp = String.join(" §r§7at "+cc+"§o", zonedTime.format(fmt).split(", "));
                             if (player != null) {
                                 player.sendMessage(
                                     Text.of(
-                                        "§8[§7Mizu§8] §7"+cc
+                                        "§8[§7MasterClient§8] §7"+cc
                                             + playerString + "§7 was last seen on "+cc + formattedTimestamp + "§7."
                                     ),false
                                 );

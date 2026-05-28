@@ -37,6 +37,32 @@ import java.util.List;
 public class MaceAura extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 
+    private boolean isMace(ItemStack stack) {
+        if (stack == null || stack.isEmpty()) return false;
+
+        // 1. Native check (1.21+ clients)
+        if (stack.getItem() instanceof net.minecraft.item.MaceItem) return true;
+
+        // 2. Registry check (when mappings are correct)
+        try {
+            if (stack.isOf(net.minecraft.item.Items.MACE)) return true;
+        } catch (Throwable ignored) {}
+
+        // 3. Registry ID fallback (covers weird IDs like modid:1.21(mace))
+        try {
+            String id = net.minecraft.registry.Registries.ITEM
+                .getId(stack.getItem())
+                .toString()
+                .toLowerCase();
+
+            if (id.contains("mace")) return true;
+        } catch (Throwable ignored) {}
+
+        // 4. Display name fallback (ViaVersion / renamed items)
+        String name = stack.getName().getString().toLowerCase().trim();
+        return name.contains("mace");
+    }
+
     private final Setting<Double> range = sgGeneral.add(new DoubleSetting.Builder()
         .name("range")
         .description("Attack range.")
@@ -357,15 +383,15 @@ public class MaceAura extends Module {
     }
 
     private FindItemResult findWeaponWithEnchant(RegistryKey<Enchantment> enchantKey) {
-        for (int slot = 0; slot < mc.player.getInventory().size(); slot++) {
+        for (int slot = 0; slot < 36; slot++) {
             ItemStack stack = mc.player.getInventory().getStack(slot);
-            if (stack.isOf(Items.MACE) && Utils.getEnchantmentLevel(stack, enchantKey) > 0) {
+            if (isMace(stack) && Utils.getEnchantmentLevel(stack, enchantKey) > 0) {
                 return new FindItemResult(slot, stack.getCount());
             }
         }
 
         ItemStack off = mc.player.getOffHandStack();
-        if (off.isOf(Items.MACE) && Utils.getEnchantmentLevel(off, enchantKey) > 0) {
+        if (isMace(off) && Utils.getEnchantmentLevel(off, enchantKey) > 0) {
             return new FindItemResult(SlotUtils.OFFHAND, off.getCount());
         }
 
@@ -373,7 +399,19 @@ public class MaceAura extends Module {
     }
 
     private FindItemResult findWeapon() {
-        return MeteorClient.SWAP.getSlot(Items.MACE);
+        for (int slot = 0; slot < 36; slot++) {
+            ItemStack stack = mc.player.getInventory().getStack(slot);
+            if (isMace(stack)) {
+                return new FindItemResult(slot, stack.getCount());
+            }
+        }
+
+        ItemStack off = mc.player.getOffHandStack();
+        if (isMace(off)) {
+            return new FindItemResult(SlotUtils.OFFHAND, off.getCount());
+        }
+
+        return new FindItemResult(-1, 0);
     }
 
     private FindItemResult findSword() {

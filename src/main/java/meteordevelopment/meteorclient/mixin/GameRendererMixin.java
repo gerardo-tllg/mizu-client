@@ -18,11 +18,9 @@ import meteordevelopment.meteorclient.renderer.MeteorRenderPipelines;
 import meteordevelopment.meteorclient.renderer.Renderer3D;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.systems.modules.player.LiquidInteract;
-import meteordevelopment.meteorclient.systems.modules.player.NoMiningTrace;
 import meteordevelopment.meteorclient.systems.modules.render.Freecam;
 import meteordevelopment.meteorclient.systems.modules.render.NoRender;
 import meteordevelopment.meteorclient.systems.modules.render.Zoom;
-import meteordevelopment.meteorclient.systems.modules.world.HighwayBuilder;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.render.NametagUtils;
 import meteordevelopment.meteorclient.utils.render.RenderUtils;
@@ -34,7 +32,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.profiler.Profilers;
 import org.joml.Matrix4f;
@@ -100,7 +97,7 @@ public abstract class GameRendererMixin {
         RenderSystem.getModelViewStack().pushMatrix().mul(view);
 
         matrices.push();
-        if (!Modules.get().get(NoRender.class).noHurtCam()) tiltViewWhenHurt(matrices, camera.getLastTickProgress());
+        tiltViewWhenHurt(matrices, camera.getLastTickProgress());
         if (client.options.getBobView().getValue()) bobView(matrices, camera.getLastTickProgress());
         RenderSystem.getModelViewStack().mul(matrices.peek().getPositionMatrix().invert());
         matrices.pop();
@@ -127,9 +124,6 @@ public abstract class GameRendererMixin {
 
     @ModifyReturnValue(method = "findCrosshairTarget", at = @At("RETURN"))
     private HitResult onUpdateTargetedEntity(HitResult original, @Local HitResult hitResult) {
-        if (Modules.get().get(NoMiningTrace.class).canWork(original instanceof EntityHitResult ehr ? ehr.getEntity() : null) && hitResult.getType() == HitResult.Type.BLOCK) {
-            return hitResult;
-        }
         return original;
     }
 
@@ -139,6 +133,11 @@ public abstract class GameRendererMixin {
         if (original.getType() != HitResult.Type.MISS) return original;
 
         return entity.raycast(maxDistance, tickProgress, true);
+    }
+
+    @Inject(method = "tiltViewWhenHurt", at = @At("HEAD"), cancellable = true)
+    private void onTiltViewWhenHurt(MatrixStack matrices, float tickDelta, CallbackInfo ci) {
+        if (Modules.get().get(NoRender.class).noHurtCam()) ci.cancel();
     }
 
     @Inject(method = "showFloatingItem", at = @At("HEAD"), cancellable = true)
@@ -166,9 +165,8 @@ public abstract class GameRendererMixin {
     @Inject(method = "updateCrosshairTarget", at = @At("HEAD"), cancellable = true)
     private void updateTargetedEntityInvoke(float tickDelta, CallbackInfo info) {
         Freecam freecam = Modules.get().get(Freecam.class);
-        boolean highwayBuilder = Modules.get().isActive(HighwayBuilder.class);
 
-        if ((freecam.isActive() || highwayBuilder) && client.getCameraEntity() != null && !freecamSet) {
+        if (freecam.isActive() && client.getCameraEntity() != null && !freecamSet) {
             info.cancel();
             Entity cameraE = client.getCameraEntity();
 
@@ -183,19 +181,14 @@ public abstract class GameRendererMixin {
             float lastYaw = cameraE.lastYaw;
             float lastPitch = cameraE.lastPitch;
 
-            if (highwayBuilder) {
-                cameraE.setYaw(camera.getYaw());
-                cameraE.setPitch(camera.getPitch());
-            } else {
-                ((IVec3d) cameraE.getPos()).meteor$set(freecam.pos.x, freecam.pos.y - cameraE.getEyeHeight(cameraE.getPose()), freecam.pos.z);
-                cameraE.lastX = freecam.prevPos.x;
-                cameraE.lastY = freecam.prevPos.y - cameraE.getEyeHeight(cameraE.getPose());
-                cameraE.lastZ = freecam.prevPos.z;
-                cameraE.setYaw(freecam.yaw);
-                cameraE.setPitch(freecam.pitch);
-                cameraE.lastYaw = freecam.prevYaw;
-                cameraE.lastPitch = freecam.prevPitch;
-            }
+            ((IVec3d) cameraE.getPos()).meteor$set(freecam.pos.x, freecam.pos.y - cameraE.getEyeHeight(cameraE.getPose()), freecam.pos.z);
+            cameraE.lastX = freecam.prevPos.x;
+            cameraE.lastY = freecam.prevPos.y - cameraE.getEyeHeight(cameraE.getPose());
+            cameraE.lastZ = freecam.prevPos.z;
+            cameraE.setYaw(freecam.yaw);
+            cameraE.setPitch(freecam.pitch);
+            cameraE.lastYaw = freecam.prevYaw;
+            cameraE.lastPitch = freecam.prevPitch;
 
             freecamSet = true;
             updateCrosshairTarget(tickDelta);

@@ -11,7 +11,6 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import meteordevelopment.meteorclient.commands.Command;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.systems.modules.movement.NoFall;
-import meteordevelopment.meteorclient.systems.modules.player.AntiHunger;
 import net.minecraft.command.CommandSource;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.text.Text;
@@ -43,9 +42,6 @@ public class DamageCommand extends Command {
         boolean noFall = Modules.get().isActive(NoFall.class);
         if (noFall) Modules.get().get(NoFall.class).toggle();
 
-        boolean antiHunger = Modules.get().isActive(AntiHunger.class);
-        if (antiHunger) Modules.get().get(AntiHunger.class).toggle();
-
         Vec3d pos = mc.player.getPos();
 
         for(int i = 0; i < 80; i++) {
@@ -56,7 +52,6 @@ public class DamageCommand extends Command {
         sendPositionPacket(pos.x, pos.y, pos.z, true);
 
         if (noFall) Modules.get().get(NoFall.class).toggle();
-        if (antiHunger) Modules.get().get(AntiHunger.class).toggle();
     }
 
     private void sendPositionPacket(double x, double y, double z, boolean onGround) {

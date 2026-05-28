@@ -27,7 +27,6 @@ import meteordevelopment.meteorclient.systems.modules.movement.GUIMove;
 import meteordevelopment.meteorclient.systems.modules.player.FastUse;
 import meteordevelopment.meteorclient.systems.modules.player.Multitask;
 import meteordevelopment.meteorclient.systems.modules.render.ESP;
-import meteordevelopment.meteorclient.systems.modules.world.HighwayBuilder;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.misc.CPSUtils;
 import meteordevelopment.meteorclient.utils.misc.MeteorStarscript;
@@ -216,13 +215,7 @@ public abstract class MinecraftClientMixin implements IMinecraftClient {
     // Have to add this condition if we want to draw back a bow using packets, without it getting cancelled by vanilla code
     @WrapWithCondition(method = "handleInputEvents", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;stopUsingItem(Lnet/minecraft/entity/player/PlayerEntity;)V"))
     private boolean wrapStopUsing(ClientPlayerInteractionManager instance, PlayerEntity player) {
-        return HB$stopUsingItem();
-    }
-
-    @Unique
-    private boolean HB$stopUsingItem() {
-        HighwayBuilder b = Modules.get().get(HighwayBuilder.class);
-        return !b.isActive() || !b.drawingBow;
+        return true;
     }
 
     @Inject(method = "onResolutionChanged", at = @At("TAIL"))
@@ -265,7 +258,7 @@ public abstract class MinecraftClientMixin implements IMinecraftClient {
     @Inject(method = "handleInputEvents", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isUsingItem()Z", ordinal = 0, shift = At.Shift.BEFORE))
     private void handleInputEventsInjectStopUsingItem(CallbackInfo info) {
         if (Modules.get().get(Multitask.class).attackingEntities() && player.isUsingItem()) {
-            if (!options.useKey.isPressed() && HB$stopUsingItem()) interactionManager.stopUsingItem(player);
+            if (!options.useKey.isPressed()) interactionManager.stopUsingItem(player);
             while (options.useKey.wasPressed());
         }
     }

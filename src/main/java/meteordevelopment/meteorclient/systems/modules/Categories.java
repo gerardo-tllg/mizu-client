@@ -17,6 +17,7 @@ public class Categories {
     public static final Category World = new Category("World", Items.GRASS_BLOCK.getDefaultStack());
     public static final Category Misc = new Category("Misc", Items.LAVA_BUCKET.getDefaultStack());
     public static final Category Hunting = new Category("Hunting", Items.BOW.getDefaultStack());
+    public static final Category Gui = new Category("Gui", Items.COMPASS.getDefaultStack());
 
     public static boolean REGISTERING;
 
@@ -31,6 +32,7 @@ public class Categories {
         Modules.registerCategory(World);
         Modules.registerCategory(Misc);
         Modules.registerCategory(Hunting);
+        Modules.registerCategory(Gui);
 
         // Addons
         AddonManager.ADDONS.forEach(MeteorAddon::onRegisterCategories);

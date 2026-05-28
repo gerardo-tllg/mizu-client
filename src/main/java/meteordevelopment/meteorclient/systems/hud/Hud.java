@@ -62,8 +62,8 @@ public class Hud extends System<Hud> implements Iterable<HudElement> {
 
     private final Setting<Double> textScale = sgGeneral.add(new DoubleSetting.Builder()
         .name("text-scale")
-        .description("Scale of text if not overridden by the element.")
-        .defaultValue(1)
+        .description("Scale of text if not overridden by the element. Synced with the clickgui's text-scale by default.")
+        .defaultValue(0.5)
         .min(0.5)
         .sliderRange(0.5, 3)
         .build()
@@ -140,7 +140,6 @@ public class Hud extends System<Hud> implements Iterable<HudElement> {
         register(TimerHud.INFO);
         register(EntityCountHud.INFO);
         register(SpeedMineHud.INFO);
-        register(ReachDisplayHud.INFO);
 
         // Default config
         if (isFirstInit) resetToDefaultElements();

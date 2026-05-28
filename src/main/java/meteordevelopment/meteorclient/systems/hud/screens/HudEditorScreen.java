@@ -347,7 +347,11 @@ public class HudEditorScreen extends WidgetScreen implements Snapper.Container {
 
     public static boolean isOpen() {
         Screen s = mc.currentScreen;
-        return s instanceof HudEditorScreen || s instanceof AddHudElementScreen || s instanceof HudElementPresetsScreen || s instanceof HudElementScreen || s instanceof HudTab.HudScreen;
+        return s instanceof HudEditorScreen || s instanceof AddHudElementScreen || s instanceof HudElementPresetsScreen || s instanceof HudElementScreen || s instanceof HudTab.HudScreen
+            || s instanceof meteordevelopment.meteorclient.gui.newgui.screens.NewHudEditorScreen
+            || s instanceof meteordevelopment.meteorclient.gui.newgui.screens.NewHudElementScreen
+            || s instanceof meteordevelopment.meteorclient.gui.newgui.screens.NewAddHudElementScreen
+            || s instanceof meteordevelopment.meteorclient.gui.newgui.screens.NewHudElementPresetsScreen;
     }
 
     private class SelectionBox implements Snapper.Element {
