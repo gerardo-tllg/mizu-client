@@ -28,10 +28,10 @@ public class FontManager {
     private Identifier fontId = null;
 
     // Theme colors — stored as 0xAARRGGBB (alpha byte preserved from user's SettingColor)
-    private int primaryColor = 0xFF000000;   // lines/borders
-    private int secondaryColor = 0xFF303030; // header fill, highlights, accent
-    private int textColor = 0xFFF0F0FA;      // primary text (headers)
-    private int textSecondary = 0xFF8C8CA5;  // secondary text (modules)
+    private int primaryColor = 0xFF0A1E30;   // header/border: deep navy
+    private int secondaryColor = 0xFF1D9E75; // active module highlight: teal
+    private int textColor = 0xFFF0F0FA;      // primary text (active modules)
+    private int textSecondary = 0xFF185FA5;  // secondary text (inactive modules)
     private boolean blur = true;
     private boolean animation = true;
     private boolean animationLTR = false;

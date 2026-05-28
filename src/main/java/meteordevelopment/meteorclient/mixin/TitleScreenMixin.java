@@ -8,15 +8,16 @@ package meteordevelopment.meteorclient.mixin;
 import meteordevelopment.meteorclient.systems.config.Config;
 import meteordevelopment.meteorclient.utils.player.TitleScreenCredits;
 import meteordevelopment.meteorclient.utils.render.MizuTitleShader;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.LogoDrawer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.SplashTextRenderer;
 import net.minecraft.client.gui.screen.TitleScreen;
-import net.minecraft.client.font.TextRenderer;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
-import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -37,54 +38,66 @@ public abstract class TitleScreenMixin extends Screen {
         super(title);
     }
 
-    // Cancel the panorama cube-map — this is what was covering the shader waves.
-    // renderBackground() is a no-op in TitleScreen; the panorama is in renderPanoramaBackground().
+    // Cancel panorama — renderBackground() is a no-op in TitleScreen;
+    // the panorama lives in renderPanoramaBackground().
     @Inject(method = "renderPanoramaBackground", at = @At("HEAD"), cancellable = true)
     private void cancelPanorama(DrawContext context, float delta, CallbackInfo ci) {
         ci.cancel();
     }
 
-    // Hide the vanilla Minecraft logo texture
-    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/LogoDrawer;draw(Lnet/minecraft/client/gui/DrawContext;IF)V"))
-    private void hideVanillaLogo(LogoDrawer drawer, DrawContext context, int screenWidth, float alpha) {
-        // no-op
-    }
+    // Hide the Minecraft logo texture
+    @Redirect(method = "render", at = @At(value = "INVOKE",
+        target = "Lnet/minecraft/client/gui/LogoDrawer;draw(Lnet/minecraft/client/gui/DrawContext;IF)V"))
+    private void hideVanillaLogo(LogoDrawer drawer, DrawContext context, int screenWidth, float alpha) {}
 
     // Hide the vanilla yellow splash text
-    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/SplashTextRenderer;render(Lnet/minecraft/client/gui/DrawContext;ILnet/minecraft/client/font/TextRenderer;I)V"))
-    private void hideSplashText(SplashTextRenderer renderer, DrawContext context, int width, TextRenderer tr, int color) {
-        // no-op
+    @Redirect(method = "render", at = @At(value = "INVOKE",
+        target = "Lnet/minecraft/client/gui/screen/SplashTextRenderer;render(Lnet/minecraft/client/gui/DrawContext;ILnet/minecraft/client/font/TextRenderer;I)V"))
+    private void hideSplashText(SplashTextRenderer renderer, DrawContext context, int width, TextRenderer tr, int color) {}
+
+    // Dim the vanilla version string — scale 0.5, alpha 15%
+    @Redirect(method = "render", at = @At(value = "INVOKE",
+        target = "Lnet/minecraft/client/gui/DrawContext;drawTextWithShadow(Lnet/minecraft/client/font/TextRenderer;Ljava/lang/String;III)I"))
+    private int dimVersionText(DrawContext context, TextRenderer tr, String text, int x, int y, int color) {
+        int alpha = (int)(0xFF * 0.15f); // ~15% opacity
+        int dimColor = (alpha << 24) | (color & 0x00FFFFFF);
+        context.getMatrices().push();
+        context.getMatrices().translate(x, y, 0);
+        context.getMatrices().scale(0.5f, 0.5f, 1f);
+        int result = context.drawTextWithShadow(tr, text, 0, 0, dimColor);
+        context.getMatrices().pop();
+        return result;
     }
 
     @Inject(method = "render", at = @At("HEAD"))
     private void onRenderHead(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        int w = this.width;
-        int h = this.height;
-
-        // Solid deep ocean background fallback
-        context.fill(0, 0, w, h, 0xFF050e1a);
-
-        // GLSL ocean wave shader
+        // NOTE: do NOT call context.fill() here — DrawContext fills are batched and
+        // execute AFTER MeshRenderer shader passes, which would paint over the waves.
+        // The shader itself provides the full dark ocean background.
         float timeSeconds = (System.currentTimeMillis() % 1000000L) / 1000.0f;
         MizuTitleShader.render(timeSeconds, mc.getWindow().getFramebufferWidth(), mc.getWindow().getFramebufferHeight());
     }
 
     @Inject(method = "render", at = @At("TAIL"))
     private void onRenderTail(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        if (Config.get().titleScreenCredits.get()) TitleScreenCredits.render(context);
-
         int w = this.width;
         int h = this.height;
 
-        // Cover vanilla logo and splash-text area cleanly — fill the full top region
+        // Cover vanilla logo/splash remnants — solid dark band across top region.
+        // DrawContext fills execute after the shader so they paint over the sky area
+        // cleanly while the shader's wave area (below ~44% from top) shows through.
         context.fill(0, 0, w, h / 4 + 70, 0xFF050e1a);
 
-        // 水 kanji watermark — large, centered, rendered BEHIND the MIZU text
+        // CPU wave crests — reliable DrawContext rendering that always shows.
+        // Draws in the lower portion of the screen where the shader ocean is.
+        drawCPUWaves(context, w, h);
+
+        // 水 kanji watermark — large, centered, behind MIZU text
         int titleScale = 5;
         int kanjiScale = 14;
         int kanjiW = textRenderer.getWidth("水") * kanjiScale;
         int kanjiH = textRenderer.fontHeight * kanjiScale;
-        int titleY = h / 6;  // ~16.7% from top, well above buttons
+        int titleY = h / 6;
         int kanjiCenterY = titleY + (textRenderer.fontHeight * titleScale) / 2;
         context.getMatrices().push();
         context.getMatrices().translate(w / 2.0f - kanjiW / 2.0f, kanjiCenterY - kanjiH / 2.0f, 0);
@@ -92,7 +105,7 @@ public abstract class TitleScreenMixin extends Screen {
         context.drawText(textRenderer, "水", 0, 0, 0xFF0D3048, false);
         context.getMatrices().pop();
 
-        // MIZU logo — large, centered, teal
+        // MIZU — large teal, at Y = ~16.7% (h/6), safely above all vanilla buttons
         String titleText = "MIZU";
         int titleW = textRenderer.getWidth(titleText) * titleScale;
         context.getMatrices().push();
@@ -116,12 +129,73 @@ public abstract class TitleScreenMixin extends Screen {
         if (!particlesInit) initParticles(w, h);
         updateAndDrawParticles(context, w, h, delta);
 
-        // Version label — bottom right, one line above vanilla copyright (which is at h-10)
+        // "Mizu by swavez" branding — top right with theme colors
+        net.minecraft.text.MutableText creditText = Text.empty();
+        creditText.append(Text.literal("Mizu").setStyle(Style.EMPTY.withColor(0x1D9E75)));
+        creditText.append(Text.literal(" by ").setStyle(Style.EMPTY.withColor(0x185FA5)));
+        creditText.append(Text.literal("swavez").setStyle(Style.EMPTY.withColor(0x378ADD)));
+        int credW = textRenderer.getWidth(creditText);
+        context.drawTextWithShadow(textRenderer, creditText, w - 3 - credW, 3, 0xFFFFFFFF);
+
+        // Version label — bottom right, above vanilla copyright at h-10
         String versionText = "Mizu 1.21.5  ·  swavez";
         int versionX = w - textRenderer.getWidth(versionText) - 4;
         int versionY = h - textRenderer.fontHeight * 2 - 8;
         context.drawText(textRenderer, versionText, versionX, versionY, 0xFF185FA5, false);
     }
+
+    // ---- CPU wave crests ----
+
+    @Unique
+    private static float cpuPeak(float x, float cx, float width, float height) {
+        float d = (x - cx) / width;
+        return height * (float) Math.exp(-d * d * 3.5);
+    }
+
+    @Unique
+    private static float cpuWaveSurf(float px, float tm, float scale) {
+        float slow = tm * 0.18f;
+        float p1 = cpuPeak(px, 0.08f + (float)Math.sin(slow*0.7f)*0.04f,  0.14f, 0.22f*scale);
+        float p2 = cpuPeak(px, 0.28f + (float)Math.sin(slow*0.5f+1.2f)*0.05f, 0.18f, 0.28f*scale);
+        float p3 = cpuPeak(px, 0.52f + (float)Math.sin(slow*0.6f+0.8f)*0.04f, 0.22f, 0.20f*scale);
+        float p4 = cpuPeak(px, 0.72f + (float)Math.sin(slow*0.4f+2.1f)*0.05f, 0.16f, 0.25f*scale);
+        float p5 = cpuPeak(px, 0.92f + (float)Math.sin(slow*0.55f+1.5f)*0.03f, 0.12f, 0.18f*scale);
+        return p1+p2+p3+p4+p5;
+    }
+
+    @Unique
+    private static void drawCPUWaves(DrawContext context, int w, int h) {
+        float tm = (System.currentTimeMillis() % 1000000L) / 1000.0f;
+        int safeTop = h / 4 + 75; // don't draw over the UI fill area
+        int step = 3;
+
+        for (int xi = 0; xi < w; xi += step) {
+            float px = (float) xi / w;
+
+            // surf1 — primary wave (brightest crest)
+            float s1 = 0.28f + cpuWaveSurf(px, tm, 1.0f);
+            int y1 = h - (int)(s1 * h); // convert GL Y to screen Y
+            if (y1 >= safeTop && y1 < h - 4) {
+                context.fill(xi, y1, xi + step, y1 + 2, 0xCC1D9E75);
+            }
+
+            // surf2 — secondary wave
+            float s2 = 0.22f + cpuWaveSurf(px, tm * 1.1f + 0.5f, 0.78f);
+            int y2 = h - (int)(s2 * h);
+            if (y2 >= safeTop && y2 < h - 4) {
+                context.fill(xi, y2, xi + step, y2 + 2, 0x990D7058);
+            }
+
+            // surf3 — tertiary wave (subtlest)
+            float s3 = 0.17f + cpuWaveSurf(px, tm * 0.9f + 1.2f, 0.58f);
+            int y3 = h - (int)(s3 * h);
+            if (y3 >= safeTop && y3 < h - 4) {
+                context.fill(xi, y3, xi + step, y3 + 1, 0x660A4A38);
+            }
+        }
+    }
+
+    // ---- Particles ----
 
     @Unique
     private static void initParticles(int w, int h) {

@@ -6,6 +6,7 @@
 package meteordevelopment.meteorclient.gui.newgui.components;
 
 import meteordevelopment.meteorclient.gui.newgui.FontManager;
+import meteordevelopment.meteorclient.gui.newgui.GuiColors;
 import meteordevelopment.meteorclient.gui.newgui.util.RenderUtils;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Category;
@@ -123,12 +124,9 @@ public class CategoryPanel {
         // Re-clamp scroll in case the viewport or content changed
         scrollOffset = Math.max(0, Math.min(scrollOffset, getMaxScroll()));
 
-        // Per the design: outline uses primary color with light transparency so the
-        // world shows through. The header uses the SAME primary color but more opaque,
-        // so when the header is drawn over the outline at the top of the panel the
-        // outline is cleanly hidden behind it (no visible seam or line showing through).
-        int outlineColor = fm.primaryAlpha(170);
-        int headerColor  = fm.primaryAlpha(220);
+        // Water-theme: deep navy header, dark teal border
+        int outlineColor = GuiColors.OUTLINE_COLOR;   // #0d3a5c at 67% alpha
+        int headerColor  = GuiColors.HEADER_FILL;     // #0a1e30 at 86% alpha
 
         // Full-panel outline first
         RenderUtils.drawThickOutline(context, x, y, width, totalHeight, 3, outlineColor);
@@ -137,25 +135,28 @@ public class CategoryPanel {
         // the header region. Higher alpha means the outline underneath is covered.
         RenderUtils.fillNative(context, x, y, width, headerH, headerColor);
 
-        // Header text
+        // Header text — ocean blue
         context.enableScissor(x, y, x + width, y + headerH);
         int headerTextY = y + (headerH - fm.getTextHeight()) / 2;
-        fm.drawText(context, category.name, x + PADDING + 2, headerTextY, fm.getTextColor());
+        fm.drawText(context, category.name, x + PADDING + 2, headerTextY, GuiColors.ACCENT_LIGHT);
         context.disableScissor();
 
         // No divider line under the header — the alpha step from "stacked header+outline"
         // to "plain outline" naturally marks the boundary.
 
-        // Module list — scrollable within the panel bounds. We scissor to the
-        // visible content rect and offset the cursor by scrollOffset. ModuleButton
-        // still handles its own expand-animation clipping internally.
+        // Module list — scrollable, filtered by search query
         int contentTop = y + headerH;
         int contentBottom = y + totalHeight;
         context.enableScissor(x, contentTop, x + width, contentBottom);
         int moduleY = contentTop - scrollOffset;
+        String query = meteordevelopment.meteorclient.gui.newgui.NewGuiScreen.searchQuery;
         for (ModuleButton button : buttons) {
-            button.render(context, x, moduleY, width, mouseX, mouseY);
-            moduleY += button.getHeight();
+            boolean matches = query.isEmpty() ||
+                button.getModule().title.toLowerCase().contains(query.toLowerCase());
+            if (matches) {
+                button.render(context, x, moduleY, width, mouseX, mouseY);
+                moduleY += button.getHeight();
+            }
         }
         context.disableScissor();
 
@@ -168,7 +169,7 @@ public class CategoryPanel {
             int thumbH = Math.max(8, (int) ((long) visibleH * trackH / totalContent));
             int thumbY = contentTop + 1 + (int) ((long) (trackH - thumbH) * scrollOffset / maxScroll);
             int sbX = x + width - 2;
-            fillNative(context, sbX, thumbY, sbX + 1, thumbY + thumbH, fm.primaryAlpha(220));
+            fillNative(context, sbX, thumbY, sbX + 1, thumbY + thumbH, GuiColors.OUTLINE_HEADER);
         }
 
         // Border trace animation (drawn on top of everything)

@@ -561,6 +561,7 @@ public class Modules extends System<Modules> {
         }
 
         add(new meteordevelopment.meteorclient.systems.modules.hunting.DiscordNotifs());
+        add(new meteordevelopment.meteorclient.systems.modules.hunting.ItemScanner());
         add(new meteordevelopment.meteorclient.systems.modules.hunting.GotoPosition());
         add(new meteordevelopment.meteorclient.systems.modules.hunting.HighlightOldLava());
         add(new meteordevelopment.meteorclient.systems.modules.hunting.LavaFlow());

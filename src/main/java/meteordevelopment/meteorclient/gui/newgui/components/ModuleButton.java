@@ -78,14 +78,13 @@ public class ModuleButton {
         if (Math.abs(expandAnimation - target) < 0.01f) expandAnimation = target;
 
         if (module.isActive()) {
-            // Enabled-module highlight uses SECONDARY color with mild transparency.
-            // Inset in NATIVE pixels so the gap-to-outline is precise regardless of
-            // Minecraft's GUI scale: 3 native px for the outline + 1 native px for
-            // the visible gap = 4 native px on each side.
-            RenderUtils.fillNativeHInset(context, x, y, width, rowH, 4, fm.secondaryAlpha(160));
+            // Active row — subtle teal fill + left accent bar
+            RenderUtils.fillNativeHInset(context, x, y, width, rowH, 4, GuiColors.ACTIVE_ROW_BG);
+            // Left teal accent bar (3 native px wide)
+            fillNative(context, x + 4, y, x + 7, y + rowH, GuiColors.ACCENT);
         }
 
-        int textColor = module.isActive() ? fm.getTextColor() : fm.getTextSecondary();
+        int textColor = module.isActive() ? GuiColors.ACCENT : GuiColors.TEXT_SECONDARY;
         boolean titleHovered = mouseY >= y && mouseY < y + rowH && mouseX >= x && mouseX < x + width;
         context.enableScissor(x + 3, y, x + width - 3, y + rowH);
         fm.drawTextMarquee(context, module, module.title, x + 5, textY(y, rowH), x + width - 5, textColor, titleHovered);

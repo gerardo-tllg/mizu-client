@@ -21,14 +21,13 @@ float peak(float x,float cx,float width,float height){
 }
 float waveSurf(float px,float tm,float scale){
   float slow=tm*0.18;
-  // 2x amplitude for debug visibility
-  float p1=peak(px,0.08+sin(slow*0.7)*0.04,0.14,0.44*scale);
-  float p2=peak(px,0.28+sin(slow*0.5+1.2)*0.05,0.18,0.56*scale);
-  float p3=peak(px,0.52+sin(slow*0.6+0.8)*0.04,0.22,0.40*scale);
-  float p4=peak(px,0.72+sin(slow*0.4+2.1)*0.05,0.16,0.50*scale);
-  float p5=peak(px,0.92+sin(slow*0.55+1.5)*0.03,0.12,0.36*scale);
-  float ripple=sin(px*22.0-tm*1.8)*0.012*scale+sin(px*35.0+tm*2.2)*0.008*scale;
-  float turb=fbm(vec2(px*2.2+slow*0.3,slow*0.15))*0.025*scale;
+  float p1=peak(px,0.08+sin(slow*0.7)*0.04,0.14,0.22*scale);
+  float p2=peak(px,0.28+sin(slow*0.5+1.2)*0.05,0.18,0.28*scale);
+  float p3=peak(px,0.52+sin(slow*0.6+0.8)*0.04,0.22,0.20*scale);
+  float p4=peak(px,0.72+sin(slow*0.4+2.1)*0.05,0.16,0.25*scale);
+  float p5=peak(px,0.92+sin(slow*0.55+1.5)*0.03,0.12,0.18*scale);
+  float ripple=sin(px*22.0-tm*1.8)*0.010*scale+sin(px*35.0+tm*2.2)*0.006*scale;
+  float turb=fbm(vec2(px*2.2+slow*0.3,slow*0.15))*0.020*scale;
   return p1+p2+p3+p4+p5+ripple+turb;
 }
 void main(){
@@ -52,7 +51,6 @@ void main(){
   vec3 layer3=vec3(0.013,0.060,0.138);
   vec3 layer4=vec3(0.018,0.082,0.168);
   vec3 layer5=vec3(0.024,0.108,0.200);
-  // Brighter crest colors for debug
   vec3 lineCol1=vec3(0.05,0.65,0.50);
   vec3 lineCol2=vec3(0.04,0.55,0.42);
   vec3 lineCol3=vec3(0.04,0.45,0.35);
@@ -64,8 +62,7 @@ void main(){
   col=mix(col,layer3,b3);
   col=mix(col,layer4,b4);
   col=mix(col,layer5,b5);
-  // 3x wider lines
-  float lw=3.6/res.y;
+  float lw=3.0/res.y;
   float fn1=n(vec2(px*10.0+tm*0.4,tm*0.28))*0.5+0.5;
   float fn2=n(vec2(px*18.0-tm*0.35,tm*0.22))*0.5+0.5;
   float line1=smoothstep(lw*6.0,0.0,abs(uv.y-surf1));

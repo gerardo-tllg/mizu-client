@@ -12,6 +12,7 @@ import meteordevelopment.meteorclient.systems.modules.Modules;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,23 +22,23 @@ public class NewGuiScreen extends Screen {
     private boolean initialized = false;
     private long openTime;
 
+    // Search bar state (static so panels can read it without a back-reference)
+    public static String searchQuery = "";
+    private static final int SEARCH_BAR_H = 16;
+    private static final int SEARCH_BAR_W = 180;
+
     public NewGuiScreen() {
-        super(Text.literal("ReviveClient"));
+        super(Text.literal("Mizu"));
     }
 
     @Override
     protected void init() {
         super.init();
-        // Ensure the keybind-capture handlers are on the event bus before any
-        // module/setting bind can start.
         meteordevelopment.meteorclient.gui.newgui.components.NewGuiBindCapture.ensureSubscribed();
 
-        // Reset animation timer each time the GUI opens
         openTime = System.currentTimeMillis();
+        searchQuery = "";
 
-        // Re-sync FontManager from the persisted Gui module settings each
-        // time the GUI opens. Handles the case where Meteor loads NBT after
-        // the Gui module constructor has already run with defaults.
         try {
             meteordevelopment.meteorclient.systems.modules.gui.Gui guiMod =
                 meteordevelopment.meteorclient.systems.modules.Modules.get()
@@ -48,17 +49,13 @@ public class NewGuiScreen extends Screen {
         if (!initialized) {
             int gap = CategoryPanel.getNativeGap();
             int startX = 4;
-            int startY = 10;
+            int startY = SEARCH_BAR_H + 6; // leave room for search bar
             int rowSpacing = 4;
 
             for (Category category : Modules.loopCategories()) {
                 panels.add(new CategoryPanel(category, 0, startY));
             }
 
-            // Panels now show their full module list (no height cap). Layout just
-            // needs to lay them out left-to-right, wrapping when they'd exceed
-            // the screen width. Each wrapped row's starting Y uses the tallest
-            // panel from the previous row.
             int maxWidth = this.width - startX;
             int currentX = startX;
             int currentY = startY;
@@ -67,7 +64,6 @@ public class NewGuiScreen extends Screen {
             for (CategoryPanel panel : panels) {
                 int pw = panel.getWidth();
                 if (currentX != startX && currentX + pw > maxWidth) {
-                    // Wrap to next row using the previous row's tallest panel
                     currentX = startX;
                     currentY += rowTallest + rowSpacing;
                     rowTallest = 0;
@@ -86,19 +82,40 @@ public class NewGuiScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        // IMPORTANT: super.render in 1.21.5 sets up the framebuffer + blur via the
-        // vanilla pipeline. Calling applyBlur() directly outside that path triggers
-        // GL_INVALID_ENUM because the post-effect pipeline was rewritten in 1.21.5.
         super.render(context, mouseX, mouseY, delta);
 
         float animProgress = getAnimProgress();
-
         for (int i = panels.size() - 1; i >= 0; i--) {
             panels.get(i).render(context, mouseX, mouseY, animProgress);
         }
+
+        drawSearchBar(context, mouseX, mouseY);
     }
 
-    /** Animation progress: 0 to 1 over ~1.5 seconds, stays at 1 after. */
+    private void drawSearchBar(DrawContext context, int mouseX, int mouseY) {
+        int barX = (this.width - SEARCH_BAR_W) / 2;
+        int barY = 2;
+
+        // Background
+        context.fill(barX, barY, barX + SEARCH_BAR_W, barY + SEARCH_BAR_H, 0xFF060d18);
+
+        // Border — teal when query active, dark teal when empty
+        boolean active = !searchQuery.isEmpty();
+        int borderColor = active ? 0xFF1D9E75 : 0xFF0D3A5C;
+        context.drawBorder(barX, barY, SEARCH_BAR_W, SEARCH_BAR_H, borderColor);
+
+        // Text
+        String display = searchQuery.isEmpty() ? "search modules..." : searchQuery;
+        int textColor = searchQuery.isEmpty() ? 0xFF185FA5 : 0xFFF0F0FA;
+        context.drawText(client.textRenderer, display, barX + 5, barY + 4, textColor, false);
+
+        // Blinking cursor
+        if (active && (System.currentTimeMillis() / 500) % 2 == 0) {
+            int cursorX = barX + 5 + client.textRenderer.getWidth(searchQuery);
+            context.fill(cursorX, barY + 3, cursorX + 1, barY + SEARCH_BAR_H - 3, 0xFF1D9E75);
+        }
+    }
+
     private float getAnimProgress() {
         long elapsed = System.currentTimeMillis() - openTime;
         return Math.min(1f, elapsed / 1500f);
@@ -107,62 +124,60 @@ public class NewGuiScreen extends Screen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         for (CategoryPanel panel : panels) {
-            if (panel.mouseClicked((int) mouseX, (int) mouseY, button)) {
-                return true;
-            }
+            if (panel.mouseClicked((int) mouseX, (int) mouseY, button)) return true;
         }
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        for (CategoryPanel panel : panels) {
-            panel.mouseReleased((int) mouseX, (int) mouseY, button);
-        }
+        for (CategoryPanel panel : panels) panel.mouseReleased((int) mouseX, (int) mouseY, button);
         return super.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         for (CategoryPanel panel : panels) {
-            if (panel.mouseScrolled((int) mouseX, (int) mouseY, verticalAmount)) {
-                return true;
-            }
+            if (panel.mouseScrolled((int) mouseX, (int) mouseY, verticalAmount)) return true;
         }
         return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (ModuleButton.onKeyPressed(keyCode)) {
+        if (ModuleButton.onKeyPressed(keyCode)) return true;
+
+        if (keyCode == GLFW.GLFW_KEY_BACKSPACE && !searchQuery.isEmpty()) {
+            searchQuery = searchQuery.substring(0, searchQuery.length() - 1);
             return true;
+        }
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+            if (!searchQuery.isEmpty()) { searchQuery = ""; return true; }
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override
     public boolean charTyped(char chr, int modifiers) {
-        if (ModuleButton.onCharTyped(chr)) {
+        if (ModuleButton.onCharTyped(chr)) return true;
+        if (chr >= 32 && chr != 127) {
+            searchQuery += chr;
             return true;
         }
         return super.charTyped(chr, modifiers);
     }
 
     @Override
-    public boolean shouldPause() {
-        return false;
-    }
+    public boolean shouldPause() { return false; }
 
     @Override
     public void close() {
-        // Don't leak a pending keybind capture — if the user dismissed the gui
-        // while "listening" for a module bind, any subsequent in-game key would
-        // otherwise rebind that module.
         meteordevelopment.meteorclient.systems.modules.Modules modules =
             meteordevelopment.meteorclient.systems.modules.Modules.get();
         if (modules != null && modules.isBinding()) modules.setModuleToBind(null);
         meteordevelopment.meteorclient.gui.newgui.components.NewGuiBindCapture.get().cancelSettingListen();
         meteordevelopment.meteorclient.gui.newgui.components.SettingGroupRenderer.commitStringEdit();
+        searchQuery = "";
         super.close();
     }
 }

@@ -5,43 +5,45 @@
 
 package meteordevelopment.meteorclient.gui.newgui;
 
-import java.awt.Color;
-
 public class GuiColors {
-    // Background
-    public static final int BG_DARK = new Color(18, 18, 24).getRGB();
-    public static final int BG_PANEL = new Color(24, 24, 32).getRGB();
-    public static final int BG_MODULE = new Color(30, 30, 40).getRGB();
-    public static final int BG_MODULE_HOVER = new Color(38, 38, 50).getRGB();
-    public static final int BG_SETTINGS = new Color(22, 22, 30).getRGB();
-    public static final int BG_SETTING_HOVER = new Color(34, 34, 46).getRGB();
+    // Backgrounds — deep ocean navy
+    public static final int BG_DARK         = 0xFF060d18;  // #060d18
+    public static final int BG_PANEL        = 0xFF060d18;
+    public static final int BG_MODULE       = 0xFF060d18;
+    public static final int BG_MODULE_HOVER = 0xFF091525;
+    public static final int BG_SETTINGS     = 0xFF060d18;
+    public static final int BG_SETTING_HOVER= 0xFF0a1a2c;
+    public static final int BG_HEADER       = 0xFF0a1e30;  // #0a1e30 category header
+    public static final int BG_HEADER_ACTIVE= 0xFF0d2840;
 
-    // Accent
-    public static final int ACCENT = new Color(130, 90, 255).getRGB();
-    public static final int ACCENT_LIGHT = new Color(160, 130, 255).getRGB();
+    // Accents — water theme
+    public static final int ACCENT          = 0xFF1D9E75;  // #1D9E75 teal (active)
+    public static final int ACCENT_LIGHT    = 0xFF378ADD;  // #378ADD ocean blue
+
+    // Active module row highlight — teal at 45% alpha
+    public static final int ACTIVE_ROW_BG   = 0x721D9E75;
 
     // Text
-    public static final int TEXT_PRIMARY = new Color(240, 240, 250).getRGB();
-    public static final int TEXT_SECONDARY = new Color(140, 140, 165).getRGB();
-    public static final int TEXT_DISABLED = new Color(80, 80, 100).getRGB();
-    public static final int TEXT_SETTING_VALUE = new Color(170, 170, 200).getRGB();
-
-    // Stub row (unsupported setting types) - use a muted grey like TEXT_DISABLED
-    public static final int TEXT_STUB = new Color(110, 110, 130).getRGB();
+    public static final int TEXT_PRIMARY    = 0xFFF0F0FA;  // near-white active text
+    public static final int TEXT_SECONDARY  = 0xFF185FA5;  // #185FA5 inactive module text
+    public static final int TEXT_DISABLED   = 0xFF0D3A5C;  // very dim
+    public static final int TEXT_SETTING_VALUE = 0xFF7FB3D4;
+    public static final int TEXT_STUB       = 0xFF0D3A5C;
 
     // Status
-    public static final int ENABLED = new Color(90, 255, 130).getRGB();
-    public static final int DISABLED = new Color(255, 70, 70).getRGB();
+    public static final int ENABLED         = 0xFF1D9E75;
+    public static final int DISABLED_COLOR  = 0xFF185FA5;
 
-    // Borders
-    public static final int BORDER = new Color(50, 50, 65).getRGB();
-    public static final int BORDER_LIGHT = new Color(70, 70, 90).getRGB();
+    // Borders — dark teal
+    public static final int BORDER          = 0xFF0D3A5C;  // #0d3a5c
+    public static final int BORDER_LIGHT    = 0xFF1D4A6C;
 
     // Scrollbar
-    public static final int SCROLLBAR = new Color(60, 60, 80).getRGB();
-    public static final int SCROLLBAR_HOVER = new Color(80, 80, 105).getRGB();
+    public static final int SCROLLBAR       = 0xFF0D3A5C;
+    public static final int SCROLLBAR_HOVER = 0xFF1D4A6C;
 
-    // Header
-    public static final int BG_HEADER = new Color(28, 28, 38).getRGB();
-    public static final int BG_HEADER_ACTIVE = new Color(40, 40, 55).getRGB();
+    // Pre-blended variants for fills (ARGB)
+    public static final int HEADER_FILL     = 0xDC0A1E30;  // header bg at alpha 220
+    public static final int OUTLINE_COLOR   = 0xAA0D3A5C;  // border at alpha 170
+    public static final int OUTLINE_HEADER  = 0xDC0D3A5C;  // border at alpha 220 (on header)
 }
