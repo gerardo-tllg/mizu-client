@@ -8,11 +8,12 @@ package meteordevelopment.meteorclient.mixin;
 import meteordevelopment.meteorclient.systems.config.Config;
 import meteordevelopment.meteorclient.utils.player.TitleScreenCredits;
 import meteordevelopment.meteorclient.utils.render.MizuTitleShader;
-import meteordevelopment.meteorclient.utils.render.WaveRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.LogoDrawer;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.SplashTextRenderer;
 import net.minecraft.client.gui.screen.TitleScreen;
+import net.minecraft.client.font.TextRenderer;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 import net.minecraft.text.Text;
@@ -36,16 +37,23 @@ public abstract class TitleScreenMixin extends Screen {
         super(title);
     }
 
-    // Cancel vanilla panorama + gradient so the GLSL ocean shader shows through
-    @Inject(method = "renderBackground", at = @At("HEAD"), cancellable = true)
-    private void cancelPanorama(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+    // Cancel the panorama cube-map — this is what was covering the shader waves.
+    // renderBackground() is a no-op in TitleScreen; the panorama is in renderPanoramaBackground().
+    @Inject(method = "renderPanoramaBackground", at = @At("HEAD"), cancellable = true)
+    private void cancelPanorama(DrawContext context, float delta, CallbackInfo ci) {
         ci.cancel();
     }
 
-    // Hide the vanilla Minecraft logo texture entirely
+    // Hide the vanilla Minecraft logo texture
     @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/LogoDrawer;draw(Lnet/minecraft/client/gui/DrawContext;IF)V"))
     private void hideVanillaLogo(LogoDrawer drawer, DrawContext context, int screenWidth, float alpha) {
-        // no-op: suppress the Minecraft logo
+        // no-op
+    }
+
+    // Hide the vanilla yellow splash text
+    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/SplashTextRenderer;render(Lnet/minecraft/client/gui/DrawContext;ILnet/minecraft/client/font/TextRenderer;I)V"))
+    private void hideSplashText(SplashTextRenderer renderer, DrawContext context, int width, TextRenderer tr, int color) {
+        // no-op
     }
 
     @Inject(method = "render", at = @At("HEAD"))
@@ -67,30 +75,26 @@ public abstract class TitleScreenMixin extends Screen {
 
         int w = this.width;
         int h = this.height;
-        long now = System.currentTimeMillis();
 
-        // Cover any remaining logo/splash-text remnants in the top region
-        context.fill(0, h / 4 - 20, w, h / 4 + 62, 0xFF050e1a);
-
-        // Ripple circles anchored to the MIZU text area
-        WaveRenderer.renderContinuousRipples(context, w / 2, h / 4, now);
+        // Cover vanilla logo and splash-text area cleanly — fill the full top region
+        context.fill(0, 0, w, h / 4 + 70, 0xFF050e1a);
 
         // 水 kanji watermark — large, centered, rendered BEHIND the MIZU text
         int titleScale = 5;
         int kanjiScale = 14;
         int kanjiW = textRenderer.getWidth("水") * kanjiScale;
         int kanjiH = textRenderer.fontHeight * kanjiScale;
-        int kanjiCenterY = h / 4 + (textRenderer.fontHeight * titleScale) / 2;
+        int titleY = h / 6;  // ~16.7% from top, well above buttons
+        int kanjiCenterY = titleY + (textRenderer.fontHeight * titleScale) / 2;
         context.getMatrices().push();
         context.getMatrices().translate(w / 2.0f - kanjiW / 2.0f, kanjiCenterY - kanjiH / 2.0f, 0);
         context.getMatrices().scale(kanjiScale, kanjiScale, 1.0f);
         context.drawText(textRenderer, "水", 0, 0, 0xFF0D3048, false);
         context.getMatrices().pop();
 
-        // MIZU logo — large, centered, teal, at Y = 25% of screen height
+        // MIZU logo — large, centered, teal
         String titleText = "MIZU";
         int titleW = textRenderer.getWidth(titleText) * titleScale;
-        int titleY = h / 4;
         context.getMatrices().push();
         context.getMatrices().translate(w / 2.0f - titleW / 2.0f, titleY, 0);
         context.getMatrices().scale(titleScale, titleScale, 1.0f);
@@ -112,10 +116,10 @@ public abstract class TitleScreenMixin extends Screen {
         if (!particlesInit) initParticles(w, h);
         updateAndDrawParticles(context, w, h, delta);
 
-        // Version label — bottom right
+        // Version label — bottom right, one line above vanilla copyright (which is at h-10)
         String versionText = "Mizu 1.21.5  ·  swavez";
         int versionX = w - textRenderer.getWidth(versionText) - 4;
-        int versionY = h - textRenderer.fontHeight - 4;
+        int versionY = h - textRenderer.fontHeight * 2 - 8;
         context.drawText(textRenderer, versionText, versionX, versionY, 0xFF185FA5, false);
     }
 
