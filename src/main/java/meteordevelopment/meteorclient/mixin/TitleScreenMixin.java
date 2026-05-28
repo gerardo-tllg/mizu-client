@@ -10,6 +10,7 @@ import meteordevelopment.meteorclient.utils.player.TitleScreenCredits;
 import meteordevelopment.meteorclient.utils.render.MizuTitleShader;
 import meteordevelopment.meteorclient.utils.render.WaveRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.LogoDrawer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
 
@@ -20,6 +21,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -34,27 +36,29 @@ public abstract class TitleScreenMixin extends Screen {
         super(title);
     }
 
+    // Cancel vanilla panorama + gradient so the GLSL ocean shader shows through
+    @Inject(method = "renderBackground", at = @At("HEAD"), cancellable = true)
+    private void cancelPanorama(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+        ci.cancel();
+    }
+
+    // Hide the vanilla Minecraft logo texture entirely
+    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/LogoDrawer;draw(Lnet/minecraft/client/gui/DrawContext;IF)V"))
+    private void hideVanillaLogo(LogoDrawer drawer, DrawContext context, int screenWidth, float alpha) {
+        // no-op: suppress the Minecraft logo
+    }
+
     @Inject(method = "render", at = @At("HEAD"))
     private void onRenderHead(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         int w = this.width;
         int h = this.height;
 
-        // Solid deep ocean background (fallback if shader is unavailable)
+        // Solid deep ocean background fallback
         context.fill(0, 0, w, h, 0xFF050e1a);
 
-        // GLSL shader background with animated ocean waves
+        // GLSL ocean wave shader
         float timeSeconds = (System.currentTimeMillis() % 1000000L) / 1000.0f;
         MizuTitleShader.render(timeSeconds, mc.getWindow().getFramebufferWidth(), mc.getWindow().getFramebufferHeight());
-
-        // Water kanji watermark — very subtle, centered
-        int kanjiScale = 12;
-        int kanjiW = textRenderer.getWidth("水") * kanjiScale;
-        int kanjiH = textRenderer.fontHeight * kanjiScale;
-        context.getMatrices().push();
-        context.getMatrices().translate(w / 2.0f - (kanjiW / 2.0f), h / 2.0f - (kanjiH / 2.0f) - 20, 0);
-        context.getMatrices().scale(kanjiScale, kanjiScale, 1.0f);
-        context.drawText(textRenderer, "水", 0, 0, 0xFF0a1e30, false);
-        context.getMatrices().pop();
     }
 
     @Inject(method = "render", at = @At("TAIL"))
@@ -65,16 +69,25 @@ public abstract class TitleScreenMixin extends Screen {
         int h = this.height;
         long now = System.currentTimeMillis();
 
-        // Cover the vanilla Minecraft logo area
-        int logoTop = h / 4 - 10;
-        int logoH = 44;
-        context.fill(0, logoTop - 8, w, logoTop + logoH + 8, 0xFF050e1a);
+        // Cover any remaining logo/splash-text remnants in the top region
+        context.fill(0, h / 4 - 20, w, h / 4 + 62, 0xFF050e1a);
 
-        // Ripple circles from center
-        WaveRenderer.renderContinuousRipples(context, w / 2, h / 3, now);
+        // Ripple circles anchored to the MIZU text area
+        WaveRenderer.renderContinuousRipples(context, w / 2, h / 4, now);
 
-        // MIZU logo — large, centered, teal
+        // 水 kanji watermark — large, centered, rendered BEHIND the MIZU text
         int titleScale = 5;
+        int kanjiScale = 14;
+        int kanjiW = textRenderer.getWidth("水") * kanjiScale;
+        int kanjiH = textRenderer.fontHeight * kanjiScale;
+        int kanjiCenterY = h / 4 + (textRenderer.fontHeight * titleScale) / 2;
+        context.getMatrices().push();
+        context.getMatrices().translate(w / 2.0f - kanjiW / 2.0f, kanjiCenterY - kanjiH / 2.0f, 0);
+        context.getMatrices().scale(kanjiScale, kanjiScale, 1.0f);
+        context.drawText(textRenderer, "水", 0, 0, 0xFF0D3048, false);
+        context.getMatrices().pop();
+
+        // MIZU logo — large, centered, teal, at Y = 25% of screen height
         String titleText = "MIZU";
         int titleW = textRenderer.getWidth(titleText) * titleScale;
         int titleY = h / 4;
@@ -84,9 +97,9 @@ public abstract class TitleScreenMixin extends Screen {
         context.drawText(textRenderer, titleText, 0, 0, 0xFF1D9E75, false);
         context.getMatrices().pop();
 
-        // Subtitle
+        // Subtitle — just below MIZU
         int subtitleScale = 2;
-        String subtitle = "水  ·  utility client  ·  1.21.5";
+        String subtitle = "utility client  ·  1.21.5";
         int subtitleW = textRenderer.getWidth(subtitle) * subtitleScale;
         int subtitleY = titleY + textRenderer.fontHeight * titleScale + 4;
         context.getMatrices().push();
@@ -99,7 +112,7 @@ public abstract class TitleScreenMixin extends Screen {
         if (!particlesInit) initParticles(w, h);
         updateAndDrawParticles(context, w, h, delta);
 
-        // Version text bottom right
+        // Version label — bottom right
         String versionText = "Mizu 1.21.5  ·  swavez";
         int versionX = w - textRenderer.getWidth(versionText) - 4;
         int versionY = h - textRenderer.fontHeight - 4;
@@ -126,7 +139,6 @@ public abstract class TitleScreenMixin extends Screen {
                 PARTICLE_Y[i] = 0;
                 PARTICLE_X[i] = (int)(Math.random() * w);
             }
-            // Rain dot — 2x4 pixels, #378ADD at 40% opacity
             context.fill(PARTICLE_X[i], (int) PARTICLE_Y[i], PARTICLE_X[i] + 1, (int) PARTICLE_Y[i] + 3, 0x66378ADD);
         }
     }

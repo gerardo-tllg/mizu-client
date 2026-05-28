@@ -12,10 +12,8 @@ import meteordevelopment.meteorclient.renderer.MeteorRenderPipelines;
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class MizuTitleShader {
-    private static boolean failed = false;
-
     public static void render(float timeSeconds, int screenWidth, int screenHeight) {
-        if (failed || FullScreenRenderer.mesh == null) return;
+        if (FullScreenRenderer.mesh == null) return;
 
         try {
             MeshRenderer.begin()
@@ -27,8 +25,8 @@ public class MizuTitleShader {
                     pass.setUniform("res", (float) screenWidth, (float) screenHeight);
                 })
                 .end();
-        } catch (Exception e) {
-            failed = true;
+        } catch (Exception ignored) {
+            // Skip this frame if the pipeline isn't ready yet
         }
     }
 }
