@@ -53,14 +53,14 @@ public class ActiveModulesHud extends HudElement {
     private final Setting<ColorMode> colorMode = sgGeneral.add(new EnumSetting.Builder<ColorMode>()
         .name("color-mode")
         .description("What color to use for active modules.")
-        .defaultValue(ColorMode.Rainbow)
+        .defaultValue(ColorMode.Flat)
         .build()
     );
 
     private final Setting<SettingColor> flatColor = sgGeneral.add(new ColorSetting.Builder()
         .name("flat-color")
         .description("Color for flat color mode.")
-        .defaultValue(new SettingColor(225, 25, 25))
+        .defaultValue(new SettingColor(29, 158, 117))
         .visible(() -> colorMode.get() == ColorMode.Flat)
         .build()
     );
@@ -248,8 +248,6 @@ public class ActiveModulesHud extends HudElement {
             }
         }
 
-        renderer.text(module.title, x, y, color, shadow.get(), getScale());
-
         double emptySpace = renderer.textWidth(" ", shadow.get(), getScale());
         double textHeight = renderer.textHeight(shadow.get(), getScale());
         double textLength = renderer.textWidth(module.title, shadow.get(), getScale());
@@ -257,8 +255,22 @@ public class ActiveModulesHud extends HudElement {
         if (activeInfo.get()) {
             String info = module.getInfoString();
             if (info != null) {
-                renderer.text(info, x + emptySpace + textLength, y, moduleInfoColor.get(), shadow.get(), getScale());
                 textLength += emptySpace + renderer.textWidth(info, shadow.get(), getScale());
+            }
+        }
+
+        // Water theme: background strip
+        renderer.quad(x - 6, y - 1, textLength + 12, textHeight + 2, new Color(5, 14, 26, 153));
+
+        // Water theme: dot indicator
+        renderer.quad(x - 4, y + (textHeight / 2.0) - 1.5, 3, 3, color);
+
+        renderer.text(module.title, x, y, color, shadow.get(), getScale());
+
+        if (activeInfo.get()) {
+            String info = module.getInfoString();
+            if (info != null) {
+                renderer.text(info, x + emptySpace + renderer.textWidth(module.title, shadow.get(), getScale()), y, moduleInfoColor.get(), shadow.get(), getScale());
             }
         }
 
