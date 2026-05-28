@@ -173,6 +173,22 @@ public abstract class MeteorRenderPipelines {
         .build()
     );
 
+    // Title Screen
+
+    public static final RenderPipeline MIZU_TITLE = add(new ExtendedRenderPipelineBuilder()
+        .withLocation(MeteorClient.identifier("pipeline/mizu_title"))
+        .withVertexFormat(MeteorVertexFormats.POS2, VertexFormat.DrawMode.TRIANGLES)
+        .withVertexShader(MeteorClient.identifier("shaders/mizu_title.vert"))
+        .withFragmentShader(MeteorClient.identifier("shaders/mizu_title.frag"))
+        .withUniform("t", UniformType.FLOAT)
+        .withUniform("res", UniformType.VEC2)
+        .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
+        .withDepthWrite(false)
+        .withBlend(BlendFunction.TRANSLUCENT)
+        .withCull(false)
+        .build()
+    );
+
     // Blur
 
     public static final RenderPipeline BLUR_DOWN = add(new ExtendedRenderPipelineBuilder(UNIFORMS)

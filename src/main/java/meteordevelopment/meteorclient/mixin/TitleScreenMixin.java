@@ -7,10 +7,13 @@ package meteordevelopment.meteorclient.mixin;
 
 import meteordevelopment.meteorclient.systems.config.Config;
 import meteordevelopment.meteorclient.utils.player.TitleScreenCredits;
+import meteordevelopment.meteorclient.utils.render.MizuTitleShader;
 import meteordevelopment.meteorclient.utils.render.WaveRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
+
+import static meteordevelopment.meteorclient.MeteorClient.mc;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Mixin;
@@ -36,8 +39,12 @@ public abstract class TitleScreenMixin extends Screen {
         int w = this.width;
         int h = this.height;
 
-        // Solid deep ocean background
+        // Solid deep ocean background (fallback if shader is unavailable)
         context.fill(0, 0, w, h, 0xFF050e1a);
+
+        // GLSL shader background with animated ocean waves
+        float timeSeconds = (System.currentTimeMillis() % 1000000L) / 1000.0f;
+        MizuTitleShader.render(timeSeconds, mc.getWindow().getFramebufferWidth(), mc.getWindow().getFramebufferHeight());
 
         // Water kanji watermark — very subtle, centered
         int kanjiScale = 12;
@@ -48,9 +55,6 @@ public abstract class TitleScreenMixin extends Screen {
         context.getMatrices().scale(kanjiScale, kanjiScale, 1.0f);
         context.drawText(textRenderer, "水", 0, 0, 0xFF0a1e30, false);
         context.getMatrices().pop();
-
-        // Wave layers at bottom 20%
-        WaveRenderer.renderWaves(context, w, h, System.currentTimeMillis());
     }
 
     @Inject(method = "render", at = @At("TAIL"))
