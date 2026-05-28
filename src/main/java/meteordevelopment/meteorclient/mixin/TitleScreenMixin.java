@@ -83,21 +83,22 @@ public abstract class TitleScreenMixin extends Screen {
         int w = this.width;
         int h = this.height;
 
-        // Cover vanilla logo/splash remnants — solid dark band across top region.
-        // DrawContext fills execute after the shader so they paint over the sky area
-        // cleanly while the shader's wave area (below ~44% from top) shows through.
-        context.fill(0, 0, w, h / 4 + 70, 0xFF050e1a);
+        // Dark band for the MIZU + subtitle area only.
+        // Capped at 33% so it NEVER reaches the button zone (buttons start at ~35-38%).
+        // DrawContext fills execute after vanilla button rendering, so keeping this
+        // strictly above 33% ensures buttons remain fully visible.
+        context.fill(0, 0, w, (int)(h * 0.33f), 0xFF050e1a);
 
-        // CPU wave crests — reliable DrawContext rendering that always shows.
-        // Draws in the lower portion of the screen where the shader ocean is.
+        // CPU wave crests — only rendered below 75% to stay clear of all buttons
         drawCPUWaves(context, w, h);
 
-        // 水 kanji watermark — large, centered, behind MIZU text
+        // 水 kanji watermark — large, centered behind MIZU
         int titleScale = 5;
         int kanjiScale = 14;
         int kanjiW = textRenderer.getWidth("水") * kanjiScale;
         int kanjiH = textRenderer.fontHeight * kanjiScale;
-        int titleY = h / 6;
+        // MIZU at exactly 18% of screen height
+        int titleY = (int)(h * 0.18f);
         int kanjiCenterY = titleY + (textRenderer.fontHeight * titleScale) / 2;
         context.getMatrices().push();
         context.getMatrices().translate(w / 2.0f - kanjiW / 2.0f, kanjiCenterY - kanjiH / 2.0f, 0);
@@ -105,7 +106,7 @@ public abstract class TitleScreenMixin extends Screen {
         context.drawText(textRenderer, "水", 0, 0, 0xFF0D3048, false);
         context.getMatrices().pop();
 
-        // MIZU — large teal, at Y = ~16.7% (h/6), safely above all vanilla buttons
+        // MIZU — Y = 18% of screen height, well above buttons
         String titleText = "MIZU";
         int titleW = textRenderer.getWidth(titleText) * titleScale;
         context.getMatrices().push();
@@ -114,18 +115,18 @@ public abstract class TitleScreenMixin extends Screen {
         context.drawText(textRenderer, titleText, 0, 0, 0xFF1D9E75, false);
         context.getMatrices().pop();
 
-        // Subtitle — just below MIZU
+        // Subtitle — Y = 26% of screen height (separate, fixed position)
         int subtitleScale = 2;
         String subtitle = "utility client  ·  1.21.5";
         int subtitleW = textRenderer.getWidth(subtitle) * subtitleScale;
-        int subtitleY = titleY + textRenderer.fontHeight * titleScale + 4;
+        int subtitleY = (int)(h * 0.26f);
         context.getMatrices().push();
         context.getMatrices().translate(w / 2.0f - subtitleW / 2.0f, subtitleY, 0);
         context.getMatrices().scale(subtitleScale, subtitleScale, 1.0f);
         context.drawText(textRenderer, subtitle, 0, 0, 0xFF378ADD, false);
         context.getMatrices().pop();
 
-        // Rain particles
+        // Rain particles — only render below 75% (clear of all buttons)
         if (!particlesInit) initParticles(w, h);
         updateAndDrawParticles(context, w, h, delta);
 
@@ -159,30 +160,28 @@ public abstract class TitleScreenMixin extends Screen {
     @Unique
     private static void drawCPUWaves(DrawContext context, int w, int h) {
         float tm = (System.currentTimeMillis() % 1000000L) / 1000.0f;
-        int safeTop = h / 4 + 75; // don't draw over the UI fill area
+        // Only render waves below 75% from top — keeps 35-75% button zone clear
+        int floorY = (int)(h * 0.75f);
         int step = 3;
 
         for (int xi = 0; xi < w; xi += step) {
             float px = (float) xi / w;
 
-            // surf1 — primary wave (brightest crest)
             float s1 = 0.28f + cpuWaveSurf(px, tm, 1.0f);
-            int y1 = h - (int)(s1 * h); // convert GL Y to screen Y
-            if (y1 >= safeTop && y1 < h - 4) {
+            int y1 = h - (int)(s1 * h);
+            if (y1 >= floorY && y1 < h - 4) {
                 context.fill(xi, y1, xi + step, y1 + 2, 0xCC1D9E75);
             }
 
-            // surf2 — secondary wave
             float s2 = 0.22f + cpuWaveSurf(px, tm * 1.1f + 0.5f, 0.78f);
             int y2 = h - (int)(s2 * h);
-            if (y2 >= safeTop && y2 < h - 4) {
+            if (y2 >= floorY && y2 < h - 4) {
                 context.fill(xi, y2, xi + step, y2 + 2, 0x990D7058);
             }
 
-            // surf3 — tertiary wave (subtlest)
             float s3 = 0.17f + cpuWaveSurf(px, tm * 0.9f + 1.2f, 0.58f);
             int y3 = h - (int)(s3 * h);
-            if (y3 >= safeTop && y3 < h - 4) {
+            if (y3 >= floorY && y3 < h - 4) {
                 context.fill(xi, y3, xi + step, y3 + 1, 0x660A4A38);
             }
         }
@@ -203,14 +202,19 @@ public abstract class TitleScreenMixin extends Screen {
 
     @Unique
     private void updateAndDrawParticles(DrawContext context, int w, int h, float delta) {
-        int waveBase = (int)(h * 0.8);
+        int waveBase = (int)(h * 0.8f);
+        int floorY   = (int)(h * 0.75f); // only visible below button zone
         for (int i = 0; i < 20; i++) {
             PARTICLE_Y[i] += PARTICLE_SPEED[i] * delta * 20;
             if (PARTICLE_Y[i] >= waveBase) {
                 PARTICLE_Y[i] = 0;
                 PARTICLE_X[i] = (int)(Math.random() * w);
             }
-            context.fill(PARTICLE_X[i], (int) PARTICLE_Y[i], PARTICLE_X[i] + 1, (int) PARTICLE_Y[i] + 3, 0x66378ADD);
+            // Only draw below 75% — keeps the button zone (35-75%) clear
+            if ((int) PARTICLE_Y[i] >= floorY) {
+                context.fill(PARTICLE_X[i], (int) PARTICLE_Y[i],
+                    PARTICLE_X[i] + 1, (int) PARTICLE_Y[i] + 3, 0x66378ADD);
+            }
         }
     }
 
