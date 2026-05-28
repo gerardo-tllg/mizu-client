@@ -81,6 +81,12 @@ public class NewGuiScreen extends Screen {
     }
 
     @Override
+    public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
+        // Solid dark navy — suppresses the vanilla world blur/gradient
+        context.fill(0, 0, this.width, this.height, 0xFF050e1a);
+    }
+
+    @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
 

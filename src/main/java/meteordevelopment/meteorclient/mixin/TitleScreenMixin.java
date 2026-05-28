@@ -129,19 +129,12 @@ public abstract class TitleScreenMixin extends Screen {
         if (!particlesInit) initParticles(w, h);
         updateAndDrawParticles(context, w, h, delta);
 
-        // "Mizu by swavez" branding — top right with theme colors
+        // "Mizu · by swavez" — top right only, no bottom-right duplicate
         net.minecraft.text.MutableText creditText = Text.empty();
         creditText.append(Text.literal("Mizu").setStyle(Style.EMPTY.withColor(0x1D9E75)));
-        creditText.append(Text.literal(" by ").setStyle(Style.EMPTY.withColor(0x185FA5)));
-        creditText.append(Text.literal("swavez").setStyle(Style.EMPTY.withColor(0x378ADD)));
+        creditText.append(Text.literal("  ·  by swavez").setStyle(Style.EMPTY.withColor(0x378ADD)));
         int credW = textRenderer.getWidth(creditText);
         context.drawTextWithShadow(textRenderer, creditText, w - 3 - credW, 3, 0xFFFFFFFF);
-
-        // Version label — bottom right, above vanilla copyright at h-10
-        String versionText = "Mizu 1.21.5  ·  swavez";
-        int versionX = w - textRenderer.getWidth(versionText) - 4;
-        int versionY = h - textRenderer.fontHeight * 2 - 8;
-        context.drawText(textRenderer, versionText, versionX, versionY, 0xFF185FA5, false);
     }
 
     // ---- CPU wave crests ----

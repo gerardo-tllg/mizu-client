@@ -117,7 +117,7 @@ public class Gui extends Module {
     public final Setting<SettingColor> primary = sgTheme.add(new ColorSetting.Builder()
         .name("primary")
         .description("Line and border color.")
-        .defaultValue(new SettingColor(0, 0, 0, 255))
+        .defaultValue(new SettingColor(10, 30, 48, 255))    // #0a1e30 deep navy
         .onChanged(c -> FontManager.get().setPrimaryColor(packRGB(c)))
         .build()
     );
@@ -125,7 +125,7 @@ public class Gui extends Module {
     public final Setting<SettingColor> secondary = sgTheme.add(new ColorSetting.Builder()
         .name("secondary")
         .description("Header fill and highlight color.")
-        .defaultValue(new SettingColor(48, 48, 48, 255))
+        .defaultValue(new SettingColor(29, 158, 117, 255))  // #1D9E75 teal
         .onChanged(c -> FontManager.get().setSecondaryColor(packRGB(c)))
         .build()
     );
@@ -133,7 +133,7 @@ public class Gui extends Module {
     public final Setting<SettingColor> textColor = sgTheme.add(new ColorSetting.Builder()
         .name("text-color")
         .description("Primary text color (active modules, headers).")
-        .defaultValue(new SettingColor(240, 240, 250, 255))
+        .defaultValue(new SettingColor(240, 240, 250, 255)) // near-white
         .onChanged(c -> FontManager.get().setTextColor(packRGB(c)))
         .build()
     );
@@ -141,7 +141,7 @@ public class Gui extends Module {
     public final Setting<SettingColor> textSecondary = sgTheme.add(new ColorSetting.Builder()
         .name("text-secondary")
         .description("Secondary text color (inactive modules).")
-        .defaultValue(new SettingColor(140, 140, 165, 255))
+        .defaultValue(new SettingColor(24, 95, 165, 255))   // #185FA5 muted blue
         .onChanged(c -> FontManager.get().setTextSecondary(packRGB(c)))
         .build()
     );

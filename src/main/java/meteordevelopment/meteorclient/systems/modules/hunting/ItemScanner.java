@@ -10,9 +10,7 @@ import meteordevelopment.orbit.EventHandler;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
-import net.minecraft.util.math.Box;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ItemScanner extends Module {
@@ -21,14 +19,14 @@ public class ItemScanner extends Module {
 
     private final Setting<List<Item>> items = sgGeneral.add(new ItemListSetting.Builder()
         .name("items")
-        .description("Items to scan for on the ground.")
-        .defaultValue(new ArrayList<>(List.of(Items.TOTEM_OF_UNDYING, Items.ELYTRA, Items.NETHERITE_INGOT)))
+        .description("Items to highlight on the ground.")
+        .defaultValue(Items.TOTEM_OF_UNDYING, Items.ELYTRA, Items.NETHERITE_INGOT)
         .build()
     );
 
     private final Setting<Double> range = sgGeneral.add(new DoubleSetting.Builder()
         .name("range")
-        .description("Maximum distance to scan for items.")
+        .description("Scan radius in blocks.")
         .defaultValue(64)
         .min(8).sliderMax(128)
         .build()
@@ -36,44 +34,43 @@ public class ItemScanner extends Module {
 
     private final Setting<ShapeMode> shapeMode = sgRender.add(new EnumSetting.Builder<ShapeMode>()
         .name("shape-mode")
-        .description("How to render item highlights.")
         .defaultValue(ShapeMode.Both)
         .build()
     );
 
     private final Setting<SettingColor> sideColor = sgRender.add(new ColorSetting.Builder()
         .name("side-color")
-        .description("Fill color for item highlight.")
         .defaultValue(new SettingColor(29, 158, 117, 45))
         .build()
     );
 
     private final Setting<SettingColor> lineColor = sgRender.add(new ColorSetting.Builder()
         .name("line-color")
-        .description("Outline color for item highlight.")
         .defaultValue(new SettingColor(29, 158, 117, 200))
         .build()
     );
 
     public ItemScanner() {
-        super(Categories.Hunting, "item-scanner", "Highlights target items lying on the ground within range.");
+        super(Categories.Hunting, "item-scanner", "Highlights target item entities on the ground.");
     }
 
     @EventHandler
     private void onRender3D(Render3DEvent event) {
         if (mc.world == null || mc.player == null) return;
 
+        double r = range.get();
         for (ItemEntity entity : mc.world.getEntitiesByClass(ItemEntity.class,
-            mc.player.getBoundingBox().expand(range.get()), e -> true)) {
+            mc.player.getBoundingBox().expand(r), e -> true)) {
 
             if (!items.get().contains(entity.getStack().getItem())) continue;
-            if (mc.player.distanceTo(entity) > range.get()) continue;
+            if (mc.player.distanceTo(entity) > r) continue;
 
-            Box box = entity.getBoundingBox().offset(-entity.getX(), -entity.getY(), -entity.getZ())
-                             .offset(entity.getX() - entity.getX(), entity.getY() - entity.getY(), entity.getZ() - entity.getZ());
-            box = entity.getBoundingBox();
-
-            event.renderer.box(box, sideColor.get(), lineColor.get(), shapeMode.get(), 0);
+            var box = entity.getBoundingBox();
+            event.renderer.box(
+                box.minX, box.minY, box.minZ,
+                box.maxX, box.maxY, box.maxZ,
+                sideColor.get(), lineColor.get(), shapeMode.get(), 0
+            );
         }
     }
 }

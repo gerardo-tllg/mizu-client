@@ -561,7 +561,11 @@ public class Modules extends System<Modules> {
         }
 
         add(new meteordevelopment.meteorclient.systems.modules.hunting.DiscordNotifs());
-        add(new meteordevelopment.meteorclient.systems.modules.hunting.ItemScanner());
+        try {
+            add(new meteordevelopment.meteorclient.systems.modules.hunting.ItemScanner());
+        } catch (Throwable e) {
+            MeteorClient.LOG.error("Failed to load ItemScanner", e);
+        }
         add(new meteordevelopment.meteorclient.systems.modules.hunting.GotoPosition());
         add(new meteordevelopment.meteorclient.systems.modules.hunting.HighlightOldLava());
         add(new meteordevelopment.meteorclient.systems.modules.hunting.LavaFlow());
