@@ -32,6 +32,9 @@ public class CategoryPanel {
     /** Max drawn content height (excluding header). 0 = auto-fit to screen. Set by NewGuiScreen. */
     private int heightCap = 0;
 
+    // Collapsed state persists across GUI opens (static so it survives new Screen instances)
+    private static final java.util.Set<String> COLLAPSED_CATS = new java.util.HashSet<>();
+
     public CategoryPanel(Category category, int x, int y) {
         this.category = category;
         this.x = x;
@@ -128,51 +131,53 @@ public class CategoryPanel {
         int outlineColor = GuiColors.OUTLINE_COLOR;   // #0d3a5c at 67% alpha
         int headerColor  = GuiColors.HEADER_FILL;     // #0a1e30 at 86% alpha
 
-        // Full-panel outline first
+        boolean collapsed = COLLAPSED_CATS.contains(category.name);
+
+        // Full-panel outline
         RenderUtils.drawThickOutline(context, x, y, width, totalHeight, 3, outlineColor);
 
-        // Header fill — full panel width, paints over the outline at top + sides of
-        // the header region. Higher alpha means the outline underneath is covered.
+        // Header fill
         RenderUtils.fillNative(context, x, y, width, headerH, headerColor);
 
-        // Header text — ocean blue
+        // Header: category name + collapse arrow on the right
         context.enableScissor(x, y, x + width, y + headerH);
         int headerTextY = y + (headerH - fm.getTextHeight()) / 2;
         fm.drawText(context, category.name, x + PADDING + 2, headerTextY, GuiColors.ACCENT_LIGHT);
+        String arrow = collapsed ? ">" : "v";
+        fm.drawText(context, arrow, x + width - fm.getGuiTextWidth(arrow) - PADDING - 2, headerTextY, GuiColors.ACCENT_LIGHT);
         context.disableScissor();
 
-        // No divider line under the header — the alpha step from "stacked header+outline"
-        // to "plain outline" naturally marks the boundary.
+        if (!collapsed) {
+            // Module list — scrollable, filtered by search query
+            int contentTop = y + headerH;
+            int contentBottom = y + totalHeight;
+            context.enableScissor(x, contentTop, x + width, contentBottom);
+            int moduleY = contentTop - scrollOffset;
+            String query = meteordevelopment.meteorclient.gui.newgui.NewGuiScreen.searchQuery;
+            for (ModuleButton button : buttons) {
+                boolean matches = query.isEmpty() ||
+                    button.getModule().title.toLowerCase().contains(query.toLowerCase());
+                if (matches) {
+                    button.render(context, x, moduleY, width, mouseX, mouseY);
+                    moduleY += button.getHeight();
+                }
+            }
+            context.disableScissor();
 
-        // Module list — scrollable, filtered by search query
-        int contentTop = y + headerH;
-        int contentBottom = y + totalHeight;
-        context.enableScissor(x, contentTop, x + width, contentBottom);
-        int moduleY = contentTop - scrollOffset;
-        String query = meteordevelopment.meteorclient.gui.newgui.NewGuiScreen.searchQuery;
-        for (ModuleButton button : buttons) {
-            boolean matches = query.isEmpty() ||
-                button.getModule().title.toLowerCase().contains(query.toLowerCase());
-            if (matches) {
-                button.render(context, x, moduleY, width, mouseX, mouseY);
-                moduleY += button.getHeight();
+            // Scrollbar
+            int maxScroll = getMaxScroll();
+            if (maxScroll > 0) {
+                int visibleH = contentHeight;
+                int totalContent = getContentHeight();
+                int trackH = Math.max(1, visibleH - 2);
+                int thumbH = Math.max(8, (int) ((long) visibleH * trackH / totalContent));
+                int thumbY = y + headerH + 1 + (int) ((long) (trackH - thumbH) * scrollOffset / maxScroll);
+                int sbX = x + width - 2;
+                fillNative(context, sbX, thumbY, sbX + 1, thumbY + thumbH, GuiColors.OUTLINE_HEADER);
             }
         }
-        context.disableScissor();
 
-        // Scrollbar indicator when content overflows the visible area.
-        int maxScroll = getMaxScroll();
-        if (maxScroll > 0) {
-            int visibleH = contentHeight;
-            int totalContent = getContentHeight();
-            int trackH = Math.max(1, visibleH - 2);
-            int thumbH = Math.max(8, (int) ((long) visibleH * trackH / totalContent));
-            int thumbY = contentTop + 1 + (int) ((long) (trackH - thumbH) * scrollOffset / maxScroll);
-            int sbX = x + width - 2;
-            fillNative(context, sbX, thumbY, sbX + 1, thumbY + thumbH, GuiColors.OUTLINE_HEADER);
-        }
-
-        // Border trace animation (drawn on top of everything)
+        // Border trace animation
         if (fm.isAnimation() && animProgress < 1f) {
             drawBorderTrace(context, x, y, width, totalHeight, animProgress, fm);
         }
